@@ -1,0 +1,59 @@
+platform: bondora
+platform_name: Bondora
+founding_year: 2008
+headquarters: Tallinn, Estland
+sourcing_strategy: curated_profile_and_secondary_audits
+regulation:
+  type: national
+  regulator: Finantsinspektsioon (Estnische Kreditgeber-Lizenz)
+  license_number: Lizenz 4.1-1/23
+  custody: Konten bei estnischen Banken (keine MiFID II Segregation)
+  investor_compensation: false
+  contract_structure: Forderungsabtretung / Go & Grow Sammelpool
+  notes: National lizenziert als Kreditgeber in Estland; kein Wertpapierinstitut,
+    kein gesetzlicher 20k Entschädigungsschutz.
+governance_and_solvency:
+  guarantor_group: Bondora Group AS
+  auditor: KPMG (testiert)
+  audit_opinion: Unqualified
+  profitability: Seit vielen Jahren hochprofitabel, signifikante Gewinnausschüttungen
+  equity_ratio_pct: 34.0
+  interest_coverage_ratio: 4.5
+  notes: Konzernabschluss unabhängig durch KPMG testiert; solide Profitabilität.
+collateral_and_workout:
+  primary_asset_type: Ungesicherte Konsumentenkredite (Estland, Finnland, Spanien,
+    Niederlande)
+  security_type: Keine dingliche Sicherheit, kein formeller Buyback
+  ltv_max_pct: null
+  historical_loss_pct: 4.5
+  current_npl_pct: 18.0
+  buyback_grace_period_days: null
+  notes: Konsumentenkredite mit strukturellen Ausfällen; Go & Grow puffert diese über
+    Renditeabstand ab.
+liquidity_and_marketplace:
+  secondary_market: false
+  secondary_market_fee_pct: null
+  secondary_market_waiting_days: null
+  primary_loan_duration_days_avg: 720
+  withdrawal_queue_days: 0
+  notes: Go & Grow verspricht tägliche Verfügbarkeit, behält sich jedoch vertraglich
+    Teilabhebungen im Krisenfall vor.
+malus_triggers:
+  monoculture_pct: 100.0
+  monoculture_originator: Bondora AS
+  term_mismatch: true
+  term_mismatch_detail: Tägliche Verfügbarkeit versprochen, aber durch langlaufende
+    unbesicherte Konsumkredite (bis 5 Jahre) hinterlegt.
+  related_party_opacity: false
+  distressed_workout: false
+benchmarks:
+  p2p_empire_safety_score: 6.9
+  p2p_empire_safety_band: Mittel
+  p2p_empire_portfolio_perf: 72.6
+  lars_wrobbel_score: 25
+  lars_wrobbel_rank: Rang 9
+  rethink_p2p_score: 5.5
+  rethink_p2p_rank: Platz 19
+  rethink_p2p_red_flags: '0'
+  p2p_game_score: 64
+  p2p_game_rank: Platz 10 von 40

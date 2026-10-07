@@ -1,0 +1,55 @@
+platform: ventus
+platform_name: Ventus Energy
+founding_year: 2023
+headquarters: Tallinn, Estland
+sourcing_strategy: curated_profile_and_secondary_audits
+regulation:
+  type: unregulated
+  regulator: null
+  license_number: null
+  custody: Betriebskonten
+  investor_compensation: false
+  contract_structure: Unternehmensanleihen / Kredite
+  notes: Unregulierter Energie-Crowdfunder.
+governance_and_solvency:
+  guarantor_group: Ventus Energy OÜ
+  auditor: null
+  audit_opinion: Ungeprüft
+  profitability: Akute finanzielle Schieflage / Restrukturierung
+  equity_ratio_pct: null
+  interest_coverage_ratio: null
+  notes: Zahlungsstopps und laufende Sanierungsverhandlungen mit Gläubigern.
+collateral_and_workout:
+  primary_asset_type: Erneuerbare Energieprojekte (Biogas, Wind)
+  security_type: Unternehmensbürgschaft / Projektrechte
+  ltv_max_pct: null
+  historical_loss_pct: 12.0
+  current_npl_pct: 65.0
+  buyback_grace_period_days: null
+  notes: Projekte in Verzug oder gerichtlich anhängig.
+liquidity_and_marketplace:
+  secondary_market: false
+  secondary_market_fee_pct: null
+  secondary_market_waiting_days: null
+  primary_loan_duration_days_avg: 720
+  withdrawal_queue_days: 30
+  notes: Auszahlungen de facto gestoppt oder blockiert.
+malus_triggers:
+  monoculture_pct: 100.0
+  monoculture_originator: Ventus Energy
+  term_mismatch: false
+  related_party_opacity: true
+  related_party_detail: Intransparente Mittelverwendung und verweigerte Gutachten.
+  distressed_workout: true
+  distressed_notes: Akutes Sanierungsverfahren, Auszahlungsstopps, 65 % NPL.
+benchmarks:
+  p2p_empire_safety_score: 0.0
+  p2p_empire_safety_band: Niedrig
+  p2p_empire_portfolio_perf: 50.0
+  lars_wrobbel_score: null
+  lars_wrobbel_rank: Kein Rating
+  rethink_p2p_score: null
+  rethink_p2p_rank: Nicht gelistet
+  rethink_p2p_red_flags: null
+  p2p_game_score: 0
+  p2p_game_rank: Platz 40 von 40

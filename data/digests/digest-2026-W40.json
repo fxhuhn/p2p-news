@@ -1,0 +1,711 @@
+{
+  "schema_version": "1.0",
+  "iso_week": "2026-W40",
+  "clusters": [
+    {
+      "cluster_id": "c-ventus-energy-reorganisation",
+      "topic": "risiko_ausfaelle",
+      "platforms": [
+        "ventus energy"
+      ],
+      "title": "Ventus Energy: Abstimmung über gerichtlichen Reorganisationsplan zur Schuldenregulierung",
+      "facts": [
+        {
+          "fact_id": "f-ventus-01",
+          "statement": "Ventus Energy befindet sich in einem gerichtlichen Sanierungsverfahren nach estnischem Recht (Saneerimisseadus), welches am 18.08.2026 eröffnet wurde, und legte am 24.09.2026 einen Reorganisationsplan vor.",
+          "evidence": [
+            {
+              "item_id": "9c2d09339d8912e4",
+              "evidence_quote": "Ventus Energy hat den Reorganisationsplan am 24. September 2026 für die Gläubiger bereitgestellt."
+            },
+            {
+              "item_id": "9c2d09339d8912e4",
+              "evidence_quote": "Ventus Energy hat am 12.06.2026 mitgeteilt, dass die Gesellschaft in ein gerichtlich überwachtes Sanierungsverfahren nach estnischem Recht (Saneerimisseadus) eintritt."
+            },
+            {
+              "item_id": "c3d4bcd1f0631a1d",
+              "evidence_quote": "Die Ventus Energy Group befindet sich seit dem 18.08.2026 offiziell in einem gerichtlichen Sanierungsverfahren."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-ventus-02",
+          "statement": "Die Gläubiger müssen bis zum 12. Oktober 2026 über den Sanierungsplan abstimmen; benötigt werden zwei Drittel der Forderungssumme (über 66 %), wobei eine Nichtteilnahme als Nein gewertet wird.",
+          "evidence": [
+            {
+              "item_id": "9c2d09339d8912e4",
+              "evidence_quote": "Die Gläubiger müssen bis zum 12. Oktober abstimmen, der Plan geht bis zum 19. Oktober zur Bestätigung an das Gericht. Nötig sind zwei Drittel der Forderungssumme, eine ausbleibende Stimme zählt als Nein."
+            },
+            {
+              "item_id": "c3d4bcd1f0631a1d",
+              "evidence_quote": "Wer nicht abstimmt, dessen Stimme wird als \"Nein\" gewertet. Wenn mehr als 66 % der Anlagesumme für den Plan stimmen, kann Ventus Energy umstrukturiert werden."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-ventus-03",
+          "statement": "Das Projektportfolio wird aktuell auf 110,2 Mio. Euro geschätzt (168,1 Mio. Euro nach Fertigstellung), bei Gesamtverbindlichkeiten von 86,0 Mio. Euro, wovon 83,9 Mio. Euro auf Plattform-Anleger entfallen.",
+          "evidence": [
+            {
+              "item_id": "9c2d09339d8912e4",
+              "evidence_quote": "Nach den Angaben im Plan liegt der geschätzte aktuelle Wert des Projektportfolios bei 110,2 Mio. Euro, nach Fertigstellung der geplanten Projekte bei 168,1 Mio. Euro. Die Verbindlichkeiten der Gesellschaft betragen 86,0 Mio. Euro, davon entfallen 83,9 Mio. Euro auf Forderungen von Anlegern der Plattform."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-ventus-04",
+          "statement": "Der Reorganisationsplan sieht vier Szenarien vor, die alle eine 100-prozentige Kapitalrückzahlung innerhalb von bis zu 5 Jahren anstreben, während Zinszahlungen je nach Szenario von 100 % bis 0 % variieren.",
+          "evidence": [
+            {
+              "item_id": "9c2d09339d8912e4",
+              "evidence_quote": "Laut Plan sollen in allen vier Szenarien 100 Prozent des eingezahlten Kapitals zurückgezahlt werden. Bei den Zinsen unterscheiden sich die Szenarien."
+            },
+            {
+              "item_id": "c3d4bcd1f0631a1d",
+              "evidence_quote": "Es gibt 4 Szenarien, die alle vorsehen, dass 100 % des investierten Kapitals regelmäßig zurückgezahlt wird."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-esketit-goodeve-lizenz",
+      "topic": "regulierung_legal",
+      "platforms": [
+        "esketit",
+        "goodeve"
+      ],
+      "title": "Esketit-Gründer erhalten lettische Wertpapierlizenz für neue Plattform Goodeve",
+      "facts": [
+        {
+          "fact_id": "f-goodeve-02",
+          "statement": "Die Lizenz gilt nicht für die bestehende Plattform Esketit, sondern für eine separate, neue P2P-Plattform namens Goodeve, die noch 2026 starten soll.",
+          "evidence": [
+            {
+              "item_id": "69b589423f1be13e",
+              "evidence_quote": "Meine Einordnung, dass Esketit damit auf ein reguliertes Fundament gestellt wird, war allerdings nicht korrekt. Stattdessen entsteht offenbar eine zweite, parallele Plattform derselben Gesellschafter."
+            },
+            {
+              "item_id": "44c91ca03112e888",
+              "evidence_quote": "Der Start ist für Ende dieses Jahres geplant."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": [
+        "Frühere Berichte ordneten die Lizenz fälschlicherweise Esketit direkt zu, was von rethink-p2p korrigiert wurde: Die Lizenz gilt für die neue Plattform Goodeve, die parallel existieren soll."
+      ]
+    },
+    {
+      "cluster_id": "c-debitum-flow",
+      "topic": "plattform_features",
+      "platforms": [
+        "debitum"
+      ],
+      "title": "Debitum verzeichnet erfolgreichen Start von Debitum Flow und erreicht 1 Million Euro",
+      "facts": [
+        {
+          "fact_id": "f-debitum-01",
+          "statement": "Debitum Flow erreichte innerhalb von weniger als drei Wochen nach dem Start 1 Million Euro an investiertem Kapital.",
+          "evidence": [
+            {
+              "item_id": "5eb8d22b2c41d917",
+              "evidence_quote": "Das Produkt erreichte innerhalb von weniger als drei Wochen bereits die Marke von 1 Million Euro investiertem Kapital."
+            },
+            {
+              "item_id": "314f755ffaf7c106",
+              "evidence_quote": "Debitum Flow hat in den ersten drei Wochen nach seinem Start bereits 1 Million Euro an Investitionen erreicht"
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-debitum-02",
+          "statement": "Debitum Flow bietet 8 % Jahresrendite bei täglicher Zinsabrechnung, eine Mindestanlage von 10 Euro, keine Ausstiegsgebühren und Auszahlungsoptionen von bis zu 5.000 Euro pro Woche.",
+          "evidence": [
+            {
+              "item_id": "314f755ffaf7c106",
+              "evidence_quote": "Die Plattform bietet eine 8%ige Jahresrendite bei täglicher Zinsabrechnung und kombiniert langfristige Investitionen mit flexiblen Auszahlungsoptionen bis zu 5.000 Euro pro Woche. Investoren genießen niedrige Einstiegshürden mit nur 10 Euro Mindestinvestition und keine Ausstiegsgebühren."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-debitum-03",
+          "statement": "Im September 2026 investierten Anleger insgesamt 5,99 Millionen Euro bei Debitum, während 776.850 Euro an Zinsen ausgezahlt wurden.",
+          "evidence": [
+            {
+              "item_id": "5eb8d22b2c41d917",
+              "evidence_quote": "Im September investierten Anleger 5,99 Millionen Euro bei Debitum, während der Plattform 776.850 Euro Zinsen an Investoren zahlte."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-robocash-robo-flow",
+      "topic": "plattform_features",
+      "platforms": [
+        "robocash"
+      ],
+      "title": "Robocash führt Liquiditätsprodukt Robo Flow ein und steigert Septembervolumen um über 62 %",
+      "facts": [
+        {
+          "fact_id": "f-robocash-02",
+          "statement": "Im September stieg das Anlagevolumen von Robocash um 62,4 Prozent, und die Nutzerbasis überschritt 43.000 registrierte Investoren.",
+          "evidence": [
+            {
+              "item_id": "a157c92750b91be8",
+              "evidence_quote": "Robocash meldete im September ein Anlagevolumen-Wachstum von 62,4 Prozent und die Anzahl registrierter Nutzer überschritt 43.000."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-peerberry-portfolio-september",
+      "topic": "zahlen_statistik",
+      "platforms": [
+        "peerberry"
+      ],
+      "title": "PeerBerry überschreitet 155 Millionen Euro Portfoliowert und bindet Crediflow an",
+      "facts": [
+        {
+          "fact_id": "f-peerberry-01",
+          "statement": "PeerBerrys ausstehendes Portfolio erreichte im September 2026 155,35 Millionen Euro (+3,4 % ggü. Vormonat), bei Neukreditfinanzierungen von 50,52 Millionen Euro (+29 %).",
+          "evidence": [
+            {
+              "item_id": "2e16b67349b8ef2e",
+              "evidence_quote": "Das ausstehende Portfolio von PeerBerry erreichte im September 155,35 Millionen Euro, ein Anstieg von 3,4 % gegenüber August. Anleger finanzierten neue Kredite im Wert von 50,52 Millionen Euro, ein monatlicher Anstieg von 29 %."
+            },
+            {
+              "item_id": "79bcd881670d3310",
+              "evidence_quote": "PeerBerry meldete im September 2026 Rekordwerte mit einem Portfolio von 155,35 Millionen Euro und Kreditfinanzierungen im Wert von 50,52 Millionen Euro."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-peerberry-02",
+          "statement": "Kurzläufer machen 22,15 % des Gesamtportfolios aus (nach 7 % im Januar 2026), während Crediflow aus Südafrika als 36. Anbahner angebunden wurde.",
+          "evidence": [
+            {
+              "item_id": "2e16b67349b8ef2e",
+              "evidence_quote": "Kurzläufer machen jetzt 22,15 % des Portfolios aus, gegenüber 7 % im Januar. Crediflow wurde der 36. Kreditanbahner von PeerBerry."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-peerberry-03",
+          "statement": "Aventus Group gründete die Gesellschaft TunaiPantas mit malaysischer Geldverleihlizenz, die in den kommenden Monaten an PeerBerry angebunden werden soll.",
+          "evidence": [
+            {
+              "item_id": "0628eb6267df4f47",
+              "evidence_quote": "Der Großpartner Aventus Group hat in diesem Jahr die neue Gesellschaft TunaiPantas gegründet. Sie soll in den kommenden Monaten angebunden werden, sobald die Integration abgeschlossen ist."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-swaper-jubilaeum-und-geschaeftszahlen",
+      "topic": "zahlen_statistik",
+      "platforms": [
+        "swaper"
+      ],
+      "title": "Swaper feiert 10-jähriges Jubiläum und veröffentlicht Jahresbericht 2025 der SW Finance OÜ",
+      "facts": [
+        {
+          "fact_id": "f-swaper-01",
+          "statement": "Im Geschäftsjahr 2025 steigerte SW Finance OÜ das Kreditportfolio um 28,8 % auf 18,86 Millionen Euro und die Zinseinnahmen um 7,3 % auf 2,58 Millionen Euro bei einem Nettoverlust von 39.282 Euro.",
+          "evidence": [
+            {
+              "item_id": "c4a2e4aacc903387",
+              "evidence_quote": "SW Finance OÜ präsentiert seinen Jahresbericht 2025 mit deutlichem Wachstum: Das Kreditportfolio stieg um 28,8% auf 18,86 Millionen Euro und die Zinseinnahmen um 7,3% auf 2,58 Millionen Euro. Die Gesamtaktiva erhöhten sich auf 19,72 Millionen Euro. Trotz eines Nettoverlusts von 39.282 Euro"
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-swaper-02",
+          "statement": "Swaper feiert im Oktober 2026 sein 10. Firmenjubiläum, meldet über 10.500 Nutzer und insgesamt 1,143 Milliarden Euro an vermittelten Kreditforderungen.",
+          "evidence": [
+            {
+              "item_id": "2e7367f44276f04f",
+              "evidence_quote": "Swaper feiert sein 10-jähriges Jubiläum im Oktober 2026 mit speziellen Bonusangeboten für neue und bestehende Nutzer. Neue Kunden erhalten mit dem Code \"Swaper10\" einen sechsmonatigen Loyalty-Status mit +2% Rendite"
+            },
+            {
+              "item_id": "2e7367f44276f04f",
+              "evidence_quote": "In zehn Jahren hat Swaper über 10.500 Nutzer, 1,143 Milliarden Euro Kreditforderungen und 14% durchschnittliche jährliche Rendite erreicht."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-revest-updates",
+      "topic": "plattform_features",
+      "platforms": [
+        "revest"
+      ],
+      "title": "Revest führt Zweitmarkt sowie Instant- und Flexible-Cashback ein",
+      "facts": [
+        {
+          "fact_id": "f-revest-02",
+          "statement": "Vom 5. Oktober bis 30. November 2026 bietet Revest zwei Cashback-Optionen ('Instant' und 'Flexible') mit bis zu 6 % Cashback auf qualifizierte Erwerbungen.",
+          "evidence": [
+            {
+              "item_id": "50dc3986085d4a98",
+              "evidence_quote": "Revest führt ab 5. Oktober 2026 zwei neue Cashback-Optionen ein: \"Instant\" für sofortige Auszahlung und \"Flexible\" für Auszahlung mit Forderungszahlungen. Die Kampagne vom 5. Oktober bis 30. November 2026 bietet bis zu 6% Cashback auf berechtigte Erwerbungen."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-indemo-cashback-rueckzahlungen",
+      "topic": "zinsen_aktionen",
+      "platforms": [
+        "indemo"
+      ],
+      "title": "Indemo zahlt über 410.000 Euro zurück und startet gestaffelte Oktober-Cashback-Aktion",
+      "facts": [
+        {
+          "fact_id": "f-indemo-01",
+          "statement": "Indemo hat im September zwei Immobilienprojekte (R013 in Höhe von 224.997 € und R226 in Höhe von 185.831 €) vorzeitig über den institutionellen Zweitmarkt abgewickelt und zurückgezahlt.",
+          "evidence": [
+            {
+              "item_id": "a5a82f9c30b00ec5",
+              "evidence_quote": "Indemo hat im September 224.997,32 € aus dem Projekt R013 in Mataró und 185.831,38 € aus dem Projekt R226 in La Torre de Claramunt zurückgezahlt."
+            },
+            {
+              "item_id": "00ef96a1cd4099d2",
+              "evidence_quote": "Beide Fälle wurden vorzeitig über den institutionellen Zweitmarkt abgeschlossen, statt den vollständigen rechtlichen Verwertungsprozess bis zum Ende zu durchlaufen."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-indemo-02",
+          "statement": "Indemo veranstaltet bis zum 31. Oktober 2026 eine gestaffelte Cashback-Aktion mit 2 % (300 bis 999 Euro), 3 % (1.000 bis 2.999 Euro) und 4 % (ab 3.000 Euro) auf qualifizierte Investments.",
+          "evidence": [
+            {
+              "item_id": "ae463415df65eaa5",
+              "evidence_quote": "Das Cashback-System arbeitet nach gestaffelten Schwellwerten: 2% für 300-999 Euro, 3% für 1.000-2.999 Euro und 4% für 3.000+ Euro."
+            },
+            {
+              "item_id": "ae463415df65eaa5",
+              "evidence_quote": "Das Angebot gilt für neue Gelder, bestehende Guthaben und Reinvestitionen und läuft bis zum 31. Oktober 2026."
+            },
+            {
+              "item_id": "a5a82f9c30b00ec5",
+              "evidence_quote": "Eine neue Cashback-Aktion läuft bis zum 31. Oktober 2026 und bietet 2,5 % auf 10-999 €, 3,5 % auf 1.000-2.999 € und 4,5 % auf Beträge ab 3.000 €."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": [
+        "Laut offizieller Indemo-Plattformmitteilung (Primärquelle) beträgt der Cashback 2 % (300-999 €), 3 % (1.000-2.999 €) und 4 % (ab 3.000 €). Die abweichenden Angaben von p2p-empire (2,5 % ab 10 € bis 4,5 %) beruhen auf einer fehlerhaften Sekundärberichterstattung."
+      ]
+    },
+    {
+      "cluster_id": "c-nectaro-monatszahlen-und-features",
+      "topic": "zahlen_statistik",
+      "platforms": [
+        "nectaro"
+      ],
+      "title": "Nectaro: Septemberzahlen, Einführung von 30-Tage-Instrumenten und iPayTax-Konto",
+      "facts": [
+        {
+          "fact_id": "f-nectaro-01",
+          "statement": "Nectaro vermittelte im September 2026 Kredite im Wert von 4.073.350 € über 218 Kredite bei 16.665 aktiven Anlegern und erreichte ein Gesamtvolumen von 97,35 Millionen Euro.",
+          "evidence": [
+            {
+              "item_id": "180b9c36ed06f980",
+              "evidence_quote": "Nectaro vergab im September 2026 Kredite im Wert von 4.073.350 € über 218 Kredite. Das Gesamtvolumen seit Gründung erreichte 97,35 Millionen Euro. Der durchschnittliche nominale Zinssatz lag bei 13,40 %. Die Plattform zählt 16.665 aktive Anleger."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-nectaro-02",
+          "statement": "Nectaro führte 30-Tage-Investmentinstrumente für verbesserte Liquidität und Flexibilität ein.",
+          "evidence": [
+            {
+              "item_id": "0cea2b5671296ba9",
+              "evidence_quote": "Starting today, you can deploy your funds into 30-day investment instruments on Nectaro - earning a competitive return over a short, predictable cycle, with your capital back in your hands within a month."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-nectaro-04",
+          "statement": "Nectaro emittierte am 1. Oktober 2026 fünf neue Zypern-Notes mit Laufzeiten von 4 bis 12 Monaten und Zinssätzen von 11 % bis 13 % p. a.",
+          "evidence": [
+            {
+              "item_id": "b6e222fdebeb180d",
+              "evidence_quote": "Nectaro hat am 1. Oktober 2026 fünf neue Zypern-Notes hinzugefügt. Die Laufzeiten liegen zwischen 4 und 12 Monaten, mit Zinssätzen von 11 % bis 13 % p. a."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-fintown-auszahlungen",
+      "topic": "risiko_ausfaelle",
+      "platforms": [
+        "fintown"
+      ],
+      "title": "Fintown wickelt 93 % der September-Auszahlungsanträge ab und verkauft Vermögenswerte",
+      "facts": [
+        {
+          "fact_id": "f-fintown-01",
+          "statement": "Zwischen dem 1. und 27. September erhielt Fintown 455 Auszahlungsanträge, von denen über 93 % bearbeitet wurden (30 Anträge stehen noch aus).",
+          "evidence": [
+            {
+              "item_id": "ac183d4a77ccf9fb",
+              "evidence_quote": "Fintown erhielt zwischen dem 1. und 27. September 455 Auszahlungsanträge. 30 davon stehen noch aus, mehr als 93 % sind bereits bearbeitet."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-fintown-02",
+          "statement": "Fintown begann den Verkauf von Wohnungen des Projekts Honest Smichov und entschied sich zum Verkauf von Honest Karlin, um Erlöse für Auszahlungsanträge zu verwenden.",
+          "evidence": [
+            {
+              "item_id": "ac183d4a77ccf9fb",
+              "evidence_quote": "Daneben hat Fintown begonnen, Honest Smichov durch den Verkauf von Wohnungen zu realisieren, und sich entschieden, Honest Karlin zu verkaufen. Beide Schritte sind Teil der geplanten Portfoliostrategie und keine Reaktion auf das Auszahlungsvolumen. Die Erlöse aus den Verkäufen werden verwendet, um Auszahlungsanträge zu erfüllen."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-inrento-meilensteine",
+      "topic": "zahlen_statistik",
+      "platforms": [
+        "inrento"
+      ],
+      "title": "InRento überschreitet 124 Millionen Euro Finanzierungsvolumen und expandiert nach Finnland",
+      "facts": [
+        {
+          "fact_id": "f-inrento-02",
+          "statement": "InRento stieg mit dem Projekt 'Noa Villas' (5 Millionen Euro Finanzierungsvolumen) erstmals in den finnischen Markt ein.",
+          "evidence": [
+            {
+              "item_id": "57329c3161ffb135",
+              "evidence_quote": "zusätzlich stieg InRento erstmals in den finnischen Markt ein. Das Projekt Noa Villas in Finnland holte allein 5 Millionen Euro und zählt damit zu den größten Projekten von InRento."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-fagura-rumaenien-inkasso",
+      "topic": "risiko_ausfaelle",
+      "platforms": [
+        "fagura"
+      ],
+      "title": "Fagura Rumänien verkauft ausgefallene Kredite gebündelt an Inkassounternehmen mit hohen Abschlägen",
+      "facts": [
+        {
+          "fact_id": "f-fagura-01",
+          "statement": "Fagura Rumänien hat im Juli 2026 ausgefallene Erstphasenkredite gebündelt mit Verlusten zwischen 86 % und 89 % an ein externes Inkassounternehmen veräußert.",
+          "evidence": [
+            {
+              "item_id": "ffec664e3c56f413",
+              "evidence_quote": "Im Juli 2026 wurden einige dieser ersten Kredite der Anfangszeit von Fagura selber für alle betroffenen Anleger an ein Inkassounternehmen verkauft. Dadurch entstand in meinem Portfolio ein Verlust von -2.389 €."
+            },
+            {
+              "item_id": "ffec664e3c56f413",
+              "evidence_quote": "Die bereits länger ausgefallenen Kredite wurden mit hohen Rabatten an ein Inkassounternehmen verkauft. Bei meinen Darlehen lag der Verlust zwischen 86 und 89 %."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-bondster-finanzen",
+      "topic": "zahlen_statistik",
+      "platforms": [
+        "bondster"
+      ],
+      "title": "Finanzielle Kennzahlen von Bondster und Muttergesellschaft CEP Invest Private Equity",
+      "facts": [
+        {
+          "fact_id": "f-bondster-01",
+          "statement": "Bondster verzeichnete von 2021 bis 2025 durchgehend Verluste (2025: -3,07 Mio. CZK / -0,12 Mio. €) und ein negatives Eigenkapital von zuletzt -3,9 Mio. € im Jahr 2025.",
+          "evidence": [
+            {
+              "item_id": "929181ff6138d187",
+              "evidence_quote": "Bondster arbeitet seit vielen Jahren unprofitabel: - Verlust 2021: -28,55 Mio. CZK (-1,2 Mio. €) - Verlust 2022: -12,4 Mio. CZK (-0,5 Mio. €) - Verlust 2023: -6,03 Mio. CZK (-0,24 Mio. €) - Verlust 2024: -14,55 Mio. CZK (-0,6 Mio. €) - Verlust 2025: -3,07 Mio. CZK (-0,12 Mio. €)"
+            },
+            {
+              "item_id": "929181ff6138d187",
+              "evidence_quote": "Das Eigenkapital von Bondster ist schon seit vielen Jahren negativ: - 2021: -2,4 Mio. € - 2022: -3,0 Mio. € - 2023: -3,2 Mio. € - 2024: -3,8 Mio. € - 2025: -3,9 Mio. €"
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-bondster-02",
+          "statement": "Die Bondster-Muttergesellschaft CEP Invest Private Equity, SE rutschte 2024 nach vorangegangenen Gewinnjahren mit -1,38 Mio. CZK (-0,06 Mio. €) in die Verlustzone.",
+          "evidence": [
+            {
+              "item_id": "929181ff6138d187",
+              "evidence_quote": "Das Mutterunternehmen von Bondster ist die CEP Invest Private Equity, SE. - Gewinn 2021: +8,73 Mio. CZK (+0,35 Mio. €) - Gewinn 2022: +8,55 Mio. CZK (+0,34 Mio. €) - Gewinn 2023: +4,39 Mio. CZK (+0,18 Mio. €) - Verlust 2024: -1,38 Mio. CZK (-0,06 Mio. €)"
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-tambadana-jahresabschluss",
+      "topic": "kreditanbahner",
+      "platforms": [
+        "tambadana",
+        "loanch"
+      ],
+      "title": "Tambadana (Wawasan Cojaya Sdn. Bhd.) legt geprüften Jahresabschluss 2025 vor",
+      "facts": [
+        {
+          "fact_id": "f-tambadana-01",
+          "statement": "Der malaysische Kreditgeber Tambadana steigerte 2025 den Umsatz von 26,4 auf 176,7 Mio. Ringgit (ca. 36,6 Mio. Euro) und den Nettogewinn auf 9,0 Mio. Ringgit (ca. 1,9 Mio. Euro).",
+          "evidence": [
+            {
+              "item_id": "d733a00f07ad8ba3",
+              "evidence_quote": "Der Umsatz stieg von 26,4 Millionen Ringgit im Jahr 2024 auf 176,7 Millionen Ringgit im Jahr 2025, umgerechnet von 5,5 auf 36,6 Millionen Euro! Der Nettogewinn wuchs von 2,2 auf 9,0 Millionen Ringgit, umgerechnet 1,9 Millionen Euro."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-tambadana-02",
+          "statement": "Die Wertberichtigungen auf Forderungen stiegen auf 73,6 Mio. Ringgit (15,2 Mio. Euro), darunter 56,0 Mio. Ringgit (11,6 Mio. Euro) abgeschriebene Forderungen; das Eigenkapital kletterte durch nachrangige Verbindlichkeiten auf 26,4 Mio. Ringgit.",
+          "evidence": [
+            {
+              "item_id": "d733a00f07ad8ba3",
+              "evidence_quote": "Die Wertberichtigungen auf Forderungen wuchsen im gleichen Zeitraum deutlich, von 10,2 Millionen Ringgit (2,1 Millionen Euro) auf 73,6 Millionen Ringgit (15,2 Millionen Euro), davon allein 56,0 Millionen Ringgit (11,6 Millionen Euro) als abgeschriebene Forderungen."
+            },
+            {
+              "item_id": "d733a00f07ad8ba3",
+              "evidence_quote": "Das Eigenkapital insgesamt stieg dadurch von 0,7 Millionen Ringgit (0,1 Millionen Euro) auf 26,4 Millionen Ringgit (5,5 Millionen Euro)."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-stock-estate-progressive-interest",
+      "topic": "zinsen_aktionen",
+      "platforms": [
+        "stock.estate"
+      ],
+      "title": "Stock.estate ersetzt Cashback durch Progressive Interest und streicht Verwaltungsgebühr",
+      "facts": [
+        {
+          "fact_id": "f-stockestate-01",
+          "statement": "Stock.estate führte das Zinsmodell 'Progressive Interest' ein (10,25 % ab 250 € bis 16 % ab 100.000 €), ersetzte das bisherige Cashback-System und schaffte die monatliche 0,2 % Verwaltungsgebühr ab.",
+          "evidence": [
+            {
+              "item_id": "403c585ac75a11a5",
+              "evidence_quote": "Das bisherige Cashback-System wird durch \"Progressive Interest\" ersetzt, gleichzeitig entfällt die bisherige monatliche Verwaltungsgebühr von 0,2 Prozent. Die jährliche Rendite hängt jetzt direkt von der Höhe der einzelnen Investition ab. Ab 250 Euro liegt sie bei 10,25 Prozent, ab 100.000 Euro bei maximal 16 Prozent."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-stockestate-02",
+          "statement": "Parallel wurde ein vierstufiges Loyalty-Programm (Standard, Bronze, Silver, Gold) gestartet, das den Einstiegszinssatz zusätzlich staffelt.",
+          "evidence": [
+            {
+              "item_id": "403c585ac75a11a5",
+              "evidence_quote": "Zusätzlich führt Stock.estate ein Loyalty Program ein, basierend auf dem aktiven Kapital eines Anlegers: - Standard gilt unter 25.000 Euro, - Bronze ab 25.000 Euro, - Silver ab 50.000 Euro - und Gold ab 100.000 Euro."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-estateguru-eg-grow",
+      "topic": "zahlen_statistik",
+      "platforms": [
+        "estateguru"
+      ],
+      "title": "EstateGuru: EG Grow erreicht über 7 Millionen Euro Investitionsvolumen im ersten Jahr",
+      "facts": [
+        {
+          "fact_id": "f-estateguru-01",
+          "statement": "Das automatisierte Produkt EG Grow hat in seinem ersten Jahr über 7 Millionen Euro an Kapital eingeworben und bietet 7 % (aktuell 8 %) feste Jahresverzinsung mit einer maximalen Beleihungsquote (LTV) von 69 %.",
+          "evidence": [
+            {
+              "item_id": "b77a554ed8bec66d",
+              "evidence_quote": "EG Grow, ein automatisiertes Anlageprodukt von Estateguru mit immobiliengestützten Darlehen, hat in seinem ersten Jahr über 7 Millionen Euro an Investitionen angezogen. Das Produkt bietet eine feste jährliche Verzinsung von 7% (aktuell 8%), gezahlt monatlich, mit einer Mindestanlage von 100 Euro."
+            },
+            {
+              "item_id": "b77a554ed8bec66d",
+              "evidence_quote": "Die Gelder werden automatisch auf mehrere erste-Rang-Hypotheken-gesicherte Darlehen verteilt, die strenge Kriterien erfüllen müssen, einschließlich einer maximalen Beleihungsquote von 69%."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-asterra-estate-kennzahlen",
+      "topic": "zahlen_statistik",
+      "platforms": [
+        "asterra"
+      ],
+      "title": "Asterra Estate Group verdoppelt Gesamtvermögen per Ende August 2026",
+      "facts": [
+        {
+          "fact_id": "f-asterra-01",
+          "statement": "In den ersten acht Monaten 2026 verdoppelte die Asterra Estate Group ihre Gesamtvermögenswerte auf 16,33 Mio. Euro, während das Immobilienportfolio um 132 % von 5,68 auf 13,17 Mio. Euro zulegte; die Schuldendeckungsquote liegt bei 1,40x.",
+          "evidence": [
+            {
+              "item_id": "a628da0cd1f9a994",
+              "evidence_quote": "Die Asterra Estate Group verzeichnet in den ersten acht Monaten des Jahres 2026 eine Verdopplung ihrer Gesamtvermögenswerte auf EUR 16,33 Millionen, getrieben durch Neuinvestitionen und Wertsteigerungen des Immobilienportfolios. Das Immobilienportfolio ist von EUR 5,68 Millionen auf EUR 13,17 Millionen gestiegen, was einer Steigerung von 132 Prozent entspricht."
+            },
+            {
+              "item_id": "a628da0cd1f9a994",
+              "evidence_quote": "Die Schuldendeckungsquote beträgt 1,40x und zeigt eine sichere finanzielle Position mit EUR 3,79 Millionen Überdeckung."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-capitalia-q2-2026",
+      "topic": "zahlen_statistik",
+      "platforms": [
+        "capitalia"
+      ],
+      "title": "Capitalia legt Halbjahresbericht 2026 mit Rückkehr in die Gewinnzone vor",
+      "facts": [
+        {
+          "fact_id": "f-capitalia-01",
+          "statement": "Capitalia erzielte im ersten Halbjahr 2026 einen Umsatz von 1,02 Millionen Euro und kehrte mit 21.000 Euro Gewinn nach dem Vorjahresverlust in die Gewinnzone zurück; das Neugeschäft stieg auf 11,1 Millionen Euro bei einer Eigenkapitalquote von 21,7 Prozent.",
+          "evidence": [
+            {
+              "item_id": "703298dddbbb38ff",
+              "evidence_quote": "Im ersten Halbjahr 2026 lag der Umsatz bei 1,02 Millionen Euro, der Gewinn bei 21.000 Euro. Damit kehrte das Unternehmen nach einem Verlust von 87.000 Euro im Gesamtjahr 2025 wieder in die Gewinnzone zurück."
+            },
+            {
+              "item_id": "703298dddbbb38ff",
+              "evidence_quote": "Im ersten Halbjahr wurden 11,1 Millionen Euro an Krediten ausgereicht, nach 10,4 Millionen Euro im Vorjahreszeitraum."
+            },
+            {
+              "item_id": "703298dddbbb38ff",
+              "evidence_quote": "Die Eigenkapitalquote liegt bei 21,7 Prozent und damit deutlich über dem für die Anleihe geltenden Mindestwert von 20 Prozent."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-loanch-loyalty-upgrade",
+      "topic": "zinsen_aktionen",
+      "platforms": [
+        "loanch"
+      ],
+      "title": "Loanch erweitert Treueprogramm um Statusstufen Iron und Diamond",
+      "facts": [
+        {
+          "fact_id": "f-loanch-01",
+          "statement": "Loanch erweiterte sein Treueprogramm um die beiden Statusstufen Iron (ab 3.000 Euro) und Diamond (ab 80.000 Euro) und erhöhte die zusätzlichen Zinssätze.",
+          "evidence": [
+            {
+              "item_id": "0af73ec1ab8f7f00",
+              "evidence_quote": "Zwei neue Statusstufen - Iron (ab 3.000 Euro) und Diamond (ab 80.000 Euro) - wurden eingeführt, und alle zusätzlichen Zinssätze wurden erhöht."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-lande-cashback-und-august-report",
+      "topic": "zinsen_aktionen",
+      "platforms": [
+        "lande"
+      ],
+      "title": "LANDE: August-Performance-Report und Primärmarkt-Cashback bis 18. Oktober",
+      "facts": [
+        {
+          "fact_id": "f-lande-01",
+          "statement": "LANDE bietet vom 1. bis 18. Oktober 2026 eine Primärmarkt-Cashback-Aktion (0,5 % ab 500 €, 1 % ab 1.000 €, 2 % ab 5.000 € pro Einzeltransaktion).",
+          "evidence": [
+            {
+              "item_id": "55a0e19695c556fd",
+              "evidence_quote": "LANDE startet vom 1. bis 18. Oktober 2026 eine Cashback-Aktion. Anleger erhalten 0,5 % Cashback ab 500 €, 1 % ab 1.000 € und 2 % ab 5.000 € bei Investments auf dem Primärmarkt."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-afranga-savesmart-aktion",
+      "topic": "zinsen_aktionen",
+      "platforms": [
+        "afranga"
+      ],
+      "title": "Afranga verlost SaveSmart-Guthaben im Oktober 2026",
+      "facts": [
+        {
+          "fact_id": "f-afranga-01",
+          "statement": "Afranga führt vom 1. bis 30. Oktober 2026 eine Verlosungsaktion durch, bei der für je 1.000 Euro Anlage in SaveSmart (12 Monate Laufzeit) ein Los für Gewinne von bis zu 3.000 Euro SaveSmart-Guthaben vergeben wird.",
+          "evidence": [
+            {
+              "item_id": "1f26e053ff09f98e",
+              "evidence_quote": "Anleger, die zwischen dem 1. und 30. Oktober mindestens 1.000 € in SaveSmart mit einer Laufzeit von 12 Monaten einzahlen, erhalten ein Los pro volle 1.000 € Investment, ohne Obergrenze. Drei Gewinner erhalten 3.000 €, 2.000 € und 1.000 € in SaveSmart-Guthaben, angelegt mit einer Laufzeit von 12 Monaten."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    }
+  ]
+}

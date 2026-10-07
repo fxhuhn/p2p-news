@@ -1,0 +1,363 @@
+# ==============================================================================
+# P2P News & Platform Scraper - Provider-Konfiguration
+# Neue Anbieter können hier rein deklarativ OHNE Python-Code hinzugefügt werden!
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. P2P Plattformen (Offizielle Betreiberseiten)
+# ------------------------------------------------------------------------------
+platforms:
+  nectaro:
+    base_url: "https://nectaro.eu"
+    subpages:
+      - "/statistics/"
+      - "/documents/"
+      - "/lending-companies/"
+    blog_path: "/blog/"
+    auto_discover: true
+
+  mintos:
+    base_url: "https://www.mintos.com"
+    subpages:
+      - "/en/statistics"
+    blog_path: "/en/blog/"
+    auto_discover: true
+
+  peerberry:
+    base_url: "https://peerberry.com"
+    subpages:
+      - "/statistics/"
+    blog_path: "/news/"
+    auto_discover: true
+
+  esketit:
+    base_url: "https://esketit.com"
+    subpages:
+      - "/statistics"
+    blog_path: "/blog"
+    auto_discover: true
+
+  debitum:
+    base_url: "https://debitum.investments"
+    subpages:
+      - "/statistics"
+    blog_path: "/blog"
+    auto_discover: true
+
+  indemo:
+    base_url: "https://www.indemo.eu"
+    subpages:
+      - "/de/insights"
+      - "/de/financial-reports"
+    blog_path: "/blog"
+    auto_discover: true
+
+  estateguru:
+    base_url: "https://estateguru.co"
+    subpages:
+      - "/statistics"
+    blog_path: "/blog"
+    auto_discover: true
+
+  swaper:
+    base_url: "https://swaper.com"
+    blog_path: "/blog"
+    auto_discover: true
+
+  loanch:
+    base_url: "https://loanch.com"
+    blog_path: "/de/blog"
+    auto_discover: true
+
+  revest:
+    base_url: "https://revest.group"
+    blog_path: "/en/blog"
+    auto_discover: true
+
+  robocash:
+    base_url: "https://robo.cash"
+    blog_path: "/de/news"
+    auto_discover: true
+
+  lande:
+    base_url: "https://lande.finance"
+    blog_path: "/en/blog"
+    auto_discover: true
+
+  afranga:
+    base_url: "https://afranga.com"
+    blog_path: "/blog"
+    auto_discover: true
+
+  inrento:
+    base_url: "https://inrento.com"
+    blog_path: "/blog"
+    auto_discover: true
+
+  fintown:
+    base_url: "https://fintown.eu"
+    blog_path: "/blog"
+    auto_discover: true
+
+  stockestate:
+    base_url: "https://stock.estate"
+    blog_path: "/blog"
+    auto_discover: true
+
+  asterra:
+    base_url: "https://asterra.estate"
+    blog_path: "/en/blog"
+    auto_discover: true
+
+  capitalia:
+    base_url: "https://www.capitalia.com"
+    blog_path: "/en/news"
+    auto_discover: true
+
+  ventus:
+    base_url: "https://ventus.energy"
+    blog_path: "/en/news"
+    auto_discover: true
+
+  bondster:
+    base_url: "https://bondster.com"
+    blog_path: "/de/blog"
+    auto_discover: true
+
+  fagura:
+    base_url: "https://fagura.com"
+    blog_path: "/blog"
+    auto_discover: true
+
+  bondora:
+    base_url: "https://www.bondora.com"
+    blog_path: "/blog/de"
+    auto_discover: true
+
+  viainvest:
+    base_url: "https://viainvest.com"
+    blog_path: "/en/blog"
+    auto_discover: true
+
+  income:
+    base_url: "https://getincome.com"
+    blog_path: "/blog"
+    auto_discover: true
+
+  hive5:
+    base_url: "https://hive5.eu"
+    blog_path: "/blog"
+    auto_discover: true
+
+  lendermarket:
+    base_url: "https://lendermarket.com"
+    blog_path: "/blog"
+    auto_discover: true
+
+  monefit:
+    base_url: "https://monefit.com"
+    blog_path: "/blog"
+    auto_discover: true
+
+  crowdpear:
+    base_url: "https://crowdpear.com"
+    subpages:
+      - "/de/statistics"
+    blog_path: "/de/blog"
+    auto_discover: true
+
+  twino:
+    base_url: "https://www.twino.eu"
+    subpages:
+      - "/en/investing/loans"
+    blog_path: "/en/blog"
+    auto_discover: true
+
+  modena:
+    base_url: "https://modena.ee"
+    blog_path: "/blog"
+    auto_discover: true
+
+  insoil:
+    base_url: "https://insoil.finance"
+    auto_discover: true
+
+# ------------------------------------------------------------------------------
+# 2. Aggregatoren & Blogs (News & Erfahrungsberichte)
+# ------------------------------------------------------------------------------
+aggregators:
+  p2p-empire:
+    base_url: "https://p2pempire.com/de/nachrichten"
+  p2p-game:
+    base_url: "https://p2p-game.com/p2p-kredite-plattform-news"
+  rethink-p2p:
+    base_url: "https://rethink-p2p.de/news/"
+  passives-einkommen:
+    base_url: "https://passives-einkommen-mit-p2p.de/p2p-kredite-news/"
+  p2p-anlage:
+    base_url: "https://p2p-anlage.de"
+
+# ------------------------------------------------------------------------------
+# 3. Keyword-Klassifikation (Plattformen, Themen, Sentiment)
+# ------------------------------------------------------------------------------
+classification:
+  # Zusätzliche Plattform-Keywords (über die oben konfigurierten hinaus)
+  platforms:
+    - bondora
+    - twino
+    - viainvest
+    - swaper
+    - estateguru
+    - inrento
+    - fintown
+    - loanch
+    - indemo
+    - fagura
+    - revest
+    - hive5
+    - finbee
+    - devon
+    - lande
+    - monefit
+    - robocash
+    - heavyfinance
+    - iuvo
+    - income
+    - crowdestor
+    - lendermarket
+    - moncera
+    - neo-finance
+    - macclear
+    - afranga
+    - mypeak
+
+  # Themengruppen und Trigger-Keywords
+  topics:
+    zinsen_aktionen:
+      - cashback
+      - bonus
+      - zinssatz
+      - zinserhöhung
+      - zinsanstieg
+      - zinsensenkung
+      - zinsaktion
+      - loyalty
+      - treueprogramm
+      - summer splash
+      - summer storm
+      - kampagne
+      - promo
+      - zinsen
+      - rendite
+    risiko_ausfaelle:
+      - ausfall
+      - verzug
+      - insolvenz
+      - pleite
+      - zahlungsverzug
+      - verlust
+      - restrukturierung
+      - krieg
+      - moratorium
+      - rückforderung
+      - eintreibung
+      - suspendiert
+      - recovery
+      - in default
+      - delayed
+      - late payment
+      - scam
+      - betrug
+    kreditanbahner:
+      - kreditanbahner
+      - anbahner
+      - originator
+      - loan originator
+      - lending company
+      - creditstar
+      - abele finance
+      - wowwo
+      - placet group
+      - ecofinance
+      - sun finance
+      - idf eurasia
+    regulierung_legal:
+      - lizenz
+      - lizenziert
+      - reguliert
+      - regulierung
+      - bafin
+      - fcmc
+      - ibf
+      - aufsicht
+      - agb
+      - terms and conditions
+      - investor protection
+      - anlegerschutz
+      - steuer
+      - steuern
+      - quellensteuer
+    zahlen_statistik:
+      - statistik
+      - zahlen
+      - geschäftsbericht
+      - jahresabschluss
+      - quartal
+      - portfolio
+      - volumen
+      - monatsbericht
+      - profit
+      - gewinn
+      - earnings
+      - performance statistics
+    plattform_features:
+      - auto-invest
+      - autopilot
+      - app
+      - dashboard
+      - sekundärmarkt
+      - secondary market
+      - strategie
+      - update
+      - feature
+    review_erfahrungen:
+      - erfahrungen
+      - test
+      - review
+      - testbericht
+      - bewertung
+      - erfahrungsbericht
+
+  # Sentiment-Keywords (Zusätzliche oder angepasste Signalwörter)
+  sentiment:
+    positive:
+      - meilenstein
+      - allzeithoch
+      - rekordvolumen
+      - übertroffen
+      - zuwachs
+      - sonderzins
+    negative:
+      - insolvenzantrag
+      - zahlungsunfähig
+      - rückschlag
+      - enttäuschend
+      - kontosperre
+      - betrugsverdacht
+
+  # Dringlichkeits-Keywords (Severity: high, medium)
+  severity:
+    high:
+      - insolvenz
+      - insolvenzantrag
+      - betrug
+      - scam
+      - warnung
+      - rückforderung
+      - strafanzeige
+    medium:
+      - zinsensenkung
+      - verspätung
+      - verzug
+      - wartungsarbeiten
+

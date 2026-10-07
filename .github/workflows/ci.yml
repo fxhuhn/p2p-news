@@ -1,0 +1,61 @@
+name: CI Quality Gate & Container Verification
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality-gate:
+    name: Lint, Type Check & Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: 1. Ruff Format Check
+        run: ruff format --check .
+
+      - name: 2. Ruff Lint Check
+        run: ruff check .
+
+      - name: 3. MyPy Static Type Check
+        run: mypy .
+
+      - name: 4. Offline Pytest Suite
+        run: pytest
+
+  container-build:
+    name: Docker Image Build Check
+    runs-on: ubuntu-latest
+    needs: quality-gate
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: p2p-news:ci-test

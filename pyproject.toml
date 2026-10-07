@@ -1,0 +1,51 @@
+[project]
+name = "p2p-news"
+version = "0.1.0"
+description = "Multi-provider P2P news scraper, fact clustering, and audit scoring pipeline"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "httpx>=0.28.0",
+    "beautifulsoup4>=4.12.0",
+    "trafilatura>=2.0.0",
+    "lxml>=6.0.0",
+    "lxml_html_clean>=0.4.0",
+    "pyyaml>=6.0.0",
+    "pydantic>=2.10.0",
+    "python-dotenv>=1.0.0",
+    "google-genai>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "pre-commit>=4.0.0",
+    "pytest>=8.3.0",
+    "types-PyYAML>=6.0.0",
+    "types-beautifulsoup4>=4.12.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+exclude = [
+    ".venv",
+    "__pycache__",
+    "data",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = false
+warn_unused_configs = true
+ignore_missing_imports = true
+check_untyped_defs = false

@@ -1,0 +1,225 @@
+{
+  "schema_version": "2.2",
+  "iso_week": "2026-W41",
+  "clusters": [
+    {
+      "cluster_id": "c-liquidity-flow",
+      "topic": "plattform_features",
+      "platforms": [
+        "debitum",
+        "robocash",
+        "bondora"
+      ],
+      "title": "Liquide Flow-Produkte im Fokus: Debitum Flow, Robo Flow und Rekorde bei Go & Grow",
+      "facts": [
+        {
+          "fact_id": "f-flow-01",
+          "statement": "Debitum Flow erreichte in den ersten drei Wochen nach Marktstart ein platziertes Anlagevolumen von 1 Million Euro bei 8 % Jahreszins.",
+          "evidence": [
+            {
+              "item_id": "dd0b6b1e93dfe991",
+              "evidence_quote": "Die P2P-Plattformen Debitum und Robocash melden erste Ergebnisse zu ihren neuen liquiden Produkten"
+            },
+            {
+              "item_id": "314f755ffaf7c106",
+              "evidence_quote": "Debitum Flow hat in den ersten drei Wochen nach seinem Start bereits 1 Million Euro an Investitionen erreicht"
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-flow-02",
+          "statement": "Robocash steigerte das Anlagevolumen im September um 62,4 Prozent, überschritt 43.000 registrierte Nutzer und startete das Liquiditätsprodukt Robo Flow.",
+          "evidence": [
+            {
+              "item_id": "a157c92750b91be8",
+              "evidence_quote": "Robocash meldete im September ein Anlagevolumen-Wachstum von 62,4 Prozent und die Anzahl registrierter Nutzer überschritt 43.000. Das Unternehmen führte Robo Flow ein"
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-flow-03",
+          "statement": "Bondora Go & Grow erzielte im August einen Rekord bei den Erträgen von fast 4 Millionen Euro, verzeichnete über 40 Millionen Euro Neuinvestitionen und zählt über 500.000 Anleger.",
+          "evidence": [
+            {
+              "item_id": "f82ddcbd9f1307eb",
+              "evidence_quote": "Im August wurden über 40 Millionen Euro neu in Go & Grow investiert. Die erzielten Erträge lagen bei fast 4 Millionen Euro und damit auf einem neuen Allzeitrekord. Rund 1.000 neue Kunden kamen im Monat August hinzu. Insgesamt hat die Plattform mittlerweile mehr als 500.000 Anleger."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-secondary-hive5",
+      "topic": "plattform_features",
+      "platforms": [
+        "hive5"
+      ],
+      "title": "Hive5 schaltet gebührenfreien Sekundärmarkt frei",
+      "facts": [
+        {
+          "fact_id": "f-hive-01",
+          "statement": "Hive5 führte einen gebührenfreien Sekundärmarkt ein, auf dem Anleger Kredite mit bis zu 50 % Abschlag oder zum vollen Nennwert ohne Gebühren handeln können.",
+          "evidence": [
+            {
+              "item_id": "c79adcb2f6e18e5c",
+              "evidence_quote": "Die P2P-Plattform Hive5 hat einen Sekundärmarkt gestartet. Anleger können ihre Investments nun vor der vollständigen Rückzahlung verkaufen oder Investments anderer Anleger kaufen. Für Einstellen, Verkaufen und Kaufen fallen keine Gebühren an. Der Verkaufspreis kann bis zu 50 % unter dem offenen Kapitalbetrag liegen oder dem vollen Wert entsprechen"
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-swaper-asterra",
+      "topic": "zahlen_statistik",
+      "platforms": [
+        "swaper",
+        "asterra"
+      ],
+      "title": "Meilensteine und Bilanzen: Swaper feiert 10 Jahre, Asterra verdoppelt Aktiva",
+      "facts": [
+        {
+          "fact_id": "f-swaper-01",
+          "statement": "Swaper besteht seit Oktober 2016 zehn Jahre, vermittelte über 1,143 Milliarden Euro an Krediten bei 21,17 Millionen Euro Zinsauszahlungen und band Fidemio als neuen lettischen Kreditgeber an.",
+          "evidence": [
+            {
+              "item_id": "2671cb8fe58ca112",
+              "evidence_quote": "Die P2P-Plattform Swaper besteht seit Oktober 2016 zehn Jahre. Ein Meilenstein, den nicht viele P2P Plattformen erreichen. Laut Plattform wurden in dieser Zeit mehr als 1,143 Milliarden Euro finanziert und über 21,17 Millionen Euro an Zinsen ausgezahlt. Die durchschnittliche Jahresrendite liegt bei 14,00 %."
+            },
+            {
+              "item_id": "2671cb8fe58ca112",
+              "evidence_quote": "Dann gab es tatsächlich auch noch einen neuen Kreditgeber! Fidemio aus Lettland. Das Unternehmen finanziert kleine lokale Unternehmen und Selbstständige."
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-asterra-01",
+          "statement": "Asterra Estate steigerte die Bilanzsumme zum 31. August 2026 auf 16,33 Millionen Euro (Ende 2025: 8,17 Millionen Euro), wovon 3,93 Millionen Euro aus Neuinvestitionen stammen, bei einer Deckungsquote von 1,40.",
+          "evidence": [
+            {
+              "item_id": "5bad889f8b9cd5f0",
+              "evidence_quote": "Die Bilanzsumme der P2P-Plattform lag laut dem Unternehmen selbst zum 31. August 2026 bei 16,33 Millionen Euro, nach 8,17 Millionen Euro Ende 2025. Von dem Zuwachs stammen 3,93 Millionen Euro aus neuen Investitionen, finanziert durch Plattform-Anleger und eine Bank."
+            },
+            {
+              "item_id": "5bad889f8b9cd5f0",
+              "evidence_quote": "Der Wert von Grundstücken und Gebäuden liegt mit 13,17 Millionen Euro deutlich darüber, was einer Deckung von etwa 1,40 entspricht."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-restructuring-recovery",
+      "topic": "risiko_ausfaelle",
+      "platforms": [
+        "ventus",
+        "fintown"
+      ],
+      "title": "Restrukturierung & Abwicklung: Ventus Energy Verfahren und Fintown Verkäufe",
+      "facts": [
+        {
+          "fact_id": "f-ventus-01",
+          "statement": "Ventus Energy stellte den Geschäftsbetrieb ein, leitete ein gerichtlich beaufsichtigtes Restrukturierungsverfahren ein und fror Neukredite, Zinsen sowie Early Exits ein, wobei die Rückzahlung über Asset-Verkäufe erfolgen soll.",
+          "evidence": [
+            {
+              "item_id": "68e02de92ca8dada",
+              "evidence_quote": "Ventus Energy hat in einer Mitteilung seine Anleger informiert, dass der normale Geschäftsbetrieb eingestellt werde und dass das Unternehmen ein gerichtlich beaufsichtigtes Restrukturierungsverfahren einleite."
+            },
+            {
+              "item_id": "68e02de92ca8dada",
+              "evidence_quote": "Für Anleger bedeutet das: Keine neuen Kredite mehr über die Plattform, ausgesetzte Zinszahlungen und ein eingefrorener Early Exit. Auszahlungen vom Konto-Guthaben sollen \"so bald wie vernünftig möglich\" erfolgen"
+            },
+            {
+              "item_id": "68e02de92ca8dada",
+              "evidence_quote": "Die Tilgung der Kredite soll vollständig über den strukturierten Verkauf der Energie-Assets laufen"
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-fintown-01",
+          "statement": "Fintown erhielt im September 455 Auszahlungsanträge, wovon über 93 % bearbeitet wurden und 30 noch ausstehen, während der Verkauf von Einheiten in Honest Smichov und Karlin vorangetrieben wird.",
+          "evidence": [
+            {
+              "item_id": "ac183d4a77ccf9fb",
+              "evidence_quote": "Fintown erhielt zwischen dem 1. und 27. September 455 Auszahlungsanträge. 30 davon stehen noch aus, mehr als 93 % sind bereits bearbeitet."
+            },
+            {
+              "item_id": "ac183d4a77ccf9fb",
+              "evidence_quote": "Daneben hat Fintown begonnen, Honest Smichov durch den Verkauf von Wohnungen zu realisieren, und sich entschieden, Honest Karlin zu verkaufen."
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    },
+    {
+      "cluster_id": "c-audit-scoring",
+      "topic": "regulierung_legal",
+      "platforms": [
+        "inrento",
+        "crowdpear",
+        "lande",
+        "mintos",
+        "debitum",
+        "estateguru",
+        "ventus"
+      ],
+      "title": "Audit-Scoring 2026: Erstes mathematisches 31-Plattformen-Ranking veröffentlicht",
+      "facts": [
+        {
+          "fact_id": "f-audit-01",
+          "statement": "Im neuen mathematischen Audit-Ranking führt InRento mit 91 Punkten als TOP TIER vor Crowdpear mit 89 Punkten, LANDE mit 89 Punkten und Mintos mit 87 Punkten.",
+          "evidence": [
+            {
+              "item_id": "audit-ranking-2026-10",
+              "evidence_quote": "Inrento | 91 | NEU | TOP TIER"
+            },
+            {
+              "item_id": "audit-ranking-2026-10",
+              "evidence_quote": "Crowdpear | 89 | NEU | TOP TIER"
+            },
+            {
+              "item_id": "audit-ranking-2026-10",
+              "evidence_quote": "Lande | 89 | NEU | TOP TIER"
+            },
+            {
+              "item_id": "audit-ranking-2026-10",
+              "evidence_quote": "Mintos | 87 | NEU | TOP TIER"
+            }
+          ],
+          "verified": true
+        },
+        {
+          "fact_id": "f-audit-02",
+          "statement": "Aufgrund von Malus-Abzügen notiert Debitum bei 51 Punkten in der WATCHLIST, während EstateGuru auf 27 Punkte und Ventus Energy auf 0 Punkte in der Kategorie DISTRESSED fallen.",
+          "evidence": [
+            {
+              "item_id": "audit-ranking-2026-10",
+              "evidence_quote": "Debitum | 51 | NEU | WATCHLIST"
+            },
+            {
+              "item_id": "audit-ranking-2026-10",
+              "evidence_quote": "Estateguru | 27 | NEU | DISTRESSED"
+            },
+            {
+              "item_id": "audit-ranking-2026-10",
+              "evidence_quote": "Ventus | 0 | NEU | DISTRESSED"
+            }
+          ],
+          "verified": true
+        }
+      ],
+      "conflicts": []
+    }
+  ]
+}

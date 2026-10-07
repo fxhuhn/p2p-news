@@ -1,0 +1,17 @@
+{
+  "development-pipeline-gate": {
+    "enabled": true,
+    "PostToolUse": [
+      {
+        "matcher": "write_to_file|replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "../scripts/run_checks.sh",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
