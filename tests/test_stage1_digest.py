@@ -9,6 +9,7 @@ import gzip
 import json
 import tempfile
 import unittest
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -282,6 +283,68 @@ class TestDigestExtractorOffline(unittest.TestCase):
         self.assertIn("- Themen-Tags: risiko_ausfaelle, regulierung_legal", prompt)
         self.assertIn("- Dringlichkeit: high (Sentiment: negative)", prompt)
         self.assertIn("Nutzung von Vorab-Tags & Dringlichkeit", prompt)
+
+    def test_severity_prioritization_sorting(self) -> None:
+        items = [
+            NewsItem(
+                item_id="item-low",
+                provider="p2p-game",
+                source_tier="secondary",
+                url="https://p2p-game.com/1",
+                title="Low item",
+                published_date="2026-10-06",
+                first_seen_at="2026-10-06T10:00:00Z",
+                last_seen_at="2026-10-06T10:00:00Z",
+                item_content_hash="h1",
+                page_snapshot_hash="s1",
+                severity="low",
+                content_plain="Allgemeine Info.",
+            ),
+            NewsItem(
+                item_id="item-high",
+                provider="rethink-p2p",
+                source_tier="secondary",
+                url="https://rethink-p2p.com/2",
+                title="High item",
+                published_date="2026-10-04",
+                first_seen_at="2026-10-04T10:00:00Z",
+                last_seen_at="2026-10-04T10:00:00Z",
+                item_content_hash="h2",
+                page_snapshot_hash="s2",
+                severity="high",
+                content_plain="Insolvenzrisiko gemeldet.",
+            ),
+            NewsItem(
+                item_id="item-med",
+                provider="p2p-empire",
+                source_tier="secondary",
+                url="https://p2pempire.com/3",
+                title="Medium item",
+                published_date="2026-10-05",
+                first_seen_at="2026-10-05T10:00:00Z",
+                last_seen_at="2026-10-05T10:00:00Z",
+                item_content_hash="h3",
+                page_snapshot_hash="s3",
+                severity="medium",
+                content_plain="Zinssenkung angekündigt.",
+            ),
+        ]
+        severity_order = {"high": 0, "medium": 1, "low": 2}
+        sorted_items = sorted(
+            items,
+            key=lambda it: (
+                severity_order.get(it.severity, 2),
+                -(
+                    datetime.fromisoformat(it.published_date).timestamp()
+                    if it.published_date
+                    else 0
+                ),
+            ),
+        )
+        self.assertEqual(
+            [it.item_id for it in sorted_items],
+            ["item-high", "item-med", "item-low"],
+        )
 
 
 if __name__ == "__main__":

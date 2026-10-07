@@ -277,16 +277,17 @@ docker run --rm -v $(pwd)/data:/app/data --env-file .env p2p-news:latest pipelin
 
 ### Ausführen via Docker Compose
 ```bash
-# Ad-hoc CLI-Ausführungen
-docker compose run scraper
-docker compose run orchestrator
-docker compose run scoring
-
-# Autarker 24/7 Scheduler-Daemon im Hintergrund starten (Europe/Berlin Timezone)
+# 1. Autarken 24/7 Scheduler-Daemon im Hintergrund starten (Europe/Berlin Timezone)
 # - Wöchentlich (Montag 06:00 Uhr): Scraping, Fakten-Clustering & Newsletter-Draft
 # - Monatlich (1. des Monats 07:00 Uhr): Audit-Scoring & Plattform-Rankings
-docker compose up -d scheduler
+docker compose up -d
 
-# Scheduler-Logs verfolgen
-docker compose logs -f scheduler
+# 2. Scheduler-Logs verfolgen
+docker compose logs -f
+
+# 3. Ad-hoc CLI-Befehle manuell ausführen (nutzt dasselbe Image & Daten-Mount)
+docker compose run --rm p2p-news p2p_news_scraper.py --provider nectaro
+docker compose run --rm p2p-news pipeline_orchestrator.py --draft
+docker compose run --rm p2p-news run_audit_scoring.py
+docker compose run --rm p2p-news scheduler.py --dry-run
 ```

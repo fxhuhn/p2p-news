@@ -1,48 +1,10 @@
 services:
-  scraper:
+  p2p-news:
     build:
       context: .
       dockerfile: Dockerfile
     image: p2p-news:latest
-    container_name: p2p-news-scraper
-    environment:
-      - PYTHONUNBUFFERED=1
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
-    volumes:
-      - ./data:/app/data
-    command: ["p2p_news_scraper.py", "--all"]
-
-  orchestrator:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: p2p-news:latest
-    container_name: p2p-news-orchestrator
-    environment:
-      - PYTHONUNBUFFERED=1
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
-    volumes:
-      - ./data:/app/data
-    command: ["pipeline_orchestrator.py"]
-
-  scoring:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: p2p-news:latest
-    container_name: p2p-news-scoring
-    environment:
-      - PYTHONUNBUFFERED=1
-    volumes:
-      - ./data:/app/data
-    command: ["run_audit_scoring.py"]
-
-  scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: p2p-news:latest
-    container_name: p2p-news-scheduler
+    container_name: p2p-news
     restart: unless-stopped
     environment:
       - PYTHONUNBUFFERED=1
