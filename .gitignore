@@ -58,3 +58,8 @@ htmlcov/
 
 # Temporary / Scratch files
 scratch/
+
+# Data directory: ignore crawled and generated data except published newsletters
+data/*
+!data/newsletters/
+data/newsletters/drafts/
