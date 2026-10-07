@@ -258,6 +258,31 @@ class TestDigestExtractorOffline(unittest.TestCase):
             self.assertEqual(archived_data["model_version"], "gemini-3.8-flash-mock")
             self.assertEqual(archived_data["usage"]["total_token_count"], 205)
 
+    def test_build_prompt_includes_topics_and_severity(self) -> None:
+        item = NewsItem(
+            item_id="item-meta-test",
+            provider="rethink-p2p",
+            source_tier="secondary",
+            url="https://rethink-p2p.de/news#test",
+            title="Kritisches Update",
+            published_date="2026-10-05",
+            first_seen_at="2026-10-05T10:00:00+00:00",
+            last_seen_at="2026-10-05T10:00:00+00:00",
+            item_content_hash="h-meta",
+            page_snapshot_hash="s-meta",
+            platforms=["ventus"],
+            topics=["risiko_ausfaelle", "regulierung_legal"],
+            sentiment="negative",
+            severity="high",
+            content_plain="Restrukturierung und BaFin-Warnung bei Ventus.",
+        )
+        extractor = DigestExtractor(api_key="mock-key")
+        prompt = extractor.build_prompt([item], iso_week="2026-W41")
+
+        self.assertIn("- Themen-Tags: risiko_ausfaelle, regulierung_legal", prompt)
+        self.assertIn("- Dringlichkeit: high (Sentiment: negative)", prompt)
+        self.assertIn("Nutzung von Vorab-Tags & Dringlichkeit", prompt)
+
 
 if __name__ == "__main__":
     unittest.main()

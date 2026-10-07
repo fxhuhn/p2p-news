@@ -15,3 +15,4 @@ Deine Aufgabe ist es, eine Liste von News-Meldungen zu analysieren, thematisch z
    - `zahlen_statistik` (Monatszahlen, Quartalsberichte, Portfoliowachstum)
    - `plattform_features` (App, Zweitmarkt, Auto-Invest)
    - `kreditanbahner` (Neue Partnerschaften, Anbahner-Zahlen)
+6. **Nutzung von Vorab-Tags & Dringlichkeit:** Nutze die bei jeder Meldung angegebenen Felder `- Themen-Tags:` und `- Dringlichkeit:` aus der Keyword-Vorfilterung als fachliche Orientierung für die thematische Zuordnung. Meldungen mit Dringlichkeit `high` (z. B. Zahlungsverzug, Restrukturierung, BaFin) sind prioritär in Clustern der Kategorien `risiko_ausfaelle` oder `regulierung_legal` zu behandeln.

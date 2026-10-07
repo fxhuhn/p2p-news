@@ -6,9 +6,9 @@ Ein modulares, produktionsreifes Python 3.11+ Tool zum Scannen von P2P-Lending-N
 
 ---
 
-## Unterstützte Anbieter (6 Provider)
+## Unterstützte Anbieter (36 Provider)
 
-### 1. News- und Erfahrungs-Aggregatoren (Blogs)
+### 1. News- und Erfahrungs-Aggregatoren (5 Blogs)
 | Provider-Key | Name / Blog | Start-URL |
 |---|---|---|
 | `p2p-empire` | P2P Empire | `https://p2pempire.com/de/nachrichten` |
@@ -17,14 +17,40 @@ Ein modulares, produktionsreifes Python 3.11+ Tool zum Scannen von P2P-Lending-N
 | `passives-einkommen` | Passives Einkommen mit P2P (Lars Wrobbel) | `https://passives-einkommen-mit-p2p.de/p2p-kredite-news/` |
 | `p2p-anlage` | P2P-Anlage.de | `https://p2p-anlage.de` |
 
-### 2. Offizielle P2P-Plattformen
+### 2. Offizielle P2P-Plattformen (31 Plattformen)
 | Provider-Key | Plattform | Start-URL | Gescannte Bereiche |
 |---|---|---|---|
 | `nectaro` | Nectaro | `https://nectaro.eu` | Hauptseite, Statistik, Dokumente, Anbahner, Blog |
-| `peerberry` | PeerBerry | `https://peerberry.com` | Hauptseite, Statistik (`/peerberry-statistics`), News |
 | `mintos` | Mintos | `https://www.mintos.com` | Hauptseite, Statistik, Blog |
+| `peerberry` | PeerBerry | `https://peerberry.com` | Hauptseite, Statistik, News |
 | `esketit` | Esketit | `https://esketit.com` | Hauptseite, Statistik, Blog |
 | `debitum` | Debitum | `https://debitum.investments` | Hauptseite, Statistik, Blog |
+| `indemo` | Indemo | `https://www.indemo.eu` | Hauptseite, Insights, Finanzberichte, Blog |
+| `estateguru` | EstateGuru | `https://estateguru.co` | Hauptseite, Statistik, Blog |
+| `swaper` | Swaper | `https://swaper.com` | Hauptseite, Blog |
+| `loanch` | Loanch | `https://loanch.com` | Hauptseite, Blog |
+| `revest` | Revest | `https://revest.group` | Hauptseite, Blog |
+| `robocash` | Robocash | `https://robo.cash` | Hauptseite, News |
+| `lande` | Lande | `https://lande.finance` | Hauptseite, Blog |
+| `afranga` | Afranga | `https://afranga.com` | Hauptseite, Blog |
+| `inrento` | InRento | `https://inrento.com` | Hauptseite, Blog |
+| `fintown` | Fintown | `https://fintown.eu` | Hauptseite, Blog |
+| `stockestate` | StockEstate | `https://stock.estate` | Hauptseite, Blog |
+| `asterra` | Asterra | `https://asterra.estate` | Hauptseite, Blog |
+| `capitalia` | Capitalia | `https://www.capitalia.com` | Hauptseite, Blog |
+| `ventus` | Ventus | `https://ventus.energy` | Hauptseite, Blog |
+| `bondster` | Bondster | `https://bondster.com` | Hauptseite, Blog |
+| `fagura` | Fagura | `https://fagura.com` | Hauptseite, Blog |
+| `bondora` | Bondora | `https://www.bondora.com` | Hauptseite, Blog |
+| `viainvest` | VIAINVEST | `https://viainvest.com` | Hauptseite, Blog |
+| `income` | Income Marketplace | `https://getincome.com` | Hauptseite, Blog |
+| `hive5` | Hive5 | `https://hive5.eu` | Hauptseite, Blog |
+| `lendermarket` | Lendermarket | `https://lendermarket.com` | Hauptseite, Kreditanbahner, Blog |
+| `monefit` | Monefit SmartSaver | `https://monefit.com` | Hauptseite, Blog |
+| `crowdpear` | Crowdpear | `https://crowdpear.com` | Hauptseite, Statistik, Blog |
+| `twino` | Twino | `https://www.twino.eu` | Hauptseite, Kredite, Blog |
+| `modena` | Modena | `https://modena.ee` | Hauptseite, Blog |
+| `insoil` | Insoil | `https://insoil.finance` | Hauptseite, Auto-Discovery |
 
 ---
 

@@ -63,6 +63,8 @@ class DigestExtractor:
                 f"- Datum: {item.published_date or 'Unbekannt'}\n"
                 f"- URL: {item.url}\n"
                 f"- Plattformen: {', '.join(item.platforms) if item.platforms else 'allgemein'}\n"
+                f"- Themen-Tags: {', '.join(item.topics) if item.topics else 'keine'}\n"
+                f"- Dringlichkeit: {item.severity} (Sentiment: {item.sentiment})\n"
                 f"- Inhalt:\n{item.content_plain}\n"
             )
 
