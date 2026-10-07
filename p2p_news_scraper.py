@@ -110,6 +110,7 @@ def setup_logging(level: int = logging.INFO) -> logging.Logger:
     """Konfiguriert strukturiertes Logging mit sauberem Format."""
     logger = logging.getLogger("p2p_news_scraper")
     logger.setLevel(level)
+    logger.propagate = False
 
     if not logger.handlers:
         handler = logging.StreamHandler(sys.stdout)
