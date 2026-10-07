@@ -1,0 +1,145 @@
+name: Docker Build, Security Scan & Push
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ "v*.*.*" ]
+  workflow_dispatch:
+
+jobs:
+  docker:
+    name: Build, Scan & Publish GHCR Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          pull: true
+          tags: |
+            ${{ github.event.repository.name }}:test
+            ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Show Trivy findings (diagnostic table)
+        uses: aquasecurity/trivy-action@v0.29.0
+        with:
+          image-ref: '${{ github.event.repository.name }}:test'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Run Trivy vulnerability scanner on Docker image
+        uses: aquasecurity/trivy-action@v0.29.0
+        with:
+          image-ref: '${{ github.event.repository.name }}:test'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Ensure Trivy SARIF validity
+        if: always()
+        run: |
+          if [ ! -s trivy-results.sarif ]; then
+            echo '{"$schema":"https://json.schemastore.org/sarif-2.1.0.json","version":"2.1.0","runs":[]}' > trivy-results.sarif
+          fi
+
+      - name: Upload Trivy SARIF report
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+          category: 'trivy'
+
+      - name: Run Container Smoke Test (Pre-Push Gate)
+        run: |
+          set -euo pipefail
+          IMAGE_NAME="${{ github.event.repository.name }}:test"
+
+          echo "=== [1/5] Testing Container User & UID Isolation ==="
+          USER_NAME=$(docker run --rm "$IMAGE_NAME" whoami)
+          USER_ID=$(docker run --rm "$IMAGE_NAME" id -u)
+          echo "Container user: ${USER_NAME} (UID ${USER_ID})"
+          if [ "$USER_NAME" != "appuser" ] || [ "$USER_ID" != "1000" ]; then
+            echo "::error::Container running as invalid user! Expected appuser:1000, got ${USER_NAME}:${USER_ID}"
+            exit 1
+          fi
+
+          echo "=== [2/5] Testing Volume Permissions (/app/data) ==="
+          docker run --rm "$IMAGE_NAME" test -w /app/data
+          echo "✓ Non-root user appuser has verified write access to /app/data"
+
+          echo "=== [3/5] Testing Core Imports & Pydantic Schemas ==="
+          docker run --rm "$IMAGE_NAME" python -c "
+          import p2p_news_scraper
+          import item_store
+          import digest_extractor
+          import newsletter_generator
+          import platform_scorer
+          import scoring_models
+          print('✓ All core pipeline modules and schemas successfully imported')
+          "
+
+          echo "=== [4/5] Testing Provider Registry Integrity ==="
+          docker run --rm "$IMAGE_NAME" python -c "
+          from p2p_news_scraper import REGISTERED_PROVIDERS
+          assert len(REGISTERED_PROVIDERS) >= 5, f'Expected at least 5 providers, found {len(REGISTERED_PROVIDERS)}'
+          print(f'✓ Provider registry loaded {len(REGISTERED_PROVIDERS)} providers from providers.yaml')
+          "
+
+          echo "=== [5/5] Testing CLI Entrypoints (--help) ==="
+          docker run --rm "$IMAGE_NAME" p2p_news_scraper.py --help > /dev/null
+          docker run --rm "$IMAGE_NAME" pipeline_orchestrator.py --help > /dev/null
+          docker run --rm "$IMAGE_NAME" run_audit_scoring.py --help > /dev/null
+          echo "✓ All CLI entry points responded successfully with exit code 0"
+
+          echo "✅ All container smoke tests passed successfully. Proceeding to Docker push."
+
+      - name: Push Docker image
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
