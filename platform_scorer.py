@@ -145,23 +145,27 @@ class PlatformScorer:
             rating_label = "Unreguliert / Lizenzübergang"
 
         else:  # unregulated
-            band_id = "Band_6_13"
-            base_score = 9
-            if "getrennt" in custody_text or "segregiert" in custody_text:
-                modifiers.append(
-                    ModifierEvaluation(
-                        name="Getrennte Firmenkonten",
-                        points=2,
-                        condition_met=True,
-                        rationale="Gelder auf getrennt geführten Konten.",
-                    )
-                )
-            else:
+            if "offshore" in custody_text or "unklar" in custody_text:
                 band_id = "Band_0_5"
                 base_score = 2
                 rating_label = "Völlig unreguliert / Offshore"
-
-            rating_label = "Unreguliert (Abtretungsverträge)"
+            else:
+                band_id = "Band_6_13"
+                base_score = 8
+                rating_label = "Unreguliert (Abtretungsverträge)"
+                if (
+                    "paysera" in custody_text
+                    or "treuhand" in custody_text
+                    or "lemonway" in custody_text
+                ):
+                    modifiers.append(
+                        ModifierEvaluation(
+                            name="Treuhänderische / EMI-Zahlungsabwicklung",
+                            points=2,
+                            condition_met=True,
+                            rationale="Gelder bei lizenziertem E-Geld-Institut geführt.",
+                        )
+                    )
 
         final_score = base_score + sum(m.points for m in modifiers if m.condition_met)
         final_score = max(0, min(25, final_score))
@@ -182,7 +186,11 @@ class PlatformScorer:
     def _score_pillar_2(self, sol: Dict[str, Any]) -> PillarFactExtract:
         auditor = (sol.get("auditor") or "").lower()
         opinion = (sol.get("audit_opinion") or "").lower()
-        equity_ratio = sol.get("equity_ratio_pct")
+        equity_ratio = (
+            sol.get("equity_ratio_pct")
+            if sol.get("equity_ratio_pct") is not None
+            else sol.get("equity_ratio_pct: ")
+        )
         icr = sol.get("interest_coverage_ratio")
         notes = sol.get("notes", "")
 
@@ -195,8 +203,17 @@ class PlatformScorer:
 
         if is_top_auditor and "unqualified" in opinion:
             band_id = "Band_21_25"
-            base_score = 23
-            if equity_ratio and equity_ratio > 30.0:
+            base_score = 20
+            if equity_ratio is not None and equity_ratio > 40.0:
+                modifiers.append(
+                    ModifierEvaluation(
+                        name="Hervorragende Eigenkapitalquote (>40 %)",
+                        points=4,
+                        condition_met=True,
+                        rationale=f"Eigenkapitalquote liegt bei {equity_ratio} %.",
+                    )
+                )
+            elif equity_ratio is not None and equity_ratio > 30.0:
                 modifiers.append(
                     ModifierEvaluation(
                         name="Starke Eigenkapitalquote (>30 %)",
@@ -205,7 +222,16 @@ class PlatformScorer:
                         rationale=f"Eigenkapitalquote liegt bei {equity_ratio} %.",
                     )
                 )
-            if icr and icr < 3.0:
+            elif equity_ratio is not None and equity_ratio > 25.0:
+                modifiers.append(
+                    ModifierEvaluation(
+                        name="Gute Eigenkapitalquote (>25 %)",
+                        points=1,
+                        condition_met=True,
+                        rationale=f"Eigenkapitalquote liegt bei {equity_ratio} %.",
+                    )
+                )
+            if icr is not None and icr < 3.0:
                 modifiers.append(
                     ModifierEvaluation(
                         name="Zinsdeckung unter 3.0x",
@@ -216,7 +242,7 @@ class PlatformScorer:
                 )
             rating_label = "Sehr gut / Testiert"
 
-        elif "lokal" in auditor or (equity_ratio and equity_ratio > 15.0):
+        elif "lokal" in auditor or (equity_ratio is not None and equity_ratio > 15.0):
             band_id = "Band_14_20"
             base_score = 17
             rating_label = "Solide / Lokaler Abschluss"
@@ -263,7 +289,7 @@ class PlatformScorer:
             or "hypothek" in security_type
             or "grundschuld" in security_type
         ):
-            if npl and npl > 30.0:
+            if npl is not None and npl > 30.0:
                 # Akute Notlage wie bei EstateGuru
                 band_id = "Band_0_7"
                 base_score = 3
@@ -271,7 +297,7 @@ class PlatformScorer:
             else:
                 band_id = "Band_21_25"
                 base_score = 23
-                if ltv and ltv <= 60.0 and hist_loss == 0.0:
+                if ltv is not None and ltv <= 60.0 and hist_loss == 0.0:
                     modifiers.append(
                         ModifierEvaluation(
                             name="Konservativer LTV (<=60 %) & 0 % Verlusthistorie",
@@ -309,13 +335,34 @@ class PlatformScorer:
                     )
                 )
             # Puffer für etablierte Anbieter
-            if npl and npl < 5.0:
+            if npl is not None and npl < 5.0:
                 modifiers.append(
                     ModifierEvaluation(
                         name="Niedrige Ausfallrate (<5 %)",
                         points=2,
                         condition_met=True,
                         rationale=f"Aktuelle Problemquote nur {npl} %.",
+                    )
+                )
+            if (
+                hist_loss == 0.0
+                and notes
+                and any(
+                    w in notes.lower()
+                    for w in [
+                        "krieg",
+                        "100 % rückzahlung",
+                        "100% rückzahlung",
+                        "krisenerprobt",
+                    ]
+                )
+            ):
+                modifiers.append(
+                    ModifierEvaluation(
+                        name="Vollständige Krisen-Schadensregulierung aus Konzerngewinnen",
+                        points=1,
+                        condition_met=True,
+                        rationale="Nachgewiesene 100 % Rückabwicklung geopolitischer Krisenfälle aus Konzernmitteln.",
                     )
                 )
             rating_label = "Unbesichert mit Buyback"
@@ -351,7 +398,7 @@ class PlatformScorer:
 
         modifiers: List[ModifierEvaluation] = []
 
-        if queue_days and queue_days > 7:
+        if queue_days is not None and queue_days > 7:
             # Auszahlungsstopp oder blockiert
             band_id = "Band_0_5"
             base_score = 2
@@ -360,9 +407,9 @@ class PlatformScorer:
         elif (
             has_secondary
             and duration_days <= 90
-            and (not waiting_days or waiting_days == 0)
+            and (waiting_days is None or waiting_days == 0)
         ):
-            # Hochliquid: Payday-Kurzläufer + gebührenfreier Sofort-Sekundärmarkt (wie Esketit)
+            # Hochliquid: Payday-Kurzläufer + gebührenfreier Sofort-Sekundärmarkt (wie Esketit, PeerBerry)
             band_id = "Band_20_25"
             base_score = 22
             if duration_days > 30:
@@ -374,12 +421,21 @@ class PlatformScorer:
                         rationale=f"Durchschnittliche Laufzeit beträgt {duration_days} Tage.",
                     )
                 )
+            if sm_fee is not None and sm_fee == 0.0 and duration_days <= 30:
+                modifiers.append(
+                    ModifierEvaluation(
+                        name="Gebührenfreier Sofort-Sekundärmarkt bei ultrakurzen Laufzeiten",
+                        points=2,
+                        condition_met=True,
+                        rationale="Keine Zweitmarktgebühren und sofortiger Liquiditätsabruf bei Laufzeiten <=30 Tagen.",
+                    )
+                )
             rating_label = "Sehr liquide / Kurzläufer & Zweitmarkt"
 
         elif has_secondary or duration_days <= 180:
             band_id = "Band_13_19"
             base_score = 16
-            if waiting_days and waiting_days >= 180:
+            if waiting_days is not None and waiting_days >= 180:
                 modifiers.append(
                     ModifierEvaluation(
                         name="Sekundärmarkt-Mindesthaltedauer (6 Monate)",
@@ -432,12 +488,12 @@ class PlatformScorer:
         mono_pct = triggers.get("monoculture_pct", 0.0)
         originator = triggers.get("monoculture_originator", "Hauptkreditgeber")
         if mono_pct > 50.0:
-            if mono_pct > 85.0:
+            if mono_pct > 90.0:
                 penalty = -8
             elif mono_pct >= 70.0:
                 penalty = -6
             else:
-                penalty = -5
+                penalty = -4
             mali.append(
                 MalusItem(
                     type="monoculture",

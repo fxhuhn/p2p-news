@@ -50,7 +50,7 @@ Ein modulares, produktionsreifes Python 3.11+ Tool zum Scannen von P2P-Lending-N
 | `crowdpear` | Crowdpear | `https://crowdpear.com` | Hauptseite, Statistik, Blog |
 | `twino` | Twino | `https://www.twino.eu` | Hauptseite, Kredite, Blog |
 | `modena` | Modena | `https://modena.ee` | Hauptseite, Blog |
-| `insoil` | Insoil | `https://insoil.finance` | Hauptseite, Auto-Discovery |
+| `insoil` | Insoil | `https://finance.insoil.com` | Hauptseite, News |
 
 ---
 

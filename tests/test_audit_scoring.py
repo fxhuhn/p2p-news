@@ -77,6 +77,50 @@ class TestAuditScoring(unittest.TestCase):
         self.assertIn(res["net_score"], [64, 65, 66])  # Im Zielbereich Mid Risk
         self.assertEqual(res["risk_class"], "MID RISK")
 
+    def test_peerberry_audit_benchmark(self):
+        profile = {
+            "platform": "peerberry",
+            "platform_name": "PeerBerry",
+            "regulation": {
+                "type": "unregulated",
+                "custody": "Getrennte Firmenkonten (keine individuellen IBANs)",
+                "notes": "Unreguliert über Kroatien/Litauen; Abtretungsverträge.",
+            },
+            "governance_and_solvency": {
+                "auditor": "BDO / Grant Thornton (testierte Konzernabschlüsse)",
+                "audit_opinion": "Unqualified / Ohne Einschränkung",
+                "equity_ratio_pct": 31.0,
+                "interest_coverage_ratio": 4.2,
+                "notes": "Wirtschaftlich getragen durch hochprofitable Aventus Group (H1 2026 Nettogewinn 49,1 Mio. €, EK 264,2 Mio. €).",
+            },
+            "collateral_and_workout": {
+                "primary_asset_type": "Kurzfristige Konsumentenkredite & Immobilienkredite",
+                "security_type": "60-Tage Rückkaufgarantie + Gruppengarantie",
+                "historical_loss_pct": 0.0,
+                "current_npl_pct": 0.0,
+                "notes": "0 % realisierter Kapitalverlust. 100 % Rückzahlung aller Kriegs-Kredite (über 50 Mio. €) aus Konzerngewinn.",
+            },
+            "liquidity_and_marketplace": {
+                "secondary_market": True,
+                "secondary_market_fee_pct": 0.0,
+                "secondary_market_waiting_days": 0,
+                "primary_loan_duration_days_avg": 30,
+            },
+            "malus_triggers": {
+                "monoculture_pct": 88.0,
+                "monoculture_originator": "Aventus Group",
+            },
+        }
+        res = self.scorer.score_platform(profile)
+        self.assertEqual(res["pillar_1"].final_score, 8)  # Base 8
+        self.assertEqual(res["pillar_2"].final_score, 22)  # Base 20 + EK>30% 2
+        self.assertEqual(res["pillar_3"].final_score, 17)  # Base 11 + 3 + 2 + 1
+        self.assertEqual(res["pillar_4"].final_score, 24)  # Base 22 + Fee=0/<=30d 2
+        self.assertEqual(res["malus_total"], -6)  # 70-90% Monokultur = -6
+        self.assertEqual(res["raw_score"], 71)
+        self.assertEqual(res["net_score"], 65)
+        self.assertEqual(res["risk_class"], "MID RISK")
+
     def test_inrento_top_tier(self):
         profile = {
             "platform": "inrento",

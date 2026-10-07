@@ -24,7 +24,7 @@ RiskClass = Literal["TOP TIER", "MID RISK", "WATCHLIST", "SPECULATIVE", "DISTRES
 
 RISK_CLASS_LIMITS: Dict[RiskClass, str] = {
     "TOP TIER": "8 - 15 %",
-    "MID RISK": "3 - 8 %",
+    "MID RISK": "5 - 8 %",
     "WATCHLIST": "0 - 3 %",
     "SPECULATIVE": "0 % (Neuanlage-Stopp)",
     "DISTRESSED": "0 % (Kapitalabzug & Recovery)",

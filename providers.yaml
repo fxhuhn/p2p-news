@@ -179,7 +179,9 @@ platforms:
     auto_discover: true
 
   insoil:
-    base_url: "https://insoil.finance"
+    base_url: "https://finance.insoil.com"
+    blog_path: "/news/"
+    blog_pattern: "^(?!how-it-works|about-us|faq|news|tag|lt)[a-z0-9-]+$"
     auto_discover: true
 
 # ------------------------------------------------------------------------------

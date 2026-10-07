@@ -16,6 +16,7 @@ from typing import Any, Dict, List
 
 import yaml
 
+from scoring_models import RISK_CLASS_LIMITS
 from storage_sqlite import SQLiteStore
 
 
@@ -99,15 +100,11 @@ class RankingGenerator:
             delta = s["delta_str"]
             k = s["risk_class"]
 
-            # Limit kürzen
+            # Limit aus Metamodell
             limit = (
-                "8-15 %"
-                if k == "TOP TIER"
-                else "3-8 %"
-                if k == "MID RISK"
-                else "0-3 %"
-                if k == "WATCHLIST"
-                else "0 %"
+                "0 %"
+                if k in ("SPECULATIVE", "DISTRESSED")
+                else RISK_CLASS_LIMITS.get(k, "0 %").replace(" - ", "-")
             )
 
             p1, p2, p3, p4 = s["pillar_1"], s["pillar_2"], s["pillar_3"], s["pillar_4"]
@@ -200,7 +197,7 @@ class RankingGenerator:
                 "| Risikoklasse | Zulässiges Depot-Limit | Plattformen im Universum | Maximale Allokation |",
                 "| :--- | :---: | :--- | :---: |",
                 f"| **TOP TIER (70 - 100)** | 8 – 15 % je Plattform | {', '.join([s['platform'].capitalize() for s in enriched_scores if s['risk_class'] == 'TOP TIER']) or 'Keine'} | **50 – 70 %** |",
-                f"| **MID RISK (60 - 69)** | 3 – 8 % je Plattform | {', '.join([s['platform'].capitalize() for s in enriched_scores if s['risk_class'] == 'MID RISK']) or 'Keine'} | **25 – 40 %** |",
+                f"| **MID RISK (60 - 69)** | 5 – 8 % je Plattform | {', '.join([s['platform'].capitalize() for s in enriched_scores if s['risk_class'] == 'MID RISK']) or 'Keine'} | **25 – 40 %** |",
                 f"| **WATCHLIST (51 - 59)** | 0 – 3 % je Plattform | {', '.join([s['platform'].capitalize() for s in enriched_scores if s['risk_class'] == 'WATCHLIST']) or 'Keine'} | **0 – 10 %** |",
                 "| **SPECULATIVE / DISTRESSED (0 - 50)** | **0 %** (Neuanlage-Stopp) | "
                 + (
