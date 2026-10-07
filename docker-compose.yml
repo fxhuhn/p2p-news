@@ -6,10 +6,11 @@ services:
     image: p2p-news:latest
     container_name: p2p-news
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       - PYTHONUNBUFFERED=1
       - TZ=Europe/Berlin
-      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
     volumes:
       - ./data:/app/data
     command: ["scheduler.py"]
