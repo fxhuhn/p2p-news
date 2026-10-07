@@ -61,5 +61,6 @@ scratch/
 
 # Data directory: ignore crawled and generated data except published newsletters
 data/*
+!data/rankings/
 !data/newsletters/
 data/newsletters/drafts/
