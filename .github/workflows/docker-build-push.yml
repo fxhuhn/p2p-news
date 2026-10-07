@@ -97,9 +97,9 @@ jobs:
           IMAGE_NAME="${{ github.event.repository.name }}:test"
 
           echo "=== [1/5] Testing Container User, UID & Timezone Isolation ==="
-          USER_NAME=$(docker run --rm "$IMAGE_NAME" whoami)
-          USER_ID=$(docker run --rm "$IMAGE_NAME" id -u)
-          CONTAINER_TZ=$(docker run --rm "$IMAGE_NAME" date +%Z)
+          USER_NAME=$(docker run --rm --entrypoint whoami "$IMAGE_NAME")
+          USER_ID=$(docker run --rm --entrypoint id "$IMAGE_NAME" -u)
+          CONTAINER_TZ=$(docker run --rm --entrypoint date "$IMAGE_NAME" +%Z)
           echo "Container user: ${USER_NAME} (UID ${USER_ID}), Timezone: ${CONTAINER_TZ}"
           if [ "$USER_NAME" != "appuser" ] || [ "$USER_ID" != "1000" ]; then
             echo "::error::Container running as invalid user! Expected appuser:1000, got ${USER_NAME}:${USER_ID}"
@@ -107,11 +107,11 @@ jobs:
           fi
 
           echo "=== [2/5] Testing Volume Permissions (/app/data) ==="
-          docker run --rm "$IMAGE_NAME" test -w /app/data
+          docker run --rm --entrypoint test "$IMAGE_NAME" -w /app/data
           echo "✓ Non-root user appuser has verified write access to /app/data"
 
           echo "=== [3/5] Testing Core Imports, Schedule & Pydantic Schemas ==="
-          docker run --rm "$IMAGE_NAME" python -c "
+          docker run --rm "$IMAGE_NAME" -c "
           import p2p_news_scraper
           import item_store
           import digest_extractor
@@ -124,7 +124,7 @@ jobs:
           "
 
           echo "=== [4/5] Testing Provider Registry Integrity ==="
-          docker run --rm "$IMAGE_NAME" python -c "
+          docker run --rm "$IMAGE_NAME" -c "
           from p2p_news_scraper import REGISTERED_PROVIDERS
           assert len(REGISTERED_PROVIDERS) >= 5, f'Expected at least 5 providers, found {len(REGISTERED_PROVIDERS)}'
           print(f'✓ Provider registry loaded {len(REGISTERED_PROVIDERS)} providers from providers.yaml')
