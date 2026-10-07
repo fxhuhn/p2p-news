@@ -46,12 +46,12 @@ class NewsletterGenerator:
     def __init__(
         self,
         api_key: str | None = None,
-        model_name: str = "gemini-3.8-flash",
+        model_name: str = "gemini-flash-latest",
         data_dir: Path | str = "data",
         prompt_path: Path | str = "prompts/stage2_editorial_v1.md",
     ) -> None:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        self.model_name = model_name
+        self.model_name = os.getenv("GEMINI_MODEL") or model_name
         self.data_dir = Path(data_dir)
         self.newsletters_dir = self.data_dir / "newsletters"
         self.drafts_dir = self.newsletters_dir / "drafts"
@@ -198,14 +198,22 @@ class NewsletterGenerator:
                 self.model_name,
             )
 
+            fallback_models = [self.model_name]
+            for fb in ["gemini-flash-latest", "gemini-3.6-flash"]:
+                if fb not in fallback_models:
+                    fallback_models.append(fb)
+
             # Retry bei transienten Überlastungen
             max_attempts = 5
             backoff_delays = [3, 6, 12, 20, 30]
             response = None
             for attempt in range(1, max_attempts + 1):
+                current_model = fallback_models[
+                    min(attempt - 1, len(fallback_models) - 1)
+                ]
                 try:
                     response = client.models.generate_content(
-                        model=self.model_name,
+                        model=current_model,
                         contents=prompt,
                         config={
                             "response_mime_type": "application/json",
@@ -232,12 +240,17 @@ class NewsletterGenerator:
                         else:
                             sleep_time = backoff_delays[attempt - 1]
 
+                        next_model = fallback_models[
+                            min(attempt, len(fallback_models) - 1)
+                        ]
                         logger.warning(
-                            "[%s] Transiente Gemini-Überlastung (%s). Retry %d/%d in %ds...",
+                            "[%s] Transiente Gemini-Überlastung auf Modell %s (%s). Retry %d/%d mit Modell %s in %ds...",
                             active_run_id,
+                            current_model,
                             exc,
                             attempt,
                             max_attempts,
+                            next_model,
                             sleep_time,
                         )
                         time.sleep(sleep_time)

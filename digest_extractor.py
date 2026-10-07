@@ -35,13 +35,13 @@ class DigestExtractor:
     def __init__(
         self,
         api_key: str | None = None,
-        model_name: str = "gemini-3.8-flash",
+        model_name: str = "gemini-flash-latest",
         runs_dir: Path | str = "data/runs",
         digests_dir: Path | str = "data/digests",
         prompt_path: Path | str = "prompts/stage1_cluster_v1.md",
     ) -> None:
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
-        self.model_name = model_name
+        self.model_name = os.getenv("GEMINI_MODEL") or model_name
         self.runs_dir = Path(runs_dir)
         self.digests_dir = Path(digests_dir)
         self.digests_dir.mkdir(parents=True, exist_ok=True)
@@ -114,12 +114,18 @@ class DigestExtractor:
             self.model_name,
         )
 
+        fallback_models = [self.model_name]
+        for fb in ["gemini-flash-latest", "gemini-3.6-flash"]:
+            if fb not in fallback_models:
+                fallback_models.append(fb)
+
         max_attempts = 4
         response = None
         for attempt in range(1, max_attempts + 1):
+            current_model = fallback_models[min(attempt - 1, len(fallback_models) - 1)]
             try:
                 response = client.models.generate_content(
-                    model=self.model_name,
+                    model=current_model,
                     contents=prompt,
                     config={
                         "response_mime_type": "application/json",
@@ -147,12 +153,15 @@ class DigestExtractor:
                     else:
                         sleep_time = 3 * attempt
 
+                    next_model = fallback_models[min(attempt, len(fallback_models) - 1)]
                     logger.warning(
-                        "[%s] Transiente Gemini-Überlastung (%s). Wiederholung %d/%d in %ds...",
+                        "[%s] Transiente Gemini-Überlastung auf Modell %s (%s). Wiederholung %d/%d mit Modell %s in %ds...",
                         active_run_id,
+                        current_model,
                         exc,
                         attempt,
                         max_attempts,
+                        next_model,
                         sleep_time,
                     )
                     time.sleep(sleep_time)
