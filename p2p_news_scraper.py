@@ -2232,7 +2232,7 @@ class P2PNewsScraper:
                     result.item.content_hash[:12] + "...",
                 )
             case ArticleStatus.CHANGED:
-                logger.warning(
+                logger.info(
                     "%s %s [GEÄNDERT] %s -> %s | Alter Hash: %s -> Neuer Hash: %s",
                     prefix,
                     type_str,
