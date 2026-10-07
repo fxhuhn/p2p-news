@@ -681,6 +681,57 @@ classification:
         finally:
             temp_path.unlink(missing_ok=True)
 
+    def test_fetch_url_trailing_slash_fallback_on_404(self) -> None:
+        """Prüft, dass bei 404 ein automatischer Fallback ohne/mit Slash versucht wird."""
+        from unittest.mock import MagicMock
+
+        from p2p_news_scraper import P2PNewsScraper, ScraperConfig
+
+        scraper = P2PNewsScraper(config=ScraperConfig())
+        mock_client = MagicMock()
+
+        resp_404 = MagicMock()
+        resp_404.status_code = 404
+
+        resp_200 = MagicMock()
+        resp_200.status_code = 200
+        resp_200.headers = {"content-type": "text/html"}
+        resp_200.content = b"<html>Content</html>"
+        resp_200.text = "<html>Content</html>"
+
+        # Erste Anfrage mit Slash schlägt fehl, zweite Anfrage ohne Slash gelingt
+        mock_client.get.side_effect = [resp_404, resp_200]
+
+        result = scraper.fetch_url(mock_client, "https://example.com/blog/article/")
+        self.assertEqual(result, "<html>Content</html>")
+        self.assertEqual(mock_client.get.call_count, 2)
+        mock_client.get.assert_any_call("https://example.com/blog/article/")
+        mock_client.get.assert_any_call("https://example.com/blog/article")
+
+    def test_fetch_url_handles_403_gracefully(self) -> None:
+        """Prüft, dass Bot-Schutz (HTTP 403) abgefangen wird und None liefert."""
+        from unittest.mock import MagicMock
+
+        import httpx
+
+        from p2p_news_scraper import P2PNewsScraper, ScraperConfig
+
+        scraper = P2PNewsScraper(config=ScraperConfig())
+        mock_client = MagicMock()
+
+        mock_resp = MagicMock()
+        mock_resp.status_code = 403
+        mock_resp.headers = {"content-type": "text/html"}
+
+        error = httpx.HTTPStatusError(
+            "403 Forbidden", request=MagicMock(), response=mock_resp
+        )
+        mock_resp.raise_for_status.side_effect = error
+        mock_client.get.return_value = mock_resp
+
+        result = scraper.fetch_url(mock_client, "https://example.com/protected")
+        self.assertIsNone(result)
+
 
 if __name__ == "__main__":
     unittest.main()

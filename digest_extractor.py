@@ -35,7 +35,7 @@ class DigestExtractor:
     def __init__(
         self,
         api_key: str | None = None,
-        model_name: str = "gemini-flash-latest",
+        model_name: str = "gemini-3.8-flash",
         runs_dir: Path | str = "data/runs",
         digests_dir: Path | str = "data/digests",
         prompt_path: Path | str = "prompts/stage1_cluster_v1.md",
@@ -104,6 +104,7 @@ class DigestExtractor:
                 )
             from google import genai
 
+            logging.getLogger("google_genai.models").setLevel(logging.ERROR)
             client = genai.Client(api_key=self.api_key)
 
         start_time = datetime.now(timezone.utc)
@@ -115,7 +116,12 @@ class DigestExtractor:
         )
 
         fallback_models = [self.model_name]
-        for fb in ["gemini-flash-latest", "gemini-3.6-flash"]:
+        for fb in [
+            "gemini-3.8-flash",
+            "gemini-3.1-flash-lite",
+            "gemini-flash-lite-latest",
+            "gemini-flash-latest",
+        ]:
             if fb not in fallback_models:
                 fallback_models.append(fb)
 

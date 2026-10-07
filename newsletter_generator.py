@@ -46,7 +46,7 @@ class NewsletterGenerator:
     def __init__(
         self,
         api_key: str | None = None,
-        model_name: str = "gemini-flash-latest",
+        model_name: str = "gemini-3.8-flash",
         data_dir: Path | str = "data",
         prompt_path: Path | str = "prompts/stage2_editorial_v1.md",
     ) -> None:
@@ -189,6 +189,7 @@ class NewsletterGenerator:
                     raise ValueError("GEMINI_API_KEY fehlt.")
                 from google import genai
 
+                logging.getLogger("google_genai.models").setLevel(logging.ERROR)
                 client = genai.Client(api_key=self.api_key)
 
             start_time = datetime.now(timezone.utc)
@@ -199,7 +200,12 @@ class NewsletterGenerator:
             )
 
             fallback_models = [self.model_name]
-            for fb in ["gemini-flash-latest", "gemini-3.6-flash"]:
+            for fb in [
+                "gemini-3.8-flash",
+                "gemini-3.1-flash-lite",
+                "gemini-flash-lite-latest",
+                "gemini-flash-latest",
+            ]:
                 if fb not in fallback_models:
                     fallback_models.append(fb)
 

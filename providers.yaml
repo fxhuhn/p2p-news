@@ -20,14 +20,14 @@ platforms:
     base_url: "https://www.mintos.com"
     subpages:
       - "/en/statistics"
-    blog_path: "/en/blog/"
+    blog_path: "/blog/"
     auto_discover: true
 
   peerberry:
     base_url: "https://peerberry.com"
     subpages:
-      - "/statistics/"
-    blog_path: "/news/"
+      - "/peerberry-statistics/"
+    blog_path: "/blog/"
     auto_discover: true
 
   esketit:
@@ -136,7 +136,7 @@ platforms:
 
   viainvest:
     base_url: "https://viainvest.com"
-    blog_path: "/en/blog"
+    blog_path: "/news/"
     auto_discover: true
 
   income:
@@ -169,13 +169,13 @@ platforms:
   twino:
     base_url: "https://www.twino.eu"
     subpages:
-      - "/en/investing/loans"
+      - "/en/invest-in-loans"
     blog_path: "/en/blog"
     auto_discover: true
 
   modena:
     base_url: "https://modena.ee"
-    blog_path: "/blog"
+    blog_path: "/eraklient/uudised"
     auto_discover: true
 
   insoil:

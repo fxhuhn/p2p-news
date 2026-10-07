@@ -122,7 +122,7 @@ def setup_logging(level: int = logging.INFO) -> logging.Logger:
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
-    logging.getLogger("trafilatura").setLevel(logging.WARNING)
+    logging.getLogger("trafilatura").setLevel(logging.ERROR)
     logging.getLogger("urllib3").setLevel(logging.WARNING)
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("httpcore").setLevel(logging.WARNING)
@@ -1295,9 +1295,9 @@ class PlatformProvider(BasePlatformProvider):
                 ):
                     continue
 
-                cleaned_url = (
-                    parsed._replace(fragment="", query="").geturl().rstrip("/") + "/"
-                )
+                cleaned_url = parsed._replace(fragment="", query="").geturl()
+                if parsed.path in ("", "/"):
+                    cleaned_url = cleaned_url.rstrip("/") + "/"
 
                 # A) Blog-Artikel erkennen
                 if self.config.blog_pattern:
@@ -1963,8 +1963,8 @@ class ContentExtractor:
                 title = soup.title.string.strip()
 
         if not extracted_content:
-            logger.warning(
-                "Trafilatura konnte keinen Inhalt extrahieren für %s, verwende Text-Fallback",
+            logger.info(
+                "Trafilatura fand keinen Fließtext für %s, verwende Text-Fallback",
                 url,
             )
             soup = BeautifulSoup(cleaned_html, "html.parser")
@@ -2012,6 +2012,17 @@ class P2PNewsScraper:
 
         try:
             response = client.get(url)
+            # Falls 404 zurückkommt: versuche alternatives Slash-Format (ohne bzw. mit abschließendem Slash)
+            if response.status_code == 404:
+                alt_url = url.rstrip("/") if url.endswith("/") else f"{url}/"
+                try:
+                    alt_resp = client.get(alt_url)
+                    if alt_resp.status_code == 200:
+                        response = alt_resp
+                        url = alt_url
+                except Exception:
+                    pass
+
             response.raise_for_status()
 
             # Content-Type Validierung: Keine Binärdateien wie application/pdf
@@ -2041,15 +2052,37 @@ class P2PNewsScraper:
 
             return response.text
         except httpx.HTTPStatusError as exc:
-            logger.error(
-                "HTTP-Fehler %s beim Aufruf von %s", exc.response.status_code, url
-            )
+            domain = urlparse(url).netloc
+            if exc.response.status_code == 403:
+                logger.warning(
+                    "[%s] Überspringe geschützte Seite (HTTP 403 / Bot-Schutz): %s",
+                    domain,
+                    url,
+                )
+            elif exc.response.status_code == 404:
+                logger.warning(
+                    "[%s] Überspringe nicht erreichbare Seite (HTTP 404): %s",
+                    domain,
+                    url,
+                )
+            else:
+                logger.warning(
+                    "[%s] HTTP-Fehler %s beim Aufruf von %s",
+                    domain,
+                    exc.response.status_code,
+                    url,
+                )
         except httpx.TimeoutException:
-            logger.error(
-                "Timeout beim Aufruf von %s (> %.1fs)", url, self.config.timeout_seconds
+            logger.warning(
+                "[%s] Timeout beim Aufruf von %s (> %.1fs)",
+                urlparse(url).netloc,
+                url,
+                self.config.timeout_seconds,
             )
         except httpx.RequestError as exc:
-            logger.error("Netzwerkfehler bei %s: %s", url, exc)
+            logger.warning(
+                "[%s] Netzwerkfehler bei %s: %s", urlparse(url).netloc, url, exc
+            )
         return None
 
     def process_page(
@@ -2146,11 +2179,6 @@ class P2PNewsScraper:
             )
             article_html = self.fetch_url(client, article_url)
             if not article_html:
-                logger.warning(
-                    "[%s] Überspringe nicht erreichbare Seite: %s",
-                    provider.name,
-                    article_url,
-                )
                 continue
 
             item = self.process_page(article_url, article_html, provider=provider)
