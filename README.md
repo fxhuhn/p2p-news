@@ -261,23 +261,24 @@ Führt die 5 Stufen des Development Pipeline Gates aus (`ruff format`, `ruff che
 
 ## Container (Docker & Docker Compose)
 
-### Image bauen
+### Image aus GitHub Container Registry (GHCR) laden
 ```bash
-docker build -t p2p-news:latest .
+docker pull ghcr.io/fxhuhn/p2p-news:latest
 ```
+*(Optional: Lokal selbst bauen via `docker build -t ghcr.io/fxhuhn/p2p-news:latest .`)*
 
 ### Ausführen via Docker
 ```bash
 # Einzelnen Scraper mit gemountetem Datenverzeichnis ausführen
-docker run --rm -v $(pwd)/data:/app/data p2p-news:latest p2p_news_scraper.py --provider nectaro
+docker run --rm -v $(pwd)/data:/app/data ghcr.io/fxhuhn/p2p-news:latest p2p_news_scraper.py --provider nectaro
 
 # Gesamte Pipeline orchestrieren
-docker run --rm -v $(pwd)/data:/app/data --env-file .env p2p-news:latest pipeline_orchestrator.py
+docker run --rm -v $(pwd)/data:/app/data --env-file .env ghcr.io/fxhuhn/p2p-news:latest pipeline_orchestrator.py
 ```
 
 ### Ausführen via Docker Compose
 ```bash
-# 1. Autarken 24/7 Scheduler-Daemon im Hintergrund starten (Europe/Berlin Timezone)
+# 1. Neuestes Image von GHCR laden & 24/7 Scheduler-Daemon starten (Europe/Berlin Timezone)
 # - Wöchentlich (Montag 06:00 Uhr): Scraping, Fakten-Clustering & Newsletter-Draft
 # - Monatlich (1. des Monats 07:00 Uhr): Audit-Scoring & Plattform-Rankings
 docker compose up -d
