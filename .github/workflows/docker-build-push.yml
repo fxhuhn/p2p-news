@@ -95,10 +95,11 @@ jobs:
           set -euo pipefail
           IMAGE_NAME="${{ github.event.repository.name }}:test"
 
-          echo "=== [1/5] Testing Container User & UID Isolation ==="
+          echo "=== [1/5] Testing Container User, UID & Timezone Isolation ==="
           USER_NAME=$(docker run --rm "$IMAGE_NAME" whoami)
           USER_ID=$(docker run --rm "$IMAGE_NAME" id -u)
-          echo "Container user: ${USER_NAME} (UID ${USER_ID})"
+          CONTAINER_TZ=$(docker run --rm "$IMAGE_NAME" date +%Z)
+          echo "Container user: ${USER_NAME} (UID ${USER_ID}), Timezone: ${CONTAINER_TZ}"
           if [ "$USER_NAME" != "appuser" ] || [ "$USER_ID" != "1000" ]; then
             echo "::error::Container running as invalid user! Expected appuser:1000, got ${USER_NAME}:${USER_ID}"
             exit 1
@@ -108,7 +109,7 @@ jobs:
           docker run --rm "$IMAGE_NAME" test -w /app/data
           echo "✓ Non-root user appuser has verified write access to /app/data"
 
-          echo "=== [3/5] Testing Core Imports & Pydantic Schemas ==="
+          echo "=== [3/5] Testing Core Imports, Schedule & Pydantic Schemas ==="
           docker run --rm "$IMAGE_NAME" python -c "
           import p2p_news_scraper
           import item_store
@@ -116,7 +117,9 @@ jobs:
           import newsletter_generator
           import platform_scorer
           import scoring_models
-          print('✓ All core pipeline modules and schemas successfully imported')
+          import schedule
+          import scheduler
+          print('✓ All core pipeline modules, schedule, and schemas successfully imported')
           "
 
           echo "=== [4/5] Testing Provider Registry Integrity ==="
@@ -126,11 +129,12 @@ jobs:
           print(f'✓ Provider registry loaded {len(REGISTERED_PROVIDERS)} providers from providers.yaml')
           "
 
-          echo "=== [5/5] Testing CLI Entrypoints (--help) ==="
+          echo "=== [5/5] Testing CLI Entrypoints & Scheduler (--dry-run / --help) ==="
           docker run --rm "$IMAGE_NAME" p2p_news_scraper.py --help > /dev/null
           docker run --rm "$IMAGE_NAME" pipeline_orchestrator.py --help > /dev/null
           docker run --rm "$IMAGE_NAME" run_audit_scoring.py --help > /dev/null
-          echo "✓ All CLI entry points responded successfully with exit code 0"
+          docker run --rm "$IMAGE_NAME" scheduler.py --dry-run > /dev/null
+          echo "✓ All CLI entry points and scheduler responded successfully with exit code 0"
 
           echo "✅ All container smoke tests passed successfully. Proceeding to Docker push."
 

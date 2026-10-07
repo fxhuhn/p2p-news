@@ -36,3 +36,18 @@ services:
     volumes:
       - ./data:/app/data
     command: ["run_audit_scoring.py"]
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: p2p-news:latest
+    container_name: p2p-news-scheduler
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TZ=Europe/Berlin
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+    volumes:
+      - ./data:/app/data
+    command: ["scheduler.py"]

@@ -1,18 +1,22 @@
 # syntax=docker/dockerfile:1
 FROM python:3.12-slim
 
-# Prevent Python from writing .pyc files and enable unbuffered logging
+# Prevent Python from writing .pyc files, enable unbuffered logging and configure Berlin timezone
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    TZ=Europe/Berlin
 
 WORKDIR /app
 
-# Install security certificates & minimal runtime requirements
+# Install security certificates, tzdata (Europe/Berlin timezone) & minimal runtime requirements
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
+    tzdata \
+    && ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime \
+    && echo "Europe/Berlin" > /etc/timezone \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root system user and group
