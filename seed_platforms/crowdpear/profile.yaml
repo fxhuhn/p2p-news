@@ -1,0 +1,54 @@
+platform: crowdpear
+platform_name: Crowdpear
+founding_year: 2022
+headquarters: Vilnius, Litauen
+sourcing_strategy: curated_profile_and_secondary_audits
+regulation:
+  type: licensed_ecsp
+  regulator: Bank of Lithuania (Litauische Zentralbank)
+  license_number: ECSP Lizenz Nr. LB002128
+  custody: Segregierte Konten bei Paysera
+  investor_compensation: false
+  contract_structure: 1st-Rank Hypotheken via litauischen Treuhänder
+  notes: Schwesterplattform von PeerBerry, reguliert unter ECSP durch die litauische
+    Zentralbank.
+governance_and_solvency:
+  guarantor_group: Crowdpear UAB
+  auditor: Grant Thornton (testiert)
+  audit_opinion: Unqualified
+  profitability: Getragen durch das Gründerteam von PeerBerry
+  equity_ratio_pct: 38.0
+  interest_coverage_ratio: 4.0
+  notes: Hohe Governance-Standards und enge Verzahnung mit der PeerBerry-Infrastruktur.
+collateral_and_workout:
+  primary_asset_type: Immobilienkredite & Geschäftsentwicklung
+  security_type: 1st-Rank Hypotheken im Grundbuch
+  ltv_max_pct: 65.0
+  historical_loss_pct: 0.0
+  current_npl_pct: 2.5
+  buyback_grace_period_days: null
+  notes: Realsicherheiten mit unabhängigen externen Wertgutachten (Ober-Haus).
+liquidity_and_marketplace:
+  secondary_market: true
+  secondary_market_fee_pct: 2.0
+  secondary_market_waiting_days: 0
+  primary_loan_duration_days_avg: 360
+  withdrawal_queue_days: 0
+  notes: Sekundärmarkt verfügbar mit 2 % Gebühr.
+malus_triggers:
+  monoculture_pct: 15.0
+  monoculture_originator: null
+  term_mismatch: false
+  related_party_opacity: false
+  distressed_workout: false
+benchmarks:
+  p2p_empire_safety_score: 8.5
+  p2p_empire_safety_band: Hoch
+  p2p_empire_portfolio_perf: 90.1
+  lars_wrobbel_score: 33
+  lars_wrobbel_rank: Rang 3
+  rethink_p2p_score: 7.8
+  rethink_p2p_rank: Platz 3
+  rethink_p2p_red_flags: '0'
+  p2p_game_score: null
+  p2p_game_rank: Nicht gelistet

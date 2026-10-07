@@ -175,6 +175,19 @@ class TestAuditScoring(unittest.TestCase):
         delta = latest["net_score"] - prev["net_score"]
         self.assertEqual(delta, 6)
 
+    def test_ensure_platform_profiles_auto_seeding(self):
+        """Prüft, dass bei leerem platforms-Verzeichnis automatisch aus seed_platforms initialisiert wird."""
+        from run_audit_scoring import ensure_platform_profiles
+
+        empty_data_dir = Path(self.temp_dir) / "empty_data"
+        empty_data_dir.mkdir(parents=True, exist_ok=True)
+
+        profiles = ensure_platform_profiles(data_dir=empty_data_dir)
+        self.assertGreaterEqual(len(profiles), 20)
+        self.assertTrue(
+            (empty_data_dir / "platforms" / "mintos" / "profile.yaml").exists()
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

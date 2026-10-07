@@ -1,0 +1,54 @@
+platform: capitalia
+platform_name: Capitalia
+founding_year: 2007
+headquarters: Riga, Lettland
+sourcing_strategy: curated_profile_and_secondary_audits
+regulation:
+  type: licensed_ecsp
+  regulator: Latvijas Banka (Lettische Zentralbank)
+  license_number: ECSP Lizenz Nr. 27-55/2023/4
+  custody: Segregierte Treuhandkonten
+  investor_compensation: false
+  contract_structure: Besicherte Unternehmenskredite & Mezzanine
+  notes: ECSP-lizenziert unter Aufsicht der Latvijas Banka.
+governance_and_solvency:
+  guarantor_group: Capitalia SE
+  auditor: BDO (testiert)
+  audit_opinion: Unqualified
+  profitability: Seit über 15 Jahren profitabler KMU-Finanzierer im Baltikum
+  equity_ratio_pct: 36.0
+  interest_coverage_ratio: 4.1
+  notes: Langjährig bewährtes Managementteam; Co-Investments mit der Europäischen
+    Investitionsbank.
+collateral_and_workout:
+  primary_asset_type: Mittelständische Unternehmenskredite & Wachstumsfinanzierung
+  security_type: Gewerbliche Grundschulden, Bürgschaften, Forderungsabtretungen
+  ltv_max_pct: 65.0
+  historical_loss_pct: 1.2
+  current_npl_pct: 2.1
+  buyback_grace_period_days: null
+  notes: Dinglich besichert mit institutioneller Due-Diligence.
+liquidity_and_marketplace:
+  secondary_market: false
+  secondary_market_fee_pct: null
+  secondary_market_waiting_days: null
+  primary_loan_duration_days_avg: 540
+  withdrawal_queue_days: 0
+  notes: Kein Sekundärmarkt; planbare Rückzahlung über 12 bis 36 Monate.
+malus_triggers:
+  monoculture_pct: 15.0
+  monoculture_originator: null
+  term_mismatch: false
+  related_party_opacity: false
+  distressed_workout: false
+benchmarks:
+  p2p_empire_safety_score: 6.9
+  p2p_empire_safety_band: Mittel
+  p2p_empire_portfolio_perf: 100.0
+  lars_wrobbel_score: 33
+  lars_wrobbel_rank: Rang 3
+  rethink_p2p_score: null
+  rethink_p2p_rank: Nicht gelistet
+  rethink_p2p_red_flags: null
+  p2p_game_score: 78
+  p2p_game_rank: Platz 4 von 40

@@ -1,0 +1,53 @@
+platform: afranga
+platform_name: Afranga
+founding_year: 2021
+headquarters: Sofia, Bulgarien
+sourcing_strategy: curated_profile_and_secondary_audits
+regulation:
+  type: licensed_ecsp
+  regulator: Bulgarische Finanzaufsicht (FSC) / ECSP
+  license_number: ECSP Lizenz RG-05-0275
+  custody: Segregierte Treuhandkonten
+  investor_compensation: false
+  contract_structure: ECSP regulierte Kredite
+  notes: Regulierte paneuropäische Crowdfunding-Plattform (ECSP).
+governance_and_solvency:
+  guarantor_group: Stik Credit AD
+  auditor: BDO (testiert)
+  audit_opinion: Unqualified
+  profitability: Stik Credit profitabel im bulgarischen Konsumentenkreditmarkt
+  equity_ratio_pct: 29.0
+  interest_coverage_ratio: 3.2
+  notes: Testierter Jahresabschluss der Stik Credit Gruppe.
+collateral_and_workout:
+  primary_asset_type: Verbraucherkredite in Bulgarien
+  security_type: 60-Tage Buyback-Garantie der Stik Credit
+  ltv_max_pct: null
+  historical_loss_pct: 0.0
+  current_npl_pct: 3.0
+  buyback_grace_period_days: 60
+  notes: Konsumkredite mit verlässlichem Rückkaufversprechen.
+liquidity_and_marketplace:
+  secondary_market: true
+  secondary_market_fee_pct: 0.0
+  secondary_market_waiting_days: 0
+  primary_loan_duration_days_avg: 90
+  withdrawal_queue_days: 0
+  notes: Gebührenfreier Sekundärmarkt und kurze originäre Kreditlaufzeiten.
+malus_triggers:
+  monoculture_pct: 100.0
+  monoculture_originator: Stik Credit AD
+  term_mismatch: false
+  related_party_opacity: false
+  distressed_workout: false
+benchmarks:
+  p2p_empire_safety_score: 7.3
+  p2p_empire_safety_band: Mittel
+  p2p_empire_portfolio_perf: 100.0
+  lars_wrobbel_score: 21
+  lars_wrobbel_rank: Rang 11
+  rethink_p2p_score: 6.4
+  rethink_p2p_rank: Platz 8
+  rethink_p2p_red_flags: '0'
+  p2p_game_score: 60
+  p2p_game_rank: Platz 14 von 40

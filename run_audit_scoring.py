@@ -28,18 +28,50 @@ logging.basicConfig(
 logger = logging.getLogger("audit_pipeline")
 
 
-def run_full_audit(audit_date: str | None = None) -> tuple[int, Path]:
+def ensure_platform_profiles(data_dir: Path | str = "data") -> list[str]:
+    """Stellt sicher, dass Plattform-Profile existieren, notfalls aus Seed-Verzeichnis kopieren."""
+    base = Path(data_dir)
+    platforms_dir = base / "platforms"
+    profiles = sorted(glob.glob(str(platforms_dir / "*/profile.yaml")))
+    if not profiles:
+        seed_candidates = [
+            Path("seed_platforms"),
+            Path("/app/seed_platforms"),
+            Path(__file__).resolve().parent / "seed_platforms",
+        ]
+        for seed_dir in seed_candidates:
+            if seed_dir.exists() and list(seed_dir.glob("*/profile.yaml")):
+                logger.info(
+                    "Initialisiere fehlende Plattform-Profile in %s aus %s...",
+                    platforms_dir,
+                    seed_dir,
+                )
+                import shutil
+
+                for profile_path in seed_dir.glob("*/profile.yaml"):
+                    dest = platforms_dir / profile_path.parent.name / "profile.yaml"
+                    dest.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(profile_path, dest)
+                break
+        profiles = sorted(glob.glob(str(platforms_dir / "*/profile.yaml")))
+    return profiles
+
+
+def run_full_audit(
+    audit_date: str | None = None, data_dir: Path | str = "data"
+) -> tuple[int, Path]:
+    base = Path(data_dir)
     audit_date = audit_date or datetime.date.today().isoformat()
-    store = SQLiteStore("data/p2p_archive.db")
+    store = SQLiteStore(str(base / "p2p_archive.db"))
     scorer = PlatformScorer()
-    factsheet_gen = FactsheetGenerator(output_dir="data/factsheets")
+    factsheet_gen = FactsheetGenerator(output_dir=str(base / "factsheets"))
     ranking_gen = RankingGenerator(
-        db_path="data/p2p_archive.db", output_dir="data/rankings"
+        db_path=str(base / "p2p_archive.db"), output_dir=str(base / "rankings")
     )
 
-    profiles = sorted(glob.glob("data/platforms/*/profile.yaml"))
+    profiles = ensure_platform_profiles(data_dir=base)
     if not profiles:
-        logger.error("Keine profile.yaml Dateien unter data/platforms/ gefunden!")
+        logger.error("Keine profile.yaml Dateien unter %s/platforms/ gefunden!", base)
         return 0, Path()
 
     logger.info(

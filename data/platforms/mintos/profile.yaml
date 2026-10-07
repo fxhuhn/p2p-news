@@ -1,0 +1,56 @@
+platform: mintos
+platform_name: Mintos
+founding_year: 2015
+headquarters: Riga, Lettland
+sourcing_strategy: curated_profile_and_secondary_audits
+regulation:
+  type: licensed_mifid
+  regulator: Latvijas Banka (Lettische Zentralbank)
+  license_number: IBF Lizenz Nr. 06.06.08.719/466
+  custody: Segregierte Treuhandkonten bei Tier-1 Banken
+  investor_compensation: true
+  contract_structure: MiFID II Verbriefte Notes (Asset-Backed Securities)
+  notes: Europäischer Marktführer, reguliert als Investment Brokerage Firm (IBF) unter
+    MiFID II mit gesetzlichem 20.000 € Anlegerentschädigungsschutz.
+governance_and_solvency:
+  guarantor_group: AS Mintos Holdings
+  auditor: KPMG (unabhängig testiert)
+  audit_opinion: Unqualified / Ohne Einschränkung
+  profitability: Profitabel im operativen Kern
+  equity_ratio_pct: 32.0
+  interest_coverage_ratio: 3.5
+  notes: Regelmäßig testierte Konzernabschlüsse durch KPMG (Big-4).
+collateral_and_workout:
+  primary_asset_type: Diversifizierte Konsum-, KFZ- und Agrarkredite
+  security_type: Buyback-Garantie + teils Besicherung
+  ltv_max_pct: null
+  historical_loss_pct: 1.8
+  current_npl_pct: 8.0
+  buyback_grace_period_days: 60
+  notes: Über 50 Kreditanbahner weltweit; Altforderungen aus Russland/Ukraine in planmäßiger
+    Recovery.
+liquidity_and_marketplace:
+  secondary_market: true
+  secondary_market_fee_pct: 0.85
+  secondary_market_waiting_days: 0
+  primary_loan_duration_days_avg: 90
+  withdrawal_queue_days: 0
+  notes: Höchste Marktplatz-Liquidität in Europa mit hochaktivem Sekundärmarkt (0,85
+    % Gebühr).
+malus_triggers:
+  monoculture_pct: 18.0
+  monoculture_originator: null
+  term_mismatch: false
+  related_party_opacity: false
+  distressed_workout: false
+benchmarks:
+  p2p_empire_safety_score: 6.2
+  p2p_empire_safety_band: Mittel
+  p2p_empire_portfolio_perf: 94.2
+  lars_wrobbel_score: 34
+  lars_wrobbel_rank: Rang 2
+  rethink_p2p_score: 6.2
+  rethink_p2p_rank: Platz 11
+  rethink_p2p_red_flags: '0'
+  p2p_game_score: 75
+  p2p_game_rank: Platz 7 von 40

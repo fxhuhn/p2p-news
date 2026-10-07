@@ -67,7 +67,7 @@ def job_weekly_newsletter(data_dir: Path | str = "data") -> bool:
         return False
 
 
-def job_monthly_scoring(force: bool = False) -> bool:
+def job_monthly_scoring(data_dir: Path | str = "data", force: bool = False) -> bool:
     """Führt das monatliche Plattform-Audit-Scoring durch (nur am 1. Tag des Monats)."""
     now = datetime.now()
     if not force and now.day != 1:
@@ -79,7 +79,7 @@ def job_monthly_scoring(force: bool = False) -> bool:
 
     logger.info("=== [SCHEDULER] Starte monatliches Audit-Scoring & Rankings ===")
     try:
-        scored_count, ranking_path = run_full_audit()
+        scored_count, ranking_path = run_full_audit(data_dir=data_dir)
         logger.info(
             "=== [SCHEDULER] Monatliches Audit abgeschlossen: %d Plattformen gescored, Ranking unter %s ===",
             scored_count,

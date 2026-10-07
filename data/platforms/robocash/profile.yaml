@@ -1,0 +1,54 @@
+platform: robocash
+platform_name: Robocash
+founding_year: 2017
+headquarters: Zagreb, Kroatien
+sourcing_strategy: curated_profile_and_secondary_audits
+regulation:
+  type: unregulated
+  regulator: null
+  license_number: null
+  custody: Getrennte Firmenkonten
+  investor_compensation: false
+  contract_structure: Abtretungsverträge (Assignment)
+  notes: Unreguliert über Kroatien operierend.
+governance_and_solvency:
+  guarantor_group: UnaFinancial Holding (Singapur)
+  auditor: KPMG (testierter Konzernabschluss)
+  audit_opinion: Unqualified
+  profitability: UnaFinancial hochprofitabel in Asien (Philippinen, Kasachstan)
+  equity_ratio_pct: 24.0
+  interest_coverage_ratio: 3.1
+  notes: Mutterkonzern UnaFinancial profitabel, jedoch Klumpen in volatilen Schwellenländern
+    und historische Russland-Wurzeln.
+collateral_and_workout:
+  primary_asset_type: Kurzfristige Konsumkredite (Payday Loans)
+  security_type: 30-Tage Buyback-Garantie der UnaFinancial
+  ltv_max_pct: null
+  historical_loss_pct: 0.0
+  current_npl_pct: 1.5
+  buyback_grace_period_days: 30
+  notes: 0 % historischer Kapitalverlust für Anleger; 30-Tage Rückkauffrist.
+liquidity_and_marketplace:
+  secondary_market: true
+  secondary_market_fee_pct: 0.0
+  secondary_market_waiting_days: 0
+  primary_loan_duration_days_avg: 30
+  withdrawal_queue_days: 0
+  notes: Sehr hohe Liquidität durch 30-Tage-Kurzläufer und gebührenfreien Sekundärmarkt.
+malus_triggers:
+  monoculture_pct: 100.0
+  monoculture_originator: UnaFinancial Holding
+  term_mismatch: false
+  related_party_opacity: false
+  distressed_workout: false
+benchmarks:
+  p2p_empire_safety_score: 4.6
+  p2p_empire_safety_band: Niedrig
+  p2p_empire_portfolio_perf: 100.0
+  lars_wrobbel_score: 28
+  lars_wrobbel_rank: Rang 7
+  rethink_p2p_score: 5.7
+  rethink_p2p_rank: Platz 16
+  rethink_p2p_red_flags: '-7'
+  p2p_game_score: 39
+  p2p_game_rank: Platz 26 von 40
