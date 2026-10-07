@@ -23,7 +23,7 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from digest_extractor import run_stage1_pipeline
@@ -45,6 +45,20 @@ def get_current_iso_week() -> str:
     return f"{now.isocalendar().year}-W{now.isocalendar().week:02d}"
 
 
+def get_target_newsletter_week(dt: datetime | None = None) -> str:
+    """
+    Ermittelt die relevante Kalenderwoche für den Newsletter.
+    An Montagen wird die gerade beendete Vorwoche ausgewertet (lückenlose Wochenrückschau).
+    An allen anderen Tagen wird die aktuelle Kalenderwoche verwendet.
+    """
+    now = dt or datetime.now(timezone.utc)
+    if now.weekday() == 0:
+        target_dt = now - timedelta(days=1)
+    else:
+        target_dt = now
+    return f"{target_dt.isocalendar().year}-W{target_dt.isocalendar().week:02d}"
+
+
 def run_pipeline(
     week: str | None = None,
     data_dir: Path | str = "data",
@@ -58,7 +72,7 @@ def run_pipeline(
     limit: int | None = None,
 ) -> int:
     base = Path(data_dir)
-    target_week = week or get_current_iso_week()
+    target_week = week or get_target_newsletter_week()
 
     # Modus 1: Revisionsprüfung
     if verify_only:

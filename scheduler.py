@@ -23,8 +23,8 @@ from types import FrameType
 
 import schedule
 
-from pipeline_orchestrator import run_pipeline
-from run_audit_scoring import run_full_audit
+from pipeline_orchestrator import get_target_newsletter_week, run_pipeline
+from run_audit_scoring import ensure_platform_profiles, run_full_audit
 
 logging.basicConfig(
     level=logging.INFO,
@@ -102,11 +102,112 @@ def setup_schedule(
     """Registriert alle periodischen Jobs in 'schedule'."""
     schedule.clear()
     schedule.every().monday.at(weekly_time).do(job_weekly_newsletter, data_dir=data_dir)
-    schedule.every().day.at(monthly_time).do(job_monthly_scoring, force=False)
+    schedule.every().day.at(monthly_time).do(
+        job_monthly_scoring, data_dir=data_dir, force=False
+    )
     logger.info(
         "Zeitplan initialisiert: Wöchentlich montags um %s | Monatlich am 1. um %s (Europe/Berlin)",
         weekly_time,
         monthly_time,
+    )
+
+
+def initial_startup_check_and_sync(data_dir: Path | str = "data") -> None:
+    """
+    Führt beim Container-Start einen initialen Check und eine Quellen-Aktualisierung durch:
+    1. Datenbank- & Plattform-Check (Profil-Integrität & Initial-Ranking).
+    2. Quellen direkt aktualisieren (Scraping & Item-Extraktion).
+    3. Konsistenzprüfung für Reports (stets verfügbare Rankings und Newsletter).
+    """
+    base = Path(data_dir)
+    logger.info(
+        "=== [STARTUP] Starte initialen System-Check & Quellen-Aktualisierung ==="
+    )
+
+    # 1. Plattform-Profile prüfen und ggf. seeden
+    profiles = ensure_platform_profiles(data_dir=base)
+    logger.info("[STARTUP] Plattform-Profile geprüft: %d Profile aktiv.", len(profiles))
+
+    # 2. Prüfen, ob bereits ein Plattform-Ranking existiert
+    rankings_dir = base / "rankings"
+    has_ranking = rankings_dir.exists() and bool(list(rankings_dir.glob("*.md")))
+    if not has_ranking:
+        logger.info(
+            "[STARTUP] Kein bestehendes Ranking gefunden. Erzeuge initiales Master-Ranking..."
+        )
+        try:
+            run_full_audit(data_dir=base)
+            logger.info(
+                "✓ [STARTUP] Initiales Plattform-Ranking erfolgreich generiert."
+            )
+        except Exception as exc:
+            logger.warning(
+                "[STARTUP] Initiales Ranking konnte nicht erzeugt werden: %s", exc
+            )
+    else:
+        logger.info("✓ [STARTUP] Bestehendes Plattform-Ranking vorhanden.")
+
+    # 3. Quellen direkt aktualisieren (Web-Scraping & Item-Extraktion)
+    logger.info("[STARTUP] Aktualisiere Quellen (Multi-Provider Scraper)...")
+    try:
+        from item_extractor import process_all_scraped_news
+        from p2p_news_scraper import (
+            P2PNewsScraper,
+            ScraperConfig,
+            load_classifier_from_yaml,
+            load_providers_from_yaml,
+        )
+
+        providers_map = load_providers_from_yaml("providers.yaml")
+        classifier = load_classifier_from_yaml("providers.yaml")
+        scraper = P2PNewsScraper(
+            config=ScraperConfig(output_dir=base), classifier=classifier
+        )
+        scraper.run(providers=list(providers_map.values()))
+
+        files_cnt, items_cnt = process_all_scraped_news(data_dir=base)
+        logger.info(
+            "✓ [STARTUP] Quellen aktualisiert (%d Dateien verarbeitet, %d Items im Store).",
+            files_cnt,
+            items_cnt,
+        )
+    except Exception as exc:
+        logger.warning("[STARTUP] Fehler bei initialer Quellen-Aktualisierung: %s", exc)
+
+    # 4. Report-Verfügbarkeit prüfen: Existiert bereits ein Newsletter für die Zielwoche?
+    target_week = get_target_newsletter_week()
+    draft_file = base / "newsletters" / "drafts" / f"newsletter-{target_week}.draft.md"
+    published_file = base / "newsletters" / f"newsletter-{target_week}.md"
+
+    if not draft_file.exists() and not published_file.exists():
+        logger.info(
+            "[STARTUP] Kein Newsletter für Zielwoche %s vorhanden. Erzeuge initialen Entwurf...",
+            target_week,
+        )
+        try:
+            run_pipeline(
+                week=target_week,
+                data_dir=base,
+                do_scrape=False,
+                is_publish=False,
+            )
+            logger.info(
+                "✓ [STARTUP] Initialer Newsletter-Entwurf für %s erfolgreich erzeugt.",
+                target_week,
+            )
+        except Exception as exc:
+            logger.warning(
+                "[STARTUP] Initialer Newsletter-Entwurf konnte nicht erzeugt werden: %s",
+                exc,
+            )
+    else:
+        logger.info(
+            "✓ [STARTUP] Newsletter-Bericht für Woche %s ist einsatzbereit.",
+            target_week,
+        )
+
+    logger.info(
+        "=== [STARTUP] Initialer Check abgeschlossen. Alle Reports sind betriebsbereit. ==="
     )
 
 
@@ -130,6 +231,11 @@ def main(argv: list[str] | None = None) -> int:
         description="Periodischer P2P-News & Audit-Scoring Scheduler Daemon"
     )
     parser.add_argument(
+        "--data-dir",
+        default="data",
+        help="Pfad zum Datenverzeichnis (Standard: data)",
+    )
+    parser.add_argument(
         "--weekly-time",
         default="06:00",
         help="Uhrzeit für den wöchentlichen Montags-Lauf (HH:MM, Standard: 06:00)",
@@ -150,6 +256,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Führt den monatlichen Job sofort einmal aus und beendet",
     )
     parser.add_argument(
+        "--skip-startup-sync",
+        action="store_true",
+        help="Überspringt den initialen Startup-Check und Quell-Aktualisierung",
+    )
+    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Initialisiert den Zeitplan, gibt anstehende Jobs aus und beendet sofort",
@@ -157,14 +268,18 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.run_weekly_now:
-        success = job_weekly_newsletter()
+        success = job_weekly_newsletter(data_dir=args.data_dir)
         return 0 if success else 1
 
     if args.run_monthly_now:
-        success = job_monthly_scoring(force=True)
+        success = job_monthly_scoring(data_dir=args.data_dir, force=True)
         return 0 if success else 1
 
-    setup_schedule(weekly_time=args.weekly_time, monthly_time=args.monthly_time)
+    setup_schedule(
+        weekly_time=args.weekly_time,
+        monthly_time=args.monthly_time,
+        data_dir=args.data_dir,
+    )
 
     if args.dry_run:
         jobs = schedule.get_jobs()
@@ -172,6 +287,9 @@ def main(argv: list[str] | None = None) -> int:
         for j in jobs:
             logger.info(" - %s (nächster Lauf: %s)", j, j.next_run)
         return 0
+
+    if not args.skip_startup_sync:
+        initial_startup_check_and_sync(data_dir=args.data_dir)
 
     run_scheduler_loop()
     return 0

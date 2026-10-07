@@ -103,3 +103,91 @@ def test_main_dry_run() -> None:
     """Prüft den CLI-Dry-Run-Modus."""
     exit_code = scheduler.main(["--dry-run"])
     assert exit_code == 0
+
+
+def test_get_target_newsletter_week_monday() -> None:
+    """Prüft, dass an Montagen die Vorwoche als Zielwoche gewählt wird (lückenlos)."""
+    from datetime import datetime, timezone
+
+    # 2026-10-12 ist ein Montag (W42) -> Ziel muss 2026-W41 sein
+    monday_dt = datetime(2026, 10, 12, 6, 0, 0, tzinfo=timezone.utc)
+    week = scheduler.get_target_newsletter_week(monday_dt)
+    assert week == "2026-W41"
+
+
+def test_get_target_newsletter_week_other_days() -> None:
+    """Prüft, dass an Tagen Di-So die aktuelle Kalenderwoche gewählt wird."""
+    from datetime import datetime, timezone
+
+    # 2026-10-14 ist ein Mittwoch (W42) -> Ziel muss 2026-W42 sein
+    wednesday_dt = datetime(2026, 10, 14, 12, 0, 0, tzinfo=timezone.utc)
+    week = scheduler.get_target_newsletter_week(wednesday_dt)
+    assert week == "2026-W42"
+
+
+@patch("scheduler.run_pipeline")
+@patch("item_extractor.process_all_scraped_news")
+@patch("p2p_news_scraper.P2PNewsScraper")
+@patch("scheduler.run_full_audit")
+@patch("scheduler.ensure_platform_profiles")
+def test_initial_startup_check_and_sync_bootstrap(
+    mock_ensure_profiles: MagicMock,
+    mock_run_audit: MagicMock,
+    mock_scraper_cls: MagicMock,
+    mock_process_items: MagicMock,
+    mock_run_pipeline: MagicMock,
+    tmp_path: Path,
+) -> None:
+    """Prüft, dass fehlende Plattformen, Rankings und Newsletter initial erzeugt werden."""
+    mock_ensure_profiles.return_value = ["mintos", "peerberry"]
+    mock_process_items.return_value = (10, 50)
+    mock_run_pipeline.return_value = 0
+
+    scheduler.initial_startup_check_and_sync(data_dir=tmp_path)
+
+    mock_ensure_profiles.assert_called_once_with(data_dir=tmp_path)
+    mock_run_audit.assert_called_once_with(data_dir=tmp_path)
+    assert mock_scraper_cls.called
+    mock_process_items.assert_called_once_with(data_dir=tmp_path)
+    mock_run_pipeline.assert_called_once()
+
+
+@patch("scheduler.run_pipeline")
+@patch("item_extractor.process_all_scraped_news")
+@patch("p2p_news_scraper.P2PNewsScraper")
+@patch("scheduler.run_full_audit")
+@patch("scheduler.ensure_platform_profiles")
+def test_initial_startup_check_and_sync_existing_data(
+    mock_ensure_profiles: MagicMock,
+    mock_run_audit: MagicMock,
+    mock_scraper_cls: MagicMock,
+    mock_process_items: MagicMock,
+    mock_run_pipeline: MagicMock,
+    tmp_path: Path,
+) -> None:
+    """Prüft, dass bei bereits vorhandenen Rankings und Newslettern keine Duplikate erzeugt werden."""
+    mock_ensure_profiles.return_value = ["mintos"]
+    mock_process_items.return_value = (5, 20)
+
+    # Ranking anlegen
+    rankings_dir = tmp_path / "rankings"
+    rankings_dir.mkdir(parents=True)
+    (rankings_dir / "platform-ranking-2026-10.md").write_text(
+        "# Ranking", encoding="utf-8"
+    )
+
+    # Newsletter-Draft anlegen
+    target_week = scheduler.get_target_newsletter_week()
+    drafts_dir = tmp_path / "newsletters" / "drafts"
+    drafts_dir.mkdir(parents=True)
+    (drafts_dir / f"newsletter-{target_week}.draft.md").write_text(
+        "# Draft", encoding="utf-8"
+    )
+
+    scheduler.initial_startup_check_and_sync(data_dir=tmp_path)
+
+    mock_ensure_profiles.assert_called_once()
+    mock_run_audit.assert_not_called()
+    assert mock_scraper_cls.called
+    mock_process_items.assert_called_once()
+    mock_run_pipeline.assert_not_called()
