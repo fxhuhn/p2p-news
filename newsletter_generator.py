@@ -215,13 +215,23 @@ class NewsletterGenerator:
                     )
                     break
                 except Exception as exc:
+                    exc_str = str(exc)
                     is_transient = (
-                        "503" in str(exc)
-                        or "429" in str(exc)
-                        or "UNAVAILABLE" in str(exc)
+                        "503" in exc_str or "429" in exc_str or "UNAVAILABLE" in exc_str
                     )
                     if is_transient and attempt < max_attempts:
-                        sleep_time = backoff_delays[attempt - 1]
+                        import re
+
+                        retry_match = re.search(
+                            r"retry.*?(\d+(?:\.\d+)?)\s*s", exc_str, re.IGNORECASE
+                        )
+                        if retry_match:
+                            sleep_time = int(float(retry_match.group(1))) + 2
+                        elif "429" in exc_str:
+                            sleep_time = 35 * attempt
+                        else:
+                            sleep_time = backoff_delays[attempt - 1]
+
                         logger.warning(
                             "[%s] Transiente Gemini-Überlastung (%s). Retry %d/%d in %ds...",
                             active_run_id,

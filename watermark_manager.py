@@ -114,9 +114,17 @@ class WatermarkManager:
                     except Exception:
                         pass
 
-            # Neueste zuerst sortieren
+            # Sortierung: Schweregrad (critical > high > medium > low), Tier (primary vor secondary), Neueste zuerst
+            severity_weights = {"critical": 3, "high": 2, "medium": 1, "low": 0}
+            tier_weights = {"primary": 1, "secondary": 0}
             selected.sort(
-                key=lambda x: (x.published_date or "", x.first_seen_at), reverse=True
+                key=lambda x: (
+                    severity_weights.get(x.severity, 0),
+                    tier_weights.get(x.source_tier, 0),
+                    x.published_date or "",
+                    x.first_seen_at,
+                ),
+                reverse=True,
             )
             return selected
 

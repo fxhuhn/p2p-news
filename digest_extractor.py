@@ -129,11 +129,24 @@ class DigestExtractor:
                 )
                 break
             except Exception as exc:
+                exc_str = str(exc)
                 is_transient = (
-                    "503" in str(exc) or "429" in str(exc) or "UNAVAILABLE" in str(exc)
+                    "503" in exc_str or "429" in exc_str or "UNAVAILABLE" in exc_str
                 )
                 if is_transient and attempt < max_attempts:
-                    sleep_time = 3 * attempt
+                    import re
+                    import time
+
+                    retry_match = re.search(
+                        r"retry.*?(\d+(?:\.\d+)?)\s*s", exc_str, re.IGNORECASE
+                    )
+                    if retry_match:
+                        sleep_time = int(float(retry_match.group(1))) + 2
+                    elif "429" in exc_str:
+                        sleep_time = 35 * attempt
+                    else:
+                        sleep_time = 3 * attempt
+
                     logger.warning(
                         "[%s] Transiente Gemini-Überlastung (%s). Wiederholung %d/%d in %ds...",
                         active_run_id,
@@ -142,8 +155,6 @@ class DigestExtractor:
                         max_attempts,
                         sleep_time,
                     )
-                    import time
-
                     time.sleep(sleep_time)
                 else:
                     raise
@@ -288,11 +299,21 @@ def run_stage1_pipeline(
         selected_items = all_items[:15]
         logger.info("Verwende %d Fallback-Items für den Testlauf.", len(selected_items))
 
-    if limit is not None and limit > 0:
+    # Obergrenze festlegen, um Token-Erschöpfung (Free-Tier Limit 250k TPM) zu verhindern
+    max_items = limit
+    if max_items is None:
+        import os
+
+        env_val = os.getenv("MAX_DIGEST_ITEMS")
+        max_items = int(env_val) if env_val and env_val.isdigit() else 50
+
+    if max_items > 0 and len(selected_items) > max_items:
         logger.info(
-            "Begrenze ausgewählte Items auf %d (von %d)", limit, len(selected_items)
+            "Begrenze ausgewählte Items auf die Top %d wichtigsten Meldungen (von %d) für Stufe 1.",
+            max_items,
+            len(selected_items),
         )
-        selected_items = selected_items[:limit]
+        selected_items = selected_items[:max_items]
 
     extractor = DigestExtractor(
         runs_dir=base / "runs",
