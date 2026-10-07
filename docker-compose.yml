@@ -2,9 +2,6 @@ services:
   p2p-news:
     image: ghcr.io/fxhuhn/p2p-news:latest
     pull_policy: always
-    build:
-      context: .
-      dockerfile: Dockerfile
     container_name: p2p-news
     restart: unless-stopped
     env_file:
