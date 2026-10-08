@@ -169,7 +169,16 @@ def run_pipeline(
     if is_publish:
         logger.info("ERFOLG: Finaler Newsletter versiegelt und veröffentlicht!")
         logger.info("Pfad: %s", out_file)
-        logger.info("Manifest: %s/digests/digest-%s.manifest.json", base, target_week)
+        manifest_file = base / "digests" / f"digest-{target_week}.manifest.json"
+        logger.info("Manifest: %s", manifest_file)
+
+        from git_publisher import publish_changes
+
+        publish_changes(
+            files=[out_file, manifest_file],
+            commit_message=f"chore(newsletter): publish newsletter {target_week}",
+            data_dir=base,
+        )
     else:
         logger.info("ERFOLG: Entwurf (Draft) erstellt zur menschlichen Durchsicht!")
         logger.info("Pfad: %s", out_file)

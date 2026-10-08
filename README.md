@@ -259,6 +259,40 @@ Führt die 5 Stufen des Development Pipeline Gates aus (`ruff format`, `ruff che
 
 ---
 
+## Automatisierte Verteilung: Push zurück auf GitHub (Phase 1)
+
+Generierte Newsletter, Monats-Rankings und Plattform-Factsheets werden nach Fertigstellung automatisch in das GitHub-Repository committet und gepusht:
+
+* **Monatlich:** `data/rankings/audit-ranking-YYYY-MM.md` & `data/factsheets/*.md`
+* **Wöchentlich (nach Freigabe):** `data/newsletters/newsletter-YYYY-Wxx.md`
+
+### Dual-Engine-Architektur
+
+1. **Git CLI Modus:** Nutzt das lokale `git`-Binary, wenn ein `.git`-Verzeichnis existiert (z. B. auf dem Server oder Host).
+2. **GitHub REST API Modus (Zero-CLI):** Erstellt atomare Commits direkt über die GitHub Git Database API. Ideal für schlanke Docker-Container, in denen nur `/app/data` gemountet ist.
+
+### Konfiguration via `.env`
+
+```bash
+# Push aktivieren / deaktivieren (Standard: true)
+GIT_PUSH_ENABLED=true
+
+# GitHub Personal Access Token (PAT mit 'repo' Rechten) für Container-Pushes
+GITHUB_TOKEN=ghp_deinPersonalAccessTokenHier
+
+# Ziel-Repository & Branch
+GITHUB_REPOSITORY=fxhuhn/p2p-news
+GIT_BRANCH=main
+```
+
+### Manuelle Ausführung via CLI
+
+```bash
+python git_publisher.py --files data/rankings/audit-ranking-2026-10.md data/factsheets --message "chore(rankings): update monthly audit scores"
+```
+
+---
+
 ## Container (Docker & Docker Compose)
 
 ### Image aus GitHub Container Registry (GHCR) laden

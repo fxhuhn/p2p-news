@@ -58,7 +58,9 @@ def ensure_platform_profiles(data_dir: Path | str = "data") -> list[str]:
 
 
 def run_full_audit(
-    audit_date: str | None = None, data_dir: Path | str = "data"
+    audit_date: str | None = None,
+    data_dir: Path | str = "data",
+    do_publish: bool = True,
 ) -> tuple[int, Path]:
     base = Path(data_dir)
     audit_date = audit_date or datetime.date.today().isoformat()
@@ -125,6 +127,16 @@ def run_full_audit(
     # Master-Ranking generieren
     ranking_path = ranking_gen.generate_monthly_ranking(audit_date=audit_date)
     logger.info(f"✓ Master-Ranking generiert: {ranking_path}")
+
+    # Git Push ausführen
+    if do_publish:
+        from git_publisher import publish_changes
+
+        publish_changes(
+            files=[ranking_path, base / "factsheets"],
+            commit_message=f"chore(audit): publish monthly platform rankings and factsheets {audit_date[:7]}",
+            data_dir=base,
+        )
 
     return scored_count, ranking_path
 

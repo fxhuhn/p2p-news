@@ -14,6 +14,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
+    git \
     tzdata \
     && ln -fs /usr/share/zoneinfo/Europe/Berlin /etc/localtime \
     && echo "Europe/Berlin" > /etc/timezone \
