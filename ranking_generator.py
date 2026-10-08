@@ -70,6 +70,7 @@ class RankingGenerator:
             f"year_month: '{year_month}'",
             f"platforms_count: {len(enriched_scores)}",
             "model: 'Mathematisches Nettomodell (Max. 100 Pkt - Mali)'",
+            "generator: 'P2P Audit Scoring System'",
             f"generated_at: '{now_iso}'",
             "---",
             "",
@@ -233,13 +234,7 @@ class RankingGenerator:
                 f"| {fs_link} | **{s['net_score']}** | `{s['risk_class']}` | {r_str} | {g_str} | {e_str} | {w_str} |"
             )
 
-        lines.extend(
-            [
-                "",
-                "---",
-                f"*Erstellt am {audit_date} durch das P2P Audit Scoring System.*",
-            ]
-        )
+        lines.append("")
 
         target_file = self.output_dir / f"audit-ranking-{year_month}.md"
         with open(target_file, "w", encoding="utf-8") as f:

@@ -4,7 +4,8 @@ audit_date: '2026-10-08'
 year_month: '2026-10'
 platforms_count: 31
 model: 'Mathematisches Nettomodell (Max. 100 Pkt - Mali)'
-generated_at: '2026-10-08T12:47:06.373946+00:00'
+generator: 'P2P Audit Scoring System'
+generated_at: '2026-10-08T12:48:55.812701+00:00'
 ---
 
 # P2P Platform Audit Ranking – 2026-10
@@ -110,6 +111,3 @@ Abgleich unseres mathematischen Netto-Scores mit den externen Experten-Rankings:
 | [Monefit](../factsheets/monefit.md) | **16** | `DISTRESSED` | **4.8** (Platz 23) | **50** (Platz 21 von 40) | **0.0** | **16** |
 | [Asterra](../factsheets/asterra.md) | **13** | `DISTRESSED` | - | **14** (Platz 36 von 40) | **2.5** | **5** |
 | [Ventus](../factsheets/ventus.md) | **0** | `DISTRESSED` | - | **0** (Platz 40 von 40) | **0.0** | - |
-
----
-*Erstellt am 2026-10-08 durch das P2P Audit Scoring System.*

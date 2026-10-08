@@ -308,8 +308,10 @@ class TestAuditScoring(unittest.TestCase):
         self.assertTrue(content.startswith("---\n"))
         self.assertIn("audit_date: '2026-10-08'", content)
         self.assertIn("platforms_count: 1", content)
+        self.assertIn("generator: 'P2P Audit Scoring System'", content)
         self.assertNotIn("**Stichtag:**", content)
         self.assertNotIn("**Geprüfte Plattformen:**", content)
+        self.assertNotIn("*Erstellt am", content)
 
         # Tabelle enthält Δ Vormonat
         self.assertIn("Δ Vormonat", content)
