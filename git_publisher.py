@@ -147,6 +147,32 @@ class GitPublisher:
         )
         return False
 
+    ALLOWED_DATA_CATEGORIES: set[str] = {"newsletters", "rankings", "factsheets"}
+
+    def _is_allowed_file(self, path: Path) -> bool:
+        """Prüft, ob eine Datei für den GitHub-Sync autorisiert ist.
+
+        Regel: Innerhalb von data/ dürfen ausschließlich 'newsletters' (ohne drafts),
+        'rankings' und 'factsheets' nach GitHub synchronisiert werden.
+        Alle anderen Verzeichnisse (crawled news, erfahrungen, platforms, digests, items, snapshots)
+        sind rein lokal.
+        """
+        try:
+            rel = path.resolve().relative_to((self.repo_dir / "data").resolve())
+            parts = rel.parts
+            if not parts:
+                return False
+            category = parts[0]
+            if category not in self.ALLOWED_DATA_CATEGORIES:
+                return False
+            # Drafts niemals übertragen
+            if category == "newsletters" and len(parts) > 1 and parts[1] == "drafts":
+                return False
+            return True
+        except ValueError:
+            # Datei liegt außerhalb von data/ (z. B. Root-Dateien bei expliziter Übergabe)
+            return True
+
     def _resolve_file_list(self, files: list[Path | str]) -> list[Path]:
         """Löst Pfade, Verzeichnisse und Globs in existierende Dateipfade auf."""
         result: list[Path] = []
@@ -158,13 +184,13 @@ class GitPublisher:
             if p.is_dir():
                 for sub in p.rglob("*"):
                     if sub.is_file() and not sub.name.startswith("."):
-                        if "digests" in sub.parts or "platforms" in sub.parts:
+                        if not self._is_allowed_file(sub):
                             continue
                         result.append(sub.resolve())
             elif p.is_file():
-                if "digests" in p.parts or "platforms" in p.parts:
+                if not self._is_allowed_file(p):
                     logger.debug(
-                        "[GIT-PUBLISHER] Ignoriere lokale Datei: %s (kein GitHub-Sync erforderlich)",
+                        "[GIT-PUBLISHER] Ignoriere lokale Datei: %s (nur newsletters, rankings, factsheets zulässig)",
                         p,
                     )
                     continue
@@ -180,7 +206,7 @@ class GitPublisher:
                     matched = list(self.repo_dir.glob(rel_pat))
                     for m in matched:
                         if m.is_file():
-                            if "digests" in m.parts or "platforms" in m.parts:
+                            if not self._is_allowed_file(m):
                                 continue
                             result.append(m.resolve())
                 except Exception:

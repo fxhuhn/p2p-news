@@ -68,8 +68,17 @@ class TestGitPublisher(unittest.TestCase):
         )
         self.assertEqual(resolved_empty, [])
 
-    def test_ignore_digest_and_platform_files(self) -> None:
-        """Prüft, dass Digest- und Platform-Dateien explizit vom GitHub-Sync ausgeschlossen werden."""
+    def test_strict_data_whitelist_newsletters_rankings_factsheets_only(
+        self,
+    ) -> None:
+        """Prüft, dass ausschließlich newsletters, rankings und factsheets als Daten übertragen werden."""
+        # Erlaubte Factsheet-Datei
+        fs_dir = self.repo_dir / "data" / "factsheets"
+        fs_dir.mkdir(parents=True, exist_ok=True)
+        factsheet_file = fs_dir / "mintos.md"
+        factsheet_file.write_text("# Mintos Factsheet", encoding="utf-8")
+
+        # Nicht erlaubte lokale Dateien
         digest_dir = self.repo_dir / "data" / "digests"
         digest_dir.mkdir(parents=True, exist_ok=True)
         digest_file = digest_dir / "digest-2026-W41.manifest.json"
@@ -80,21 +89,51 @@ class TestGitPublisher(unittest.TestCase):
         plat_file = plat_dir / "profile.yaml"
         plat_file.write_text("platform: mintos", encoding="utf-8")
 
+        draft_dir = self.repo_dir / "data" / "newsletters" / "drafts"
+        draft_dir.mkdir(parents=True, exist_ok=True)
+        draft_file = draft_dir / "newsletter-2026-W41.draft.md"
+        draft_file.write_text("# Draft", encoding="utf-8")
+
+        item_dir = self.repo_dir / "data" / "items"
+        item_dir.mkdir(parents=True, exist_ok=True)
+        item_file = item_dir / "item_01.md"
+        item_file.write_text("# Item", encoding="utf-8")
+
+        db_file = self.repo_dir / "data" / "p2p_archive.db"
+        db_file.write_text("mock db", encoding="utf-8")
+
         pub = GitPublisher(repo_dir=self.repo_dir)
 
-        # Direkt übergeben
+        # 1. Direkte Übergabe
         resolved = pub._resolve_file_list(
-            [digest_file, plat_file, self.newsletter_file]
+            [
+                self.newsletter_file,
+                self.ranking_file,
+                factsheet_file,
+                digest_file,
+                plat_file,
+                draft_file,
+                item_file,
+                db_file,
+            ]
         )
+        # Erlaubt
+        self.assertIn(self.newsletter_file.resolve(), resolved)
+        self.assertIn(self.ranking_file.resolve(), resolved)
+        self.assertIn(factsheet_file.resolve(), resolved)
+        # Verboten
         self.assertNotIn(digest_file.resolve(), resolved)
         self.assertNotIn(plat_file.resolve(), resolved)
-        self.assertIn(self.newsletter_file.resolve(), resolved)
+        self.assertNotIn(draft_file.resolve(), resolved)
+        self.assertNotIn(item_file.resolve(), resolved)
+        self.assertNotIn(db_file.resolve(), resolved)
 
-        # Via Verzeichnis übergeben
+        # 2. Rekursive Auflösung von data/
         resolved_dir = pub._resolve_file_list([self.repo_dir / "data"])
-        self.assertNotIn(digest_file.resolve(), resolved_dir)
-        self.assertNotIn(plat_file.resolve(), resolved_dir)
         self.assertIn(self.newsletter_file.resolve(), resolved_dir)
+        self.assertIn(self.ranking_file.resolve(), resolved_dir)
+        self.assertIn(factsheet_file.resolve(), resolved_dir)
+        self.assertEqual(len(resolved_dir), 3)
 
     @patch("git_publisher.shutil.which", return_value="/usr/bin/git")
     def test_has_local_git_repo(self, mock_which: MagicMock) -> None:
