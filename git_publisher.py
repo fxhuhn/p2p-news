@@ -60,18 +60,30 @@ class GitPublisher:
             self.enabled = enabled
 
         self.token = (
-            token or os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN") or ""
-        ).strip()
+            token.strip()
+            if token is not None
+            else (os.getenv("GITHUB_TOKEN") or os.getenv("GH_TOKEN") or "").strip()
+        )
         self.repository = (
-            repository or os.getenv("GITHUB_REPOSITORY") or "fxhuhn/p2p-news"
-        ).strip()
-        self.branch = (branch or os.getenv("GIT_BRANCH") or "main").strip()
+            repository.strip()
+            if repository is not None
+            else (os.getenv("GITHUB_REPOSITORY") or "fxhuhn/p2p-news").strip()
+        )
+        self.branch = (
+            branch.strip()
+            if branch is not None
+            else (os.getenv("GIT_BRANCH") or "main").strip()
+        )
         self.author_name = (
-            author_name or os.getenv("GIT_AUTHOR_NAME") or "P2P News Automation"
-        ).strip()
+            author_name.strip()
+            if author_name is not None
+            else (os.getenv("GIT_AUTHOR_NAME") or "P2P News Automation").strip()
+        )
         self.author_email = (
-            author_email or os.getenv("GIT_AUTHOR_EMAIL") or "bot@p2p-news.local"
-        ).strip()
+            author_email.strip()
+            if author_email is not None
+            else (os.getenv("GIT_AUTHOR_EMAIL") or "bot@p2p-news.local").strip()
+        )
 
     def has_local_git_repo(self) -> bool:
         """Prüft, ob ein gültiges .git-Verzeichnis existiert und git im PATH ist."""
@@ -299,8 +311,8 @@ class GitPublisher:
             api_base = f"https://api.github.com/repos/{self.repository}"
 
             # 1. Neuesten Commit-SHA des Ziel-Branches abrufen
-            ref_url = f"{api_base}/git/ref/heads/{self.branch}"
-            ref_data = self._http_request(ref_url, headers=headers)
+            ref_get_url = f"{api_base}/git/ref/heads/{self.branch}"
+            ref_data = self._http_request(ref_get_url, headers=headers)
             latest_commit_sha = ref_data["object"]["sha"]
 
             # 2. Base Tree SHA des neuesten Commits ermitteln
@@ -361,9 +373,10 @@ class GitPublisher:
             )
             new_commit_sha = new_commit_data["sha"]
 
-            # 6. Branch Ref aktualisieren
+            # 6. Branch Ref aktualisieren (GitHub REST API verlangt strikt Plural /git/refs/ für PATCH)
+            ref_update_url = f"{api_base}/git/refs/heads/{self.branch}"
             self._http_request(
-                ref_url,
+                ref_update_url,
                 method="PATCH",
                 headers=headers,
                 payload={"sha": new_commit_sha},

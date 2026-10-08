@@ -2223,7 +2223,7 @@ class P2PNewsScraper:
                     result.item.content_hash[:12] + "...",
                 )
             case ArticleStatus.UNCHANGED:
-                logger.info(
+                logger.debug(
                     "%s %s [UNVERÄNDERT] %s -> %s | Hash: %s",
                     prefix,
                     type_str,

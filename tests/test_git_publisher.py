@@ -198,6 +198,14 @@ class TestGitPublisher(unittest.TestCase):
         # 5 API-Aufrufe müssen stattgefunden haben
         self.assertEqual(mock_urlopen.call_count, 5)
 
+        # Prüfen, dass der 5. Aufruf PATCH auf das Plural-Endpoint /git/refs/heads/main war
+        patch_req = mock_urlopen.call_args_list[4][0][0]
+        self.assertEqual(patch_req.get_method(), "PATCH")
+        self.assertTrue(
+            patch_req.full_url.endswith("/git/refs/heads/main"),
+            f"Erwartete plural git/refs/heads/main URL, erhalten: {patch_req.full_url}",
+        )
+
     def test_missing_git_and_token(self) -> None:
         """Prüft den sauberen Warn-Fallback, wenn weder .git noch Token existieren."""
         pub = GitPublisher(repo_dir=self.repo_dir, enabled=True, token="")
