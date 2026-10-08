@@ -178,7 +178,7 @@ def run_full_audit(
 
         publish_changes(
             files=[ranking_path, base / "factsheets"],
-            commit_message=f"chore(audit): publish monthly platform rankings and factsheets {audit_date[:7]}",
+            commit_message=f"Auditreport: monthly platform rankings and factsheets {audit_date[:7]}",
             data_dir=base,
         )
 
