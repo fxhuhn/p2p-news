@@ -68,6 +68,25 @@ class TestGitPublisher(unittest.TestCase):
         )
         self.assertEqual(resolved_empty, [])
 
+    def test_ignore_digest_files(self) -> None:
+        """Prüft, dass Digest-Dateien explizit vom GitHub-Sync ausgeschlossen werden."""
+        digest_dir = self.repo_dir / "data" / "digests"
+        digest_dir.mkdir(parents=True, exist_ok=True)
+        digest_file = digest_dir / "digest-2026-W41.manifest.json"
+        digest_file.write_text("{}", encoding="utf-8")
+
+        pub = GitPublisher(repo_dir=self.repo_dir)
+
+        # Direkt übergeben
+        resolved = pub._resolve_file_list([digest_file, self.newsletter_file])
+        self.assertNotIn(digest_file.resolve(), resolved)
+        self.assertIn(self.newsletter_file.resolve(), resolved)
+
+        # Via Verzeichnis übergeben
+        resolved_dir = pub._resolve_file_list([self.repo_dir / "data"])
+        self.assertNotIn(digest_file.resolve(), resolved_dir)
+        self.assertIn(self.newsletter_file.resolve(), resolved_dir)
+
     @patch("git_publisher.shutil.which", return_value="/usr/bin/git")
     def test_has_local_git_repo(self, mock_which: MagicMock) -> None:
         """Prüft die Erkennung von lokalen Git-Repositories."""

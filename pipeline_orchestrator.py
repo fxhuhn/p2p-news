@@ -175,7 +175,7 @@ def run_pipeline(
         from git_publisher import publish_changes
 
         publish_changes(
-            files=[out_file, manifest_file],
+            files=[out_file],
             commit_message=f"chore(newsletter): publish newsletter {target_week}",
             data_dir=base,
         )
