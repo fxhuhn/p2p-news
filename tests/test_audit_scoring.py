@@ -274,6 +274,51 @@ class TestAuditScoring(unittest.TestCase):
             "custom_user_edit: true", mintos_profile.read_text(encoding="utf-8")
         )
 
+    def test_ranking_generator_clean_sections_no_redundant_migration_report(
+        self,
+    ) -> None:
+        """Prüft, dass RankingGenerator keine redundante Migration-Sektion rendert und die Abschnitte sauber nummeriert sind."""
+        from ranking_generator import RankingGenerator
+
+        # Score in Test-DB anlegen
+        s = {
+            "platform": "mintos",
+            "audit_date": "2026-10-08",
+            "raw_score": 84,
+            "net_score": 84,
+            "risk_class": "TOP TIER",
+            "pillar_1": 25,
+            "pillar_2": 22,
+            "pillar_3": 17,
+            "pillar_4": 20,
+            "malus_total": 0,
+            "malus_json": "[]",
+            "has_conflict": False,
+            "sourcing_strategy": "curated_profile",
+            "factsheet_path": "data/factsheets/mintos.md",
+        }
+        self.store.save_platform_score(s)
+
+        out_dir = Path(self.temp_dir) / "rankings"
+        gen = RankingGenerator(db_path=self.db_path, output_dir=str(out_dir))
+        rank_file = gen.generate_monthly_ranking("2026-10-08")
+        content = rank_file.read_text(encoding="utf-8")
+
+        # Tabelle enthält Δ Vormonat
+        self.assertIn("Δ Vormonat", content)
+        # Redundanter Delta-Report entfällt
+        self.assertNotIn("## 2. Rating-Migrationen & Delta-Report", content)
+        self.assertNotIn("### 🔼 Aufwertungen", content)
+        self.assertNotIn("### 🔽 Herabstufungen", content)
+        # Nummerierung der Folgeabschnitte ist konsistent
+        self.assertIn("## 2. Akute Watchlist- & Risiko-Warnungen", content)
+        self.assertIn(
+            "## 3. Portfoliogewichtung für ein 100.000 € Musterdepot", content
+        )
+        self.assertIn(
+            "## 4. Markt-Triangulierung & Benchmark-Vergleichsspiegel", content
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

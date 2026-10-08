@@ -3,11 +3,10 @@ P2P Platform Ranking Generator
 
 Erstellt monatliche Gesamtrankings unter data/rankings/audit-ranking-YYYY-MM.md
 Enthält:
-- Master-Rangliste aller Plattformen (sortiert nach Netto-Score)
-- Historische Differenzen (Deltas +/-) zum Vormonat
-- Migrations-Report (Upgrades, Downgrades, Watchlist-Alarme)
-- Benchmark-Spiegel (Abgleich mit P2P Empire & Lars Wrobbel)
+- Master-Rangliste aller Plattformen (sortiert nach Netto-Score inkl. Deltas +/-)
+- Akute Watchlist- & Risiko-Warnungen
 - Portfolio-Allokationsmatrix für ein 100.000 € Musterdepot
+- Benchmark-Spiegel (Abgleich mit externen Experten-Rankings)
 """
 
 import datetime
@@ -41,8 +40,6 @@ class RankingGenerator:
 
         # Deltas zum Vormonat berechnen
         enriched_scores: List[Dict[str, Any]] = []
-        upgrades: List[Dict[str, Any]] = []
-        downgrades: List[Dict[str, Any]] = []
 
         for s in scores:
             plat = s["platform"]
@@ -52,24 +49,6 @@ class RankingGenerator:
                 delta_str = (
                     f"+{delta}" if delta > 0 else f"{delta}" if delta < 0 else "±0"
                 )
-                if delta > 0:
-                    upgrades.append(
-                        {
-                            "platform": plat,
-                            "delta": delta,
-                            "from": prev["net_score"],
-                            "to": s["net_score"],
-                        }
-                    )
-                elif delta < 0:
-                    downgrades.append(
-                        {
-                            "platform": plat,
-                            "delta": delta,
-                            "from": prev["net_score"],
-                            "to": s["net_score"],
-                        }
-                    )
             else:
                 delta_str = "NEU"
 
@@ -125,37 +104,6 @@ class RankingGenerator:
                 f"| **{rank}** | {fs_link} | **{net}** | `{delta}` | `{k}` | {limit} | {p1} | {p2} | {p3} | {p4} | {malus} | {flag_str} |"
             )
 
-        lines.extend(
-            [
-                "",
-                "## 2. Rating-Migrationen & Delta-Report",
-                "",
-            ]
-        )
-
-        if upgrades or downgrades:
-            if upgrades:
-                lines.append("### 🔼 Aufwertungen (Upgrades)")
-                for u in upgrades:
-                    lines.append(
-                        f"• **{u['platform'].capitalize()}**: Anstieg um +{u['delta']} Punkte (von {u['from']} auf {u['to']} Pkt)."
-                    )
-                lines.append("")
-            if downgrades:
-                lines.append("### 🔽 Herabstufungen (Downgrades)")
-                for d in downgrades:
-                    lines.append(
-                        f"• **{d['platform'].capitalize()}**: Rückgang um {d['delta']} Punkte (von {d['from']} auf {d['to']} Pkt)."
-                    )
-                lines.append("")
-        else:
-            lines.extend(
-                [
-                    "Keine Rating-Migrationen im laufenden Monat. Alle Bestandsplattformen bestätigen ihr Risikoprofil oder wurden neu initialisiert.",
-                    "",
-                ]
-            )
-
         # Watchlist & Risiko-Warnungen
         distressed = [
             s
@@ -164,7 +112,8 @@ class RankingGenerator:
         ]
         lines.extend(
             [
-                "## 3. Akute Watchlist- & Risiko-Warnungen",
+                "",
+                "## 2. Akute Watchlist- & Risiko-Warnungen",
                 "",
             ]
         )
@@ -192,7 +141,7 @@ class RankingGenerator:
         # Allokationsmatrix
         lines.extend(
             [
-                "## 4. Portfoliogewichtung für ein 100.000 € Musterdepot",
+                "## 3. Portfoliogewichtung für ein 100.000 € Musterdepot",
                 "",
                 "| Risikoklasse | Zulässiges Depot-Limit | Plattformen im Universum | Maximale Allokation |",
                 "| :--- | :---: | :--- | :---: |",
@@ -212,7 +161,7 @@ class RankingGenerator:
                 )
                 + " | **0 %** |",
                 "",
-                "## 5. Markt-Triangulierung & Benchmark-Vergleichsspiegel",
+                "## 4. Markt-Triangulierung & Benchmark-Vergleichsspiegel",
                 "",
                 "Abgleich unseres mathematischen Netto-Scores mit den externen Experten-Rankings:",
                 "- **re:think P2P:** Risk Score (0.0 - 10.0) inkl. Red Flags / Malus-Abzüge (Denny Neidhardt)",
