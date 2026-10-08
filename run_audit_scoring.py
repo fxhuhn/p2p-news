@@ -13,6 +13,8 @@ import datetime
 import glob
 import json
 import logging
+import os
+import shutil
 from pathlib import Path
 
 import yaml
@@ -28,33 +30,75 @@ logging.basicConfig(
 logger = logging.getLogger("audit_pipeline")
 
 
-def ensure_platform_profiles(data_dir: Path | str = "data") -> list[str]:
-    """Stellt sicher, dass Plattform-Profile existieren, notfalls aus Seed-Verzeichnis kopieren."""
+def ensure_platform_profiles(
+    data_dir: Path | str = "data",
+    auto_sync: bool | None = None,
+) -> list[str]:
+    """
+    Stellt sicher, dass Plattform-Profile existieren und autark synchronisiert werden.
+
+    Verhalten:
+    - Fehlende Plattform-Profile werden automatisch aus seed_platforms/ initialisiert.
+    - Existierende Profile auf gemounteten Volumes werden bei Container-Restart oder
+      Scoring-Läufen automatisch mit aktualisierten Seed-Profilen synchronisiert
+      (kann via PLATFORM_PROFILES_AUTO_SYNC=false deaktiviert werden).
+    """
     base = Path(data_dir)
     platforms_dir = base / "platforms"
-    profiles = sorted(glob.glob(str(platforms_dir / "*/profile.yaml")))
-    if not profiles:
-        seed_candidates = [
-            Path("seed_platforms"),
-            Path("/app/seed_platforms"),
-            Path(__file__).resolve().parent / "seed_platforms",
-        ]
-        for seed_dir in seed_candidates:
-            if seed_dir.exists() and list(seed_dir.glob("*/profile.yaml")):
-                logger.info(
-                    "Initialisiere fehlende Plattform-Profile in %s aus %s...",
-                    platforms_dir,
-                    seed_dir,
-                )
-                import shutil
+    platforms_dir.mkdir(parents=True, exist_ok=True)
 
-                for profile_path in seed_dir.glob("*/profile.yaml"):
-                    dest = platforms_dir / profile_path.parent.name / "profile.yaml"
+    if auto_sync is None:
+        env_val = os.getenv("PLATFORM_PROFILES_AUTO_SYNC", "true").strip().lower()
+        should_sync = env_val not in ("false", "0", "no", "off")
+    else:
+        should_sync = auto_sync
+
+    seed_candidates = [
+        Path("seed_platforms"),
+        Path("/app/seed_platforms"),
+        Path(__file__).resolve().parent / "seed_platforms",
+    ]
+
+    for seed_dir in seed_candidates:
+        if seed_dir.exists() and list(seed_dir.glob("*/profile.yaml")):
+            created_cnt = 0
+            updated_cnt = 0
+
+            for seed_path in seed_dir.glob("*/profile.yaml"):
+                platform_name = seed_path.parent.name
+                dest = platforms_dir / platform_name / "profile.yaml"
+
+                if not dest.exists():
                     dest.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copy2(profile_path, dest)
-                break
-        profiles = sorted(glob.glob(str(platforms_dir / "*/profile.yaml")))
-    return profiles
+                    shutil.copy2(seed_path, dest)
+                    created_cnt += 1
+                elif should_sync:
+                    try:
+                        seed_content = seed_path.read_text(encoding="utf-8")
+                        dest_content = dest.read_text(encoding="utf-8")
+                        if seed_content != dest_content:
+                            shutil.copy2(seed_path, dest)
+                            updated_cnt += 1
+                            logger.debug(
+                                "[PLATFORMS] Profil für '%s' auf neueste Seed-Version aktualisiert.",
+                                platform_name,
+                            )
+                    except Exception as err:
+                        logger.warning(
+                            "[PLATFORMS] Fehler beim Abgleich von Profil %s: %s",
+                            platform_name,
+                            err,
+                        )
+
+            if created_cnt > 0 or updated_cnt > 0:
+                logger.info(
+                    "✓ [PLATFORMS] Autarker Profil-Sync abgeschlossen (%d initialisiert, %d aktualisiert).",
+                    created_cnt,
+                    updated_cnt,
+                )
+            break
+
+    return sorted(glob.glob(str(platforms_dir / "*/profile.yaml")))
 
 
 def run_full_audit(

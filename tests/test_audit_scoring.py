@@ -232,6 +232,48 @@ class TestAuditScoring(unittest.TestCase):
             (empty_data_dir / "platforms" / "mintos" / "profile.yaml").exists()
         )
 
+    def test_ensure_platform_profiles_auto_sync_on_restart(self):
+        """Prüft, dass veraltete Profile auf gemounteten Volumes autark aktualisiert werden."""
+        from run_audit_scoring import ensure_platform_profiles
+
+        test_data_dir = Path(self.temp_dir) / "test_sync_data"
+        test_data_dir.mkdir(parents=True, exist_ok=True)
+
+        # 1. Initialisiere
+        ensure_platform_profiles(data_dir=test_data_dir)
+        mintos_profile = test_data_dir / "platforms" / "mintos" / "profile.yaml"
+        self.assertTrue(mintos_profile.exists())
+
+        # 2. Veralteten Inhalt simulieren
+        mintos_profile.write_text(
+            "platform: mintos\noutdated: true\n", encoding="utf-8"
+        )
+        self.assertIn("outdated: true", mintos_profile.read_text(encoding="utf-8"))
+
+        # 3. Autarker Sync bei Restart
+        ensure_platform_profiles(data_dir=test_data_dir, auto_sync=True)
+        updated_content = mintos_profile.read_text(encoding="utf-8")
+        self.assertNotIn("outdated: true", updated_content)
+        self.assertIn("founding_year: 2015", updated_content)
+
+    def test_ensure_platform_profiles_sync_disabled(self):
+        """Prüft, dass bei auto_sync=False bestehende Profile nicht überschrieben werden."""
+        from run_audit_scoring import ensure_platform_profiles
+
+        test_data_dir = Path(self.temp_dir) / "test_no_sync_data"
+        test_data_dir.mkdir(parents=True, exist_ok=True)
+
+        ensure_platform_profiles(data_dir=test_data_dir)
+        mintos_profile = test_data_dir / "platforms" / "mintos" / "profile.yaml"
+        mintos_profile.write_text(
+            "platform: mintos\ncustom_user_edit: true\n", encoding="utf-8"
+        )
+
+        ensure_platform_profiles(data_dir=test_data_dir, auto_sync=False)
+        self.assertIn(
+            "custom_user_edit: true", mintos_profile.read_text(encoding="utf-8")
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
