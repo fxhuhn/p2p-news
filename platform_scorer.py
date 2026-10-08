@@ -27,6 +27,20 @@ from scoring_models import (
     determine_risk_class,
 )
 
+DEFAULT_PENALTY_TERM_MISMATCH: int = -7
+DEFAULT_PENALTY_RELATED_PARTY: int = -10
+DEFAULT_PENALTY_DISTRESSED: int = -20
+DEFAULT_PENALTY_MARKETPLACE_ORIGINATOR: int = -10
+
+
+def _sanitize_penalty(raw_penalty: Any, default_penalty: int) -> int:
+    """Stellt sicher, dass Malus-Strafen strikt negativ und im regulatorischen Rahmen (-20 bis -1) liegen."""
+    try:
+        val = int(raw_penalty)
+        return min(-1, max(-20, val))
+    except (TypeError, ValueError):
+        return default_penalty
+
 
 class PlatformScorer:
     """Führt die deterministische Bewertung für ein Plattform-Profil durch."""
@@ -213,11 +227,7 @@ class PlatformScorer:
     def _score_pillar_2(self, sol: Dict[str, Any]) -> PillarFactExtract:
         auditor = (sol.get("auditor") or "").lower()
         opinion = (sol.get("audit_opinion") or "").lower()
-        equity_ratio = (
-            sol.get("equity_ratio_pct")
-            if sol.get("equity_ratio_pct") is not None
-            else sol.get("equity_ratio_pct: ")
-        )
+        equity_ratio = sol.get("equity_ratio_pct")
         icr = sol.get("interest_coverage_ratio")
         notes = sol.get("notes", "")
 
@@ -269,16 +279,27 @@ class PlatformScorer:
                 )
             rating_label = "Sehr gut / Testiert"
 
-        elif "lokal" in auditor or (equity_ratio is not None and equity_ratio > 15.0):
+        elif not auditor or "ungeprüft" in opinion or auditor == "none":
+            # Vorsichtsprinzip bei fehlendem / ungeprüftem Abschluss
+            band_id = "Band_0_6"
+            base_score = 3
+            if equity_ratio is not None and equity_ratio > 15.0:
+                modifiers.append(
+                    ModifierEvaluation(
+                        name="Ungeprüfte Management-EK-Quote (>15 %)",
+                        points=2,
+                        condition_met=True,
+                        rationale=f"Management berichtet {equity_ratio} % EK-Quote (ohne externes Testat).",
+                    )
+                )
+            rating_label = "Keine testierten Finanzberichte"
+
+        elif "lokal" in auditor or (
+            auditor and equity_ratio is not None and equity_ratio > 15.0
+        ):
             band_id = "Band_14_20"
             base_score = 17
             rating_label = "Solide / Lokaler Abschluss"
-
-        elif not is_top_auditor and not auditor:
-            # Vorsichtsprinzip bei fehlendem Abschluss
-            band_id = "Band_0_6"
-            base_score = 3
-            rating_label = "Keine testierten Finanzberichte"
 
         else:
             band_id = "Band_7_13"
@@ -441,7 +462,7 @@ class PlatformScorer:
         has_secondary = liq.get("secondary_market", False)
         sm_fee = liq.get("secondary_market_fee_pct")
         waiting_days = liq.get("secondary_market_waiting_days", 0)
-        duration_days = liq.get("primary_loan_duration_days_avg", 180)
+        duration_days = liq.get("primary_loan_duration_days_avg")
         queue_days = liq.get("withdrawal_queue_days", 0)
         notes = liq.get("notes", "")
 
@@ -480,6 +501,7 @@ class PlatformScorer:
 
         elif (
             has_secondary
+            and duration_days is not None
             and duration_days <= 90
             and (waiting_days is None or waiting_days == 0)
         ):
@@ -506,7 +528,7 @@ class PlatformScorer:
                 )
             rating_label = "Sehr liquide / Kurzläufer & Zweitmarkt"
 
-        elif has_secondary or duration_days <= 180:
+        elif has_secondary or (duration_days is not None and duration_days <= 180):
             band_id = "Band_13_19"
             base_score = 16
             if waiting_days is not None and waiting_days >= 180:
@@ -529,15 +551,21 @@ class PlatformScorer:
                 )
             rating_label = "Gute Liquidität"
 
-        elif not has_secondary and duration_days > 365:
+        elif not has_secondary and duration_days is not None and duration_days > 365:
             band_id = "Band_6_12"
             base_score = 9
             rating_label = "Illiquide / Langläufer ohne Zweitmarkt"
 
-        else:
+        elif duration_days is not None:
             band_id = "Band_6_12"
             base_score = 11
             rating_label = "Planbare Tilgung"
+
+        else:
+            # Vorsichtsprinzip bei fehlenden oder unvollständigen Liquiditätsdaten
+            band_id = "Band_0_5"
+            base_score = 3
+            rating_label = "Unzureichende Liquiditätsdaten / Minimalwert"
 
         final_score = base_score + sum(m.points for m in modifiers if m.condition_met)
         final_score = max(0, min(25, final_score))
@@ -586,7 +614,10 @@ class PlatformScorer:
                 "term_mismatch_detail",
                 "Tägliche Auszahlung mit langlaufenden Notes hinterlegt",
             )
-            penalty = triggers.get("term_mismatch_penalty", -7)
+            raw_penalty = triggers.get(
+                "term_mismatch_penalty", DEFAULT_PENALTY_TERM_MISMATCH
+            )
+            penalty = _sanitize_penalty(raw_penalty, DEFAULT_PENALTY_TERM_MISMATCH)
             mali.append(
                 MalusItem(
                     type="term_mismatch",
@@ -603,7 +634,10 @@ class PlatformScorer:
             detail = triggers.get(
                 "related_party_detail", "Insidergeschäfte / Schwesterfirmen-Aufschläge"
             )
-            penalty = triggers.get("related_party_penalty", -10)
+            raw_penalty = triggers.get(
+                "related_party_penalty", DEFAULT_PENALTY_RELATED_PARTY
+            )
+            penalty = _sanitize_penalty(raw_penalty, DEFAULT_PENALTY_RELATED_PARTY)
             mali.append(
                 MalusItem(
                     type="related_party",
@@ -620,7 +654,8 @@ class PlatformScorer:
             detail = triggers.get(
                 "distressed_notes", "Portfolio-NPL >40 % oder gerichtliche Sanierung"
             )
-            penalty = triggers.get("distressed_penalty", -20)
+            raw_penalty = triggers.get("distressed_penalty", DEFAULT_PENALTY_DISTRESSED)
+            penalty = _sanitize_penalty(raw_penalty, DEFAULT_PENALTY_DISTRESSED)
             mali.append(
                 MalusItem(
                     type="distressed",
@@ -638,7 +673,13 @@ class PlatformScorer:
                 "marketplace_originator_detail",
                 "Wiederholte Ausfälle externer Kreditanbahner / erhebliche Pending Payments",
             )
-            penalty = triggers.get("marketplace_originator_penalty", -10)
+            raw_penalty = triggers.get(
+                "marketplace_originator_penalty",
+                DEFAULT_PENALTY_MARKETPLACE_ORIGINATOR,
+            )
+            penalty = _sanitize_penalty(
+                raw_penalty, DEFAULT_PENALTY_MARKETPLACE_ORIGINATOR
+            )
             mali.append(
                 MalusItem(
                     type="marketplace_originator_risk",
@@ -687,6 +728,13 @@ class PlatformScorer:
         ).get("notes"):
             data_gaps.append(
                 "Unzureichende Dokumentation der Besicherung oder Ausfallhistorie."
+            )
+        queue_days = profile.get("liquidity_and_marketplace", {}).get(
+            "withdrawal_queue_days", 0
+        )
+        if p4.band_id == "Band_0_5" and queue_days <= 7:
+            data_gaps.append(
+                "Unzureichende Dokumentation der Liquidität oder Laufzeiten (Säule 4 auf Minimalwert gesetzt)."
             )
         gaps = profile.get("data_gaps")
         if isinstance(gaps, list):

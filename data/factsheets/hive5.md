@@ -4,16 +4,18 @@ platform_name: hive5
 audit_date: '2026-10-08'
 audit_version: '1.0'
 audit_score:
-  net_score: 57
-  raw_score: 63
-  risk_class: WATCHLIST
-  portfolio_limit: 0 - 3 %
-  recommendation: 'Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende
-    Testate oder Governance-Risse.'
+  net_score: 45
+  raw_score: 51
+  risk_class: SPECULATIVE
+  portfolio_limit: 0 % (Neuanlage-Stopp)
+  recommendation: 'Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen
+    oder Pending Payments.'
 flags:
   has_conflict: false
   conflict_notes: []
   data_gaps:
+  - Keine unabhängig testierten Finanzberichte auffindbar (Säule 2 auf Minimalwert
+    gesetzt).
   - Unabhängig testierter Konzernabschluss der Hive Finance Gruppe steht noch aus
 evidence_metadata:
   sourcing_strategy: curated_profile_and_secondary_audits
@@ -41,10 +43,10 @@ pillars:
       Externe Zahlungsabwicklung über lizenziertes EMI (Paysera). Keine MiFID II /
       ECSP-Lizenz.
   pillar_2_solvency:
-    score: 17
+    score: 5
     max_score: 25
-    band: Band_14_20
-    rating: Solide / Lokaler Abschluss
+    band: Band_0_6
+    rating: Keine testierten Finanzberichte
     evidence: Gehört zur Hive Finance Gruppe. Starkes Wachstum, Management berichtet
       Profitabilität, jedoch noch kein unabhängiges Big-Four / Tier-2 Testat.
   pillar_3_collateral:
@@ -76,16 +78,17 @@ sources:
 
 # Platform Audit Factsheet: hive5
 
-**Audit-Datum:** 2026-10-08 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
+**Audit-Datum:** 2026-10-08 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **57 / 100 Punkte** (Rohscore: 63 Pkt | Malus-Abschläge: -6 Pkt)
-> **Allokationsempfehlung:** Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende Testate oder Governance-Risse.
+> **Finaler Netto-Score:** **45 / 100 Punkte** (Rohscore: 51 Pkt | Malus-Abschläge: -6 Pkt)
+> **Allokationsempfehlung:** Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen oder Pending Payments.
 
 > [!NOTE]
 > **Vorsichtsprinzip bei Datenlücken aktiv:**
+> • Keine unabhängig testierten Finanzberichte auffindbar (Säule 2 auf Minimalwert gesetzt).
 > • Unabhängig testierter Konzernabschluss der Hive Finance Gruppe steht noch aus
 
 ## 2. Aufschlüsselung der 4 Säulen
@@ -93,10 +96,10 @@ sources:
 | Säule | Kategorie | Punkte | Einstufung | Kern-Evidenz |
 | :--- | :--- | :---: | :--- | :--- |
 | **Säule 1** | Regulierung & Verwahrung | **10 / 25** | Unreguliert (Abtretungsverträge) | Operiert über kroatisches SPV (hive5 d.o.o.) mit Abtretungsverträgen. Externe Zahlungsabwicklung über lizenziertes EMI (Paysera). Keine MiFID II / ECSP-Lizenz. |
-| **Säule 2** | Solvenz & Governance | **17 / 25** | Solide / Lokaler Abschluss | Gehört zur Hive Finance Gruppe. Starkes Wachstum, Management berichtet Profitabilität, jedoch noch kein unabhängiges Big-Four / Tier-2 Testat. |
+| **Säule 2** | Solvenz & Governance | **5 / 25** | Keine testierten Finanzberichte | Gehört zur Hive Finance Gruppe. Starkes Wachstum, Management berichtet Profitabilität, jedoch noch kein unabhängiges Big-Four / Tier-2 Testat. |
 | **Säule 3** | Besicherung & Workout | **16 / 25** | Unbesichert mit Buyback | Unbesicherte Payday- und Konsumentenkredite der Konzerngesellschaften (Rupex, Tengo). Rückkaufverpflichtung nach 60 Tagen. |
 | **Säule 4** | Liquidität & Zweitmarkt | **20 / 25** | Sehr liquide / Kurzläufer & Zweitmarkt | Sehr kurze Laufzeiten (meist 30-90 Tage, Ø 45 Tage) kombiniert mit dem im Oktober 2026 (KW 41) eingeführten gebührenfreien Sekundärmarkt. Zügige Auszahlungen. |
-| **SUMME** | **Rohscore (vor Mali)** | **63 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **SUMME** | **Rohscore (vor Mali)** | **51 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 

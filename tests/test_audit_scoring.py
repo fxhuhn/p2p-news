@@ -51,7 +51,7 @@ class TestAuditScoring(unittest.TestCase):
             "governance_and_solvency": {
                 "auditor": "BDO (unabhängig testiert)",
                 "audit_opinion": "Unqualified",
-                "equity_ratio_pct: ": 28.5,
+                "equity_ratio_pct": 28.5,
                 "notes": "Creamfinance Gruppe hochprofitabel.",
             },
             "collateral_and_workout": {
@@ -389,6 +389,86 @@ class TestAuditScoring(unittest.TestCase):
         self.assertIn(
             "## 4. Markt-Triangulierung & Benchmark-Vergleichsspiegel", content
         )
+
+    def test_untested_auditor_prudence_principle(self):
+        """Prüft, dass Plattformen ohne Wirtschaftsprüfer nicht in Band 14-20 (17 Pkt) fallen, nur weil das Management hohe EK-Quoten angibt."""
+        sol_untested = {
+            "auditor": None,
+            "audit_opinion": "Ungeprüft",
+            "equity_ratio_pct": 25.0,
+            "interest_coverage_ratio": 2.5,
+            "notes": "Management berichtet 25% EK, aber kein Abschlussprüfer vorhanden.",
+        }
+        res = self.scorer._score_pillar_2(sol_untested)
+        self.assertEqual(res.band_id, "Band_0_6")
+        self.assertEqual(
+            res.final_score, 5
+        )  # 3 Basis + 2 unbestätigte Management-Angabe
+        self.assertEqual(res.rating_label, "Keine testierten Finanzberichte")
+
+    def test_pillar_4_conservative_fallback_on_missing_liquidity_data(self):
+        """Prüft, dass bei fehlenden Liquiditätsdaten konservativ Band_0_5 (3 Pkt) und eine Datenlücke vergeben wird."""
+        profile = {
+            "platform": "unknown_p2p",
+            "liquidity_and_marketplace": {},
+        }
+        res = self.scorer.score_platform(profile)
+        self.assertEqual(res["pillar_4"].band_id, "Band_0_5")
+        self.assertEqual(res["pillar_4"].final_score, 3)
+        self.assertEqual(
+            res["pillar_4"].rating_label,
+            "Unzureichende Liquiditätsdaten / Minimalwert",
+        )
+        self.assertIn(
+            "Unzureichende Dokumentation der Liquidität oder Laufzeiten (Säule 4 auf Minimalwert gesetzt).",
+            res["flags"].data_gaps,
+        )
+
+    def test_malus_penalty_sanitization_prevents_positive_or_zero_bypass(self):
+        """Prüft, dass Malus-Strafen nicht durch positive Zahlen oder Null ausgehebelt werden können."""
+        # 1. Positiver Wert (10) muss auf mindestens -1 geklemmt werden
+        profile_positive = {
+            "platform": "test_bypass",
+            "malus_triggers": {
+                "term_mismatch": True,
+                "term_mismatch_penalty": 10,
+            },
+        }
+        res_pos = self.scorer.score_platform(profile_positive)
+        self.assertEqual(res_pos["malus_deductions"][0].penalty, -1)
+
+        # 2. Null (0) muss auf mindestens -1 geklemmt werden
+        profile_zero = {
+            "platform": "test_bypass",
+            "malus_triggers": {
+                "term_mismatch": True,
+                "term_mismatch_penalty": 0,
+            },
+        }
+        res_zero = self.scorer.score_platform(profile_zero)
+        self.assertEqual(res_zero["malus_deductions"][0].penalty, -1)
+
+        # 3. Zu hoher Abzug (-30) wird auf maximal -20 begrenzt
+        profile_excess = {
+            "platform": "test_bypass",
+            "malus_triggers": {
+                "term_mismatch": True,
+                "term_mismatch_penalty": -30,
+            },
+        }
+        res_excess = self.scorer.score_platform(profile_excess)
+        self.assertEqual(res_excess["malus_deductions"][0].penalty, -20)
+
+        # 4. Ungültiger Typ ("ungültig") fällt auf Default (-7) zurück
+        profile_invalid = {
+            "platform": "test_bypass",
+            "malus_triggers": {
+                "term_mismatch": True,
+                "term_mismatch_penalty": "ungültig",
+            },
+        }
+        res_invalid = self.scorer.score_platform(profile_invalid)
+        self.assertEqual(res_invalid["malus_deductions"][0].penalty, -7)
 
 
 if __name__ == "__main__":
