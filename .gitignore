@@ -59,12 +59,8 @@ htmlcov/
 # Temporary / Scratch files
 scratch/
 
-# Data directory: ignore crawled and ephemeral cache except platform profiles, rankings, and newsletters
+# Data directory: ignore crawled and ephemeral cache except rankings, newsletters, and factsheets
 data/*
-!data/platforms/
-data/platforms/*/**/*.md
-data/platforms/*/*.md
-!data/platforms/*/profile.yaml
 !data/rankings/
 !data/newsletters/
 data/newsletters/drafts/

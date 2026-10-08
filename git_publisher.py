@@ -158,13 +158,13 @@ class GitPublisher:
             if p.is_dir():
                 for sub in p.rglob("*"):
                     if sub.is_file() and not sub.name.startswith("."):
-                        if "digests" in sub.parts:
+                        if "digests" in sub.parts or "platforms" in sub.parts:
                             continue
                         result.append(sub.resolve())
             elif p.is_file():
-                if "digests" in p.parts:
+                if "digests" in p.parts or "platforms" in p.parts:
                     logger.debug(
-                        "[GIT-PUBLISHER] Ignoriere Digest-Datei: %s (kein GitHub-Sync erforderlich)",
+                        "[GIT-PUBLISHER] Ignoriere lokale Datei: %s (kein GitHub-Sync erforderlich)",
                         p,
                     )
                     continue
@@ -180,7 +180,7 @@ class GitPublisher:
                     matched = list(self.repo_dir.glob(rel_pat))
                     for m in matched:
                         if m.is_file():
-                            if "digests" in m.parts:
+                            if "digests" in m.parts or "platforms" in m.parts:
                                 continue
                             result.append(m.resolve())
                 except Exception:
