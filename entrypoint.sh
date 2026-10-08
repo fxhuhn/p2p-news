@@ -25,11 +25,15 @@ from run_audit_scoring import ensure_platform_profiles
 ensure_platform_profiles('data')
 " || echo "[ENTRYPOINT] Warnung: Auto-Seed Check konnte nicht vollständig ausgeführt werden."
 
-# Wenn das erste Argument ein Python-Skript ist, mit python ausführen
-if [[ "$1" == *.py* ]]; then
+# Wenn das erste Argument ein Python-Skript, ein Flag (-*) oder explizit python ist, mit PYTHON_BIN ausführen
+if [[ "$1" == *.py* ]] || [[ "$1" == -* ]] || [ "$1" = "python" ] || [ "$1" = "python3" ]; then
+    if [ "$1" = "python" ] || [ "$1" = "python3" ]; then
+        shift
+    fi
     exec $PYTHON_BIN "$@"
 elif [ -z "$1" ]; then
     exec $PYTHON_BIN scheduler.py
 else
     exec "$@"
 fi
+

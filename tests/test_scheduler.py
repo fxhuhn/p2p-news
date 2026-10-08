@@ -5,6 +5,7 @@ Tests für den autarken Zeitplan-Daemon (scheduler.py).
 from __future__ import annotations
 
 import signal
+import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -191,3 +192,31 @@ def test_initial_startup_check_and_sync_existing_data(
     assert mock_scraper_cls.called
     mock_process_items.assert_called_once()
     mock_run_pipeline.assert_not_called()
+
+
+def test_entrypoint_script_flag_delegation() -> None:
+    """Prüft, dass entrypoint.sh CLI-Flags (-c) und explizite Python-Aufrufe korrekt delegiert."""
+    entrypoint = Path(__file__).parent.parent / "entrypoint.sh"
+    assert entrypoint.exists(), "entrypoint.sh muss im Repository-Root existieren"
+
+    # Test -c Flag-Delegation (analog zum GitHub Actions Smoke-Test)
+    res_flag = subprocess.run(
+        ["bash", str(entrypoint), "-c", "import sys; sys.exit(0)"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert res_flag.returncode == 0, (
+        f"entrypoint.sh mit -c fehlgeschlagen: {res_flag.stderr}"
+    )
+
+    # Test expliziten python -c Aufruf
+    res_py = subprocess.run(
+        ["bash", str(entrypoint), "python", "-c", "import sys; sys.exit(0)"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert res_py.returncode == 0, (
+        f"entrypoint.sh mit python -c fehlgeschlagen: {res_py.stderr}"
+    )
