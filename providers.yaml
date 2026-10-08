@@ -120,8 +120,12 @@ platforms:
     auto_discover: true
 
   bondster:
-    base_url: "https://bondster.com"
-    blog_path: "/de/blog"
+    base_url: "https://bondster.com/en/"
+    subpages:
+      - "/en/about-investing/bondster-in-numbers/"
+      - "/en/about-investing/loan-providers/"
+    blog_path: "/en/blog-2/"
+    blog_pattern: "^en/blog/"
     auto_discover: true
 
   fagura:
@@ -145,7 +149,7 @@ platforms:
     auto_discover: true
 
   hive5:
-    base_url: "https://hive5.eu"
+    base_url: "https://hive5.com"
     blog_path: "/blog"
     auto_discover: true
 

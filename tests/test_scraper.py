@@ -421,6 +421,37 @@ class TestMultiProviderStorageManager(unittest.TestCase):
         )
         self.assertEqual(fm_blog["category"], "blog")
 
+    def test_trailing_slash_tolerance_avoids_hash_suffix_collision(self) -> None:
+        """Prüft, dass Trailing-Slash-Variationen denselben Eintrag aktualisieren und keine Hash-Suffix-Duplikate erzeugen."""
+        from p2p_news_scraper import ArticleStatus
+
+        item_with_slash = ArticleItem(
+            url="https://rethink-p2p.de/news/creditstar-news/",
+            title="Creditstar News V1",
+            published_date="2026-07-03",
+            author="Denny",
+            content="Version 1",
+            content_hash=compute_sha256_hash("Version 1"),
+            scanned_at="2026-10-01T10:00:00Z",
+        )
+        res1 = self.storage.record_scan(item_with_slash, self.rethink)
+        self.assertEqual(res1.status, ArticleStatus.NEW)
+        self.assertEqual(res1.file_path.name, "creditstar-news.md")
+
+        # Zweiter Scan mit URL ohne Trailing Slash und aktualisiertem Inhalt
+        item_without_slash = ArticleItem(
+            url="https://rethink-p2p.de/news/creditstar-news",
+            title="Creditstar News V2",
+            published_date="2026-07-03",
+            author="Denny",
+            content="Version 2",
+            content_hash=compute_sha256_hash("Version 2"),
+            scanned_at="2026-10-02T10:00:00Z",
+        )
+        res2 = self.storage.record_scan(item_without_slash, self.rethink)
+        self.assertEqual(res2.status, ArticleStatus.CHANGED)
+        self.assertEqual(res2.file_path, res1.file_path)
+
 
 class TestPlatformProvider(unittest.TestCase):
     def setUp(self) -> None:

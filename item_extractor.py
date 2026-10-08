@@ -85,6 +85,7 @@ PRIMARY_PLATFORM_DOMAINS: set[str] = {
     "viainvest.com",
     "getincome.com",
     "hive5.eu",
+    "hive5.com",
     "lendermarket.com",
     "monefit.com",
     "twino.eu",

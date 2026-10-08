@@ -1623,6 +1623,9 @@ class MarkdownStorageManager:
     def record_scan(self, item: ArticleItem, provider: BaseProvider) -> ScanResult:
         """Liest bestehenden Stand ab, vergleicht Hashes und aktualisiert Frontmatter/Body."""
         existing_path = self._url_to_path.get(item.url)
+        if not existing_path:
+            alt_url = item.url.rstrip("/") if item.url.endswith("/") else f"{item.url}/"
+            existing_path = self._url_to_path.get(alt_url)
 
         content_type = provider.classify_content_type(item.url)
         platform = provider.extract_platform_name(item.url)
@@ -1678,6 +1681,7 @@ class MarkdownStorageManager:
                     new_frontmatter, old_body
                 )
                 self._write_file_atomically(existing_path, file_text)
+                self._url_to_path[item.url] = existing_path
 
                 return ScanResult(
                     item=item,
@@ -1728,6 +1732,7 @@ class MarkdownStorageManager:
                 new_frontmatter, item.content
             )
             self._write_file_atomically(existing_path, file_text)
+            self._url_to_path[item.url] = existing_path
 
             return ScanResult(
                 item=item,

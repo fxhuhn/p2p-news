@@ -39,12 +39,12 @@ Ein modulares, produktionsreifes Python 3.11+ Tool zum Scannen von P2P-Lending-N
 | `asterra` | Asterra | `https://asterra.estate` | Hauptseite, Blog |
 | `capitalia` | Capitalia | `https://www.capitalia.com` | Hauptseite, Blog |
 | `ventus` | Ventus | `https://ventus.energy` | Hauptseite, Blog |
-| `bondster` | Bondster | `https://bondster.com` | Hauptseite, Blog |
+| `bondster` | Bondster | `https://bondster.com/en/` | Hauptseite, Blog |
 | `fagura` | Fagura | `https://fagura.com` | Hauptseite, Blog |
 | `bondora` | Bondora | `https://www.bondora.com` | Hauptseite, Blog |
 | `viainvest` | VIAINVEST | `https://viainvest.com` | Hauptseite, Blog |
 | `income` | Income Marketplace | `https://getincome.com` | Hauptseite, Blog |
-| `hive5` | Hive5 | `https://hive5.eu` | Hauptseite, Blog |
+| `hive5` | Hive5 | `https://hive5.com` | Hauptseite, Blog |
 | `lendermarket` | Lendermarket | `https://lendermarket.com` | Hauptseite, Kreditanbahner, Blog |
 | `monefit` | Monefit SmartSaver | `https://monefit.com` | Hauptseite, Blog |
 | `crowdpear` | Crowdpear | `https://crowdpear.com` | Hauptseite, Statistik, Blog |
