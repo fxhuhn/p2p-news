@@ -21,6 +21,18 @@ class MarkdownRenderer:
     """Rendert verifizierte redaktionelle Newsletter in druckreifes Markdown."""
 
     @staticmethod
+    def _clean_source_title(title: str) -> str:
+        """Entfernt irreführende Markdown-Formatierungen (Fettung, Kursiv-Tags) aus Quelltiteln."""
+        if not title:
+            return "Quelle"
+        clean = title.replace("**", "").replace("__", "").strip()
+        if (clean.startswith("*") and clean.endswith("*")) or (
+            clean.startswith("_") and clean.endswith("_")
+        ):
+            clean = clean[1:-1].strip()
+        return clean or "Quelle"
+
+    @staticmethod
     def _ensure_platform_bolded(text: str, platform: str) -> str:
         """Stellt sicher, dass der Plattformname bei Ersterwähnung fett (**Plattform**) formatiert ist."""
         if not platform or not text:
@@ -136,18 +148,17 @@ class MarkdownRenderer:
                         if itm.source_tier == "primary"
                         else "Sekundärquelle"
                     )
+                    clean_title = self._clean_source_title(itm.title)
                     body.append(
-                        f"- [{itm.title}]({itm.url}) *({itm.provider}, {tier_badge})*"
+                        f"- [{clean_title}]({itm.url}) *({itm.provider}, {tier_badge})*"
                     )
                 body.append("")
 
             body.append("---\n")
 
-        # 4. Fußzeile & Revisionshinweis
+        # 4. Fußzeile & Revisionshinweis (ohne Daten-Doppelung zu Frontmatter/Header)
         footer = [
             "### Revisions- & Prüfnachweis",
-            f"- **Woche:** {iso_week} | **Run-ID:** `{run_id}`",
-            f"- **Verifizierte Fakten:** {verified_facts_count} (alle durch Roh-Snapshots belegt)",
             "- **Integrität:** Deterministisch gerendert aus schema-validierten Fakten.",
             "- *Hinweis: Dieser Newsletter dient ausschließlich Informationszwecken und stellt keine Anlageberatung dar.*",
             "",

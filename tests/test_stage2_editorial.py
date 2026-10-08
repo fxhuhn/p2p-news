@@ -281,6 +281,115 @@ class TestMarkdownRenderer(unittest.TestCase):
         self.assertIn("Abweichende Berichte zwischen Quellen", md)
         self.assertIn("Rolle von Ieva Narbute unterschiedlich angegeben", md)
 
+        # Prüfe, dass Footer keine Header-Doppelungen enthält
+        self.assertIn("### Revisions- & Prüfnachweis", md)
+        self.assertNotIn("- **Woche:**", md)
+        self.assertNotIn("- **Verifizierte Fakten:**", md)
+        self.assertIn("- **Integrität:** Deterministisch gerendert", md)
+
+    def test_clean_source_title_and_footer_deduplication(self) -> None:
+        """Prüft, dass fett formatierte Quelltitel bereinigt werden und keine Doppelungen im Footer landen."""
+        fact = ExtractedFact(
+            fact_id="f-aiffin",
+            statement="Lendermarket nimmt Aiffin auf.",
+            evidence=[
+                FactEvidence(item_id="i-aiffin", evidence_quote="Aiffin Autoleasing")
+            ],
+            verified=True,
+        )
+        digest = WeeklyDigestSchema(
+            iso_week="2026-W41",
+            clusters=[
+                TopicCluster(
+                    cluster_id="c-lendermarket",
+                    topic="plattform_features",
+                    platforms=["lendermarket"],
+                    title="Lendermarket Neuer Anbahner",
+                    facts=[fact],
+                )
+            ],
+        )
+        item = NewsItem(
+            item_id="i-aiffin",
+            provider="lendermarket",
+            source_tier="primary",
+            url="https://lendermarket.com/blog/aiffin/#why-aiffin-is-different",
+            title="**Why Aiffin Is Different**",
+            published_date="2026-10-08",
+            first_seen_at="2026-10-08T10:00:00Z",
+            last_seen_at="2026-10-08T10:00:00Z",
+            item_content_hash="h-aiffin",
+            page_snapshot_hash="s-aiffin",
+            content_plain="Aiffin Autoleasing für Unternehmen.",
+        )
+        items_map = {"i-aiffin": item}
+
+        sentence = EditorialSentence(
+            text="Lendermarket hat mit Aiffin einen neuen Anbahner gelistet.",
+            fact_ids=["f-aiffin"],
+        )
+        newsletter = EditorialNewsletterSchema(
+            title="P2P Briefing KW 41",
+            summary_lead="Übersicht KW 41.",
+            sections=[
+                EditorialSection(
+                    headline="Lendermarket Neuigkeit",
+                    category="plattform_features",
+                    platform_tags=["lendermarket"],
+                    sentences=[sentence],
+                )
+            ],
+        )
+
+        renderer = MarkdownRenderer()
+        # Test helper directly
+        self.assertEqual(
+            renderer._clean_source_title("**Why Aiffin Is Different**"),
+            "Why Aiffin Is Different",
+        )
+        self.assertEqual(
+            renderer._clean_source_title("__Why Aiffin Is Different__"),
+            "Why Aiffin Is Different",
+        )
+        self.assertEqual(
+            renderer._clean_source_title("*Why Aiffin Is Different*"),
+            "Why Aiffin Is Different",
+        )
+
+        md = renderer.render(
+            newsletter=newsletter,
+            digest=digest,
+            items_map=items_map,
+            run_id="run_2026-W41_test",
+            iso_week="2026-W41",
+            verified_facts_count=17,
+            verified_sentences_count=18,
+        )
+
+        # Quell-Link darf nicht fett formatiert sein
+        self.assertIn(
+            "[Why Aiffin Is Different](https://lendermarket.com/blog/aiffin/#why-aiffin-is-different)",
+            md,
+        )
+        self.assertNotIn("[**Why Aiffin Is Different**]", md)
+
+        # Frontmatter enthält Metadaten, aber Footer wiederholt sie nicht
+        self.assertIn("iso_week: '2026-W41'", md)
+        self.assertIn("verified_facts_count: 17", md)
+        self.assertIn("run_id: 'run_2026-W41_test'", md)
+
+        self.assertIn("### Revisions- & Prüfnachweis", md)
+        self.assertNotIn("- **Woche:** 2026-W41", md)
+        self.assertNotIn("- **Verifizierte Fakten:** 17", md)
+        self.assertIn(
+            "- **Integrität:** Deterministisch gerendert aus schema-validierten Fakten.",
+            md,
+        )
+        self.assertIn(
+            "- *Hinweis: Dieser Newsletter dient ausschließlich Informationszwecken und stellt keine Anlageberatung dar.*",
+            md,
+        )
+
     def test_paragraph_separation_and_platform_bolding(self) -> None:
         """Prüft, dass mehrere Absätze mit Leerzeilen getrennt und Plattformnamen fett gerendert werden."""
         f1 = ExtractedFact(
