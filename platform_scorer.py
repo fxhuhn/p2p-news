@@ -120,6 +120,21 @@ class PlatformScorer:
             band_id = "Band_14_20"
             base_score = 17
             rating_label = "National reguliert"
+            if not has_investor_comp and (
+                "keine mifid" in notes.lower()
+                or "keine einlagensicherung" in notes.lower()
+                or "sammelpool" in notes.lower()
+                or "nicht segregiert" in custody_text
+                or "keine mifid ii" in custody_text
+            ):
+                modifiers.append(
+                    ModifierEvaluation(
+                        name="Keine MiFID-Segregation oder Einlagensicherung bei nationalem Kreditgeber",
+                        points=-3,
+                        condition_met=True,
+                        rationale="Kundengelder im Sammelpool / operativer Bilanz gebunden.",
+                    )
+                )
 
         elif reg_type == "unregulated_with_pipeline":
             # Beispiel Esketit: Kroatische Abtretung, aber IBF-Verfahren läuft
@@ -164,6 +179,18 @@ class PlatformScorer:
                             points=2,
                             condition_met=True,
                             rationale="Gelder bei lizenziertem E-Geld-Institut geführt.",
+                        )
+                    )
+                if reg.get("parent_company_regulated", False) or (
+                    "finantsinspektsioon" in notes.lower()
+                    and "muttergesellschaft" in notes.lower()
+                ):
+                    modifiers.append(
+                        ModifierEvaluation(
+                            name="Regulierte Muttergesellschaft (Konzernaufsicht)",
+                            points=2,
+                            condition_met=True,
+                            rationale="Muttergesellschaft verfügt über aufsichtsrechtliche Kreditgeber-Lizenz.",
                         )
                     )
 
@@ -309,10 +336,15 @@ class PlatformScorer:
                 rating_label = "Erststellige Realsicherheiten"
 
         elif (
-            "agrar" in asset_type
-            or "kfz" in asset_type
-            or "maschinen" in asset_type
-            or "pfand" in security_type
+            ("agrar" in asset_type or "kfz" in asset_type or "maschinen" in asset_type)
+            and (
+                "pfand" in security_type
+                or "sicherungsübereignung" in security_type
+                or "eigentumsvorbehalt" in security_type
+                or "brief" in security_type
+                or "hypothek" in security_type
+            )
+            or ("pfand" in security_type and "buyback" not in security_type)
         ):
             band_id = "Band_15_20"
             base_score = 17
@@ -322,6 +354,7 @@ class PlatformScorer:
             "buyback" in security_type
             or "rückkauf" in security_type
             or "konsum" in asset_type
+            or "keine dingliche" in security_type
         ):
             band_id = "Band_8_14"
             base_score = 11
@@ -365,6 +398,22 @@ class PlatformScorer:
                         rationale="Nachgewiesene 100 % Rückabwicklung geopolitischer Krisenfälle aus Konzernmitteln.",
                     )
                 )
+            if (
+                col.get("has_loss_buffer", False)
+                or "renditeabstand" in notes.lower()
+                or (
+                    "diversifikation" in notes.lower()
+                    and ("puffer" in notes.lower() or "reserve" in notes.lower())
+                )
+            ):
+                modifiers.append(
+                    ModifierEvaluation(
+                        name="Granulare Diversifikation & Zinsabstand-Verlustpuffer",
+                        points=2,
+                        condition_met=True,
+                        rationale="Hohe Streuung über Zehntausende Kleinkredite und Zinsmarge als interner Verlustpuffer.",
+                    )
+                )
             rating_label = "Unbesichert mit Buyback"
 
         else:
@@ -398,11 +447,36 @@ class PlatformScorer:
 
         modifiers: List[ModifierEvaluation] = []
 
+        is_pool = (
+            liq.get("is_liquidity_pool", False)
+            or "pool" in notes.lower()
+            or "go & grow" in notes.lower()
+            or "smartsaver" in notes.lower()
+        )
+
         if queue_days is not None and queue_days > 7:
             # Auszahlungsstopp oder blockiert
             band_id = "Band_0_5"
             base_score = 2
             rating_label = "Liquiditätsstau / Warteschlange"
+
+        elif is_pool:
+            band_id = "Band_13_19"
+            base_score = 18
+            rating_label = "Hohe Alltagsliquidität (Reserve-Pool)"
+            if (
+                "teilauszahlung" in notes.lower()
+                or "partial" in notes.lower()
+                or "auszahlungsdeckel" in notes.lower()
+            ):
+                modifiers.append(
+                    ModifierEvaluation(
+                        name="Vertragliches Schutzventil (gestaffelte Teilauszahlungen)",
+                        points=0,
+                        condition_met=True,
+                        rationale="Auszahlungsdeckel schützt vor Notverkäufen bei Marktpanik.",
+                    )
+                )
 
         elif (
             has_secondary
@@ -484,10 +558,11 @@ class PlatformScorer:
     def _evaluate_malus(self, triggers: Dict[str, Any]) -> List[MalusItem]:
         mali: List[MalusItem] = []
 
-        # 1. Monokultur-Malus (Einzelner Anbahner > 50 %)
+        # 1. Monokultur-Malus (Einzelner Anbahner > 50 %) - Gilt nur für Marktplätze, nicht für Direktkreditgeber
+        is_direct_lender = triggers.get("is_direct_lender", False)
         mono_pct = triggers.get("monoculture_pct", 0.0)
         originator = triggers.get("monoculture_originator", "Hauptkreditgeber")
-        if mono_pct > 50.0:
+        if not is_direct_lender and mono_pct > 50.0:
             if mono_pct > 90.0:
                 penalty = -8
             elif mono_pct >= 70.0:
@@ -511,11 +586,12 @@ class PlatformScorer:
                 "term_mismatch_detail",
                 "Tägliche Auszahlung mit langlaufenden Notes hinterlegt",
             )
+            penalty = triggers.get("term_mismatch_penalty", -7)
             mali.append(
                 MalusItem(
                     type="term_mismatch",
                     name="Fristen-Mismatch-Malus",
-                    penalty=-7,
+                    penalty=penalty,
                     trigger_detected=True,
                     trigger_detail=detail,
                     evidence_quote=detail,
@@ -527,11 +603,12 @@ class PlatformScorer:
             detail = triggers.get(
                 "related_party_detail", "Insidergeschäfte / Schwesterfirmen-Aufschläge"
             )
+            penalty = triggers.get("related_party_penalty", -10)
             mali.append(
                 MalusItem(
                     type="related_party",
                     name="Related-Party- & Opazitäts-Malus",
-                    penalty=-10,
+                    penalty=penalty,
                     trigger_detected=True,
                     trigger_detail=detail,
                     evidence_quote=detail,
@@ -543,11 +620,30 @@ class PlatformScorer:
             detail = triggers.get(
                 "distressed_notes", "Portfolio-NPL >40 % oder gerichtliche Sanierung"
             )
+            penalty = triggers.get("distressed_penalty", -20)
             mali.append(
                 MalusItem(
                     type="distressed",
                     name="Distressed- & Ausfall-Malus",
-                    penalty=-20,
+                    penalty=penalty,
+                    trigger_detected=True,
+                    trigger_detail=detail,
+                    evidence_quote=detail,
+                )
+            )
+
+        # 5. Marktplatz-Anbahnerausfall- & Workout-Malus
+        if triggers.get("marketplace_originator_risk", False):
+            detail = triggers.get(
+                "marketplace_originator_detail",
+                "Wiederholte Ausfälle externer Kreditanbahner / erhebliche Pending Payments",
+            )
+            penalty = triggers.get("marketplace_originator_penalty", -10)
+            mali.append(
+                MalusItem(
+                    type="marketplace_originator_risk",
+                    name="Marktplatz-Anbahnerausfall-Malus",
+                    penalty=penalty,
                     trigger_detected=True,
                     trigger_detail=detail,
                     evidence_quote=detail,

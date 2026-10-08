@@ -4,12 +4,12 @@ platform_name: PeerBerry
 audit_date: '2026-10-08'
 audit_version: '1.0'
 audit_score:
-  net_score: 56
-  raw_score: 62
-  risk_class: WATCHLIST
-  portfolio_limit: 0 - 3 %
-  recommendation: 'Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende
-    Testate oder Governance-Risse.'
+  net_score: 65
+  raw_score: 71
+  risk_class: MID RISK
+  portfolio_limit: 5 - 8 %
+  recommendation: 'Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite
+    oder Monokulturen.'
 flags:
   has_conflict: false
   conflict_notes: []
@@ -37,26 +37,32 @@ pillars:
     band: Band_6_13
     rating: Unreguliert (Abtretungsverträge)
     evidence: Unreguliert über Kroatien/Litauen, aber getrennt geführte Bankkonten.
+      Keine gesetzliche Anlegerentschädigung.
   pillar_2_solvency:
     score: 22
     max_score: 25
     band: Band_21_25
     rating: Sehr gut / Testiert
-    evidence: Wirtschaftlich getragen durch hochprofitable Aventus Group. 100 % Rückzahlung
-      aller Kriegs-Kredite (Ukraine/Russland) bis Ende 2024 ohne Anlegerverlust.
+    evidence: Wirtschaftlich getragen durch hochprofitable Aventus Group (H1 2026
+      Nettogewinn 49,1 Mio. €, Eigenkapital 264,2 Mio. €). Ausstehendes Portfolio
+      übersteigt 155 Mio. € bei 120.000 Investoren (91 % Loyalty-Konzentration). 100
+      % Rückzahlung aller Kriegs-Kredite centgenau aus Konzerngewinnen.
   pillar_3_collateral:
-    score: 16
+    score: 17
     max_score: 25
     band: Band_8_14
     rating: Unbesichert mit Buyback
-    evidence: 0 % Kapitalverlust über 8 Jahre Geschäftsbetrieb trotz Krisen.
+    evidence: 0 % realisierter Kapitalverlust seit Launch 2017. 100 % Rückzahlung
+      aller kriegsbetroffenen Kredite (über 50 Mio. €) aus operativen Konzerngewinnen
+      der Aventus Group.
   pillar_4_liquidity:
-    score: 16
+    score: 24
     max_score: 25
-    band: Band_13_19
-    rating: Gute Liquidität
-    evidence: Sehr kurze originäre Kreditlaufzeiten (<30-60 Tage). Sekundärmarkt mit
-      6 Monaten Haltedauer.
+    band: Band_20_25
+    rating: Sehr liquide / Kurzläufer & Zweitmarkt
+    evidence: Sehr kurze originäre Kreditlaufzeiten (>70 % unter 60 Tagen, Ø 30 Tage)
+      kombiniert mit seit 15. Januar 2026 aktivem, gebührenfreiem Sekundärmarkt ohne
+      Mindesthaltedauer.
 malus_deductions:
 - type: monoculture
   name: Monokultur-Malus
@@ -72,23 +78,23 @@ sources:
 
 # Platform Audit Factsheet: PeerBerry
 
-**Audit-Datum:** 2026-10-08 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
+**Audit-Datum:** 2026-10-08 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **56 / 100 Punkte** (Rohscore: 62 Pkt | Malus-Abschläge: -6 Pkt)
-> **Allokationsempfehlung:** Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende Testate oder Governance-Risse.
+> **Finaler Netto-Score:** **65 / 100 Punkte** (Rohscore: 71 Pkt | Malus-Abschläge: -6 Pkt)
+> **Allokationsempfehlung:** Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite oder Monokulturen.
 
 ## 2. Aufschlüsselung der 4 Säulen
 
 | Säule | Kategorie | Punkte | Einstufung | Kern-Evidenz |
 | :--- | :--- | :---: | :--- | :--- |
-| **Säule 1** | Regulierung & Verwahrung | **8 / 25** | Unreguliert (Abtretungsverträge) | Unreguliert über Kroatien/Litauen, aber getrennt geführte Bankkonten. |
-| **Säule 2** | Solvenz & Governance | **22 / 25** | Sehr gut / Testiert | Wirtschaftlich getragen durch hochprofitable Aventus Group. 100 % Rückzahlung aller Kriegs-Kredite (Ukraine/Russland) bis Ende 2024 ohne Anlegerverlust. |
-| **Säule 3** | Besicherung & Workout | **16 / 25** | Unbesichert mit Buyback | 0 % Kapitalverlust über 8 Jahre Geschäftsbetrieb trotz Krisen. |
-| **Säule 4** | Liquidität & Zweitmarkt | **16 / 25** | Gute Liquidität | Sehr kurze originäre Kreditlaufzeiten (<30-60 Tage). Sekundärmarkt mit 6 Monaten Haltedauer. |
-| **SUMME** | **Rohscore (vor Mali)** | **62 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **Säule 1** | Regulierung & Verwahrung | **8 / 25** | Unreguliert (Abtretungsverträge) | Unreguliert über Kroatien/Litauen, aber getrennt geführte Bankkonten. Keine gesetzliche Anlegerentschädigung. |
+| **Säule 2** | Solvenz & Governance | **22 / 25** | Sehr gut / Testiert | Wirtschaftlich getragen durch hochprofitable Aventus Group (H1 2026 Nettogewinn 49,1 Mio. €, Eigenkapital 264,2 Mio. €). Ausstehendes Portfolio übersteigt 155 Mio. € bei 120.000 Investoren (91 % Loyalty-Konzentration). 100 % Rückzahlung aller Kriegs-Kredite centgenau aus Konzerngewinnen. |
+| **Säule 3** | Besicherung & Workout | **17 / 25** | Unbesichert mit Buyback | 0 % realisierter Kapitalverlust seit Launch 2017. 100 % Rückzahlung aller kriegsbetroffenen Kredite (über 50 Mio. €) aus operativen Konzerngewinnen der Aventus Group. |
+| **Säule 4** | Liquidität & Zweitmarkt | **24 / 25** | Sehr liquide / Kurzläufer & Zweitmarkt | Sehr kurze originäre Kreditlaufzeiten (>70 % unter 60 Tagen, Ø 30 Tage) kombiniert mit seit 15. Januar 2026 aktivem, gebührenfreiem Sekundärmarkt ohne Mindesthaltedauer. |
+| **SUMME** | **Rohscore (vor Mali)** | **71 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 

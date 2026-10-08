@@ -187,7 +187,13 @@ class PillarFactExtract(BaseModel):
 # 5. Malus-Abzüge
 # ==============================================================================
 
-MalusType = Literal["monoculture", "term_mismatch", "related_party", "distressed"]
+MalusType = Literal[
+    "monoculture",
+    "term_mismatch",
+    "related_party",
+    "distressed",
+    "marketplace_originator_risk",
+]
 
 
 class MalusItem(BaseModel):

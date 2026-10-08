@@ -4,8 +4,8 @@ platform_name: Mintos
 audit_date: '2026-10-08'
 audit_version: '1.0'
 audit_score:
-  net_score: 84
-  raw_score: 84
+  net_score: 78
+  raw_score: 78
   risk_class: TOP TIER
   portfolio_limit: 8 - 15 %
   recommendation: 'Kerninvestment: 1st-Rank Hypotheken, segregierte Treuhandkonten,
@@ -45,10 +45,10 @@ pillars:
     rating: Sehr gut / Testiert
     evidence: Regelmäßig testierte Konzernabschlüsse durch KPMG (Big-4).
   pillar_3_collateral:
-    score: 17
+    score: 11
     max_score: 25
-    band: Band_15_20
-    rating: Dinglich besichert (Mobiliar)
+    band: Band_8_14
+    rating: Unbesichert mit Buyback
     evidence: Über 50 Kreditanbahner weltweit; Altforderungen aus Russland/Ukraine
       in planmäßiger Recovery.
   pillar_4_liquidity:
@@ -73,7 +73,7 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **84 / 100 Punkte** (Rohscore: 84 Pkt | Malus-Abschläge: 0 Pkt)
+> **Finaler Netto-Score:** **78 / 100 Punkte** (Rohscore: 78 Pkt | Malus-Abschläge: 0 Pkt)
 > **Allokationsempfehlung:** Kerninvestment: 1st-Rank Hypotheken, segregierte Treuhandkonten, 0 % Verlusthistorie.
 
 ## 2. Aufschlüsselung der 4 Säulen
@@ -82,9 +82,9 @@ sources:
 | :--- | :--- | :---: | :--- | :--- |
 | **Säule 1** | Regulierung & Verwahrung | **25 / 25** | MiFID II / IBF lizenziert | Europäischer Marktführer, reguliert als Investment Brokerage Firm (IBF) unter MiFID II mit gesetzlichem 20.000 € Anlegerentschädigungsschutz. |
 | **Säule 2** | Solvenz & Governance | **22 / 25** | Sehr gut / Testiert | Regelmäßig testierte Konzernabschlüsse durch KPMG (Big-4). |
-| **Säule 3** | Besicherung & Workout | **17 / 25** | Dinglich besichert (Mobiliar) | Über 50 Kreditanbahner weltweit; Altforderungen aus Russland/Ukraine in planmäßiger Recovery. |
+| **Säule 3** | Besicherung & Workout | **11 / 25** | Unbesichert mit Buyback | Über 50 Kreditanbahner weltweit; Altforderungen aus Russland/Ukraine in planmäßiger Recovery. |
 | **Säule 4** | Liquidität & Zweitmarkt | **20 / 25** | Sehr liquide / Kurzläufer & Zweitmarkt | Höchste Marktplatz-Liquidität in Europa mit hochaktivem Sekundärmarkt (0,85 % Gebühr). |
-| **SUMME** | **Rohscore (vor Mali)** | **84 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **SUMME** | **Rohscore (vor Mali)** | **78 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 

@@ -31,16 +31,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application source code
 COPY --chown=appuser:appuser . .
 
-# Ensure data directory exists with non-root ownership
-RUN mkdir -p /app/data && chown -R appuser:appuser /app
+# Ensure entrypoint is executable and data directory exists with non-root ownership
+RUN chmod +x /app/entrypoint.sh && mkdir -p /app/data && chown -R appuser:appuser /app
 
 USER appuser
 
 # Mount point for flat-file Markdown store and sync cache
 VOLUME ["/app/data"]
 
-# Default entrypoint allows invoking any pipeline runner directly:
-# e.g.: docker run p2p-news p2p_news_scraper.py --provider nectaro
-#       docker run p2p-news pipeline_orchestrator.py
-ENTRYPOINT ["python"]
-CMD ["p2p_news_scraper.py", "--help"]
+# Entrypoint führt vor jedem Start/Neustart den Auto-Seed Check aus
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["scheduler.py"]

@@ -101,6 +101,11 @@ def run_pipeline(
     )
     logger.info("==================================================================")
 
+    # 0. Plattform-Profile Integritätscheck
+    from run_audit_scoring import ensure_platform_profiles
+
+    ensure_platform_profiles(data_dir=base)
+
     # Stufe 0: Optionales Scraping & Item-Extraktion
     if do_scrape:
         logger.info("--- Stufe 0: Web-Scraping wird ausgeführt ---")

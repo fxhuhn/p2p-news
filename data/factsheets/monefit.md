@@ -4,12 +4,12 @@ platform_name: Monefit SmartSaver
 audit_date: '2026-10-08'
 audit_version: '1.0'
 audit_score:
-  net_score: 16
-  raw_score: 41
-  risk_class: DISTRESSED
-  portfolio_limit: 0 % (Kapitalabzug & Recovery)
-  recommendation: 'Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte
-    Zweitmärkte, Moratorien.'
+  net_score: 54
+  raw_score: 59
+  risk_class: WATCHLIST
+  portfolio_limit: 0 - 3 %
+  recommendation: 'Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende
+    Testate oder Governance-Risse.'
 flags:
   has_conflict: false
   conflict_notes: []
@@ -32,50 +32,42 @@ benchmarks:
   lars_wrobbel_rank: Rang 14
 pillars:
   pillar_1_regulation:
-    score: 8
+    score: 10
     max_score: 25
     band: Band_6_13
     rating: Unreguliert (Abtretungsverträge)
-    evidence: Völlig unreguliertes Produkt; keine Einlagensicherung, keine Treuhandkonten.
+    evidence: Die Muttergesellschaft Creditstar Group AS ist als Kreditgeber durch
+      die estnische Finantsinspektsioon beaufsichtigt; SmartSaver selbst operiert
+      als unreguliertes Darlehenskonstrukt ohne Einlagensicherung oder Treuhandsegregation.
   pillar_2_solvency:
     score: 17
     max_score: 25
     band: Band_14_20
     rating: Solide / Lokaler Abschluss
     evidence: Erhebliche Einreichungsverzögerungen bei Bilanzen; Pending Payments
-      auf Mintos und Lendermarket.
+      von Creditstar auf Mintos und Lendermarket.
   pillar_3_collateral:
     score: 14
     max_score: 25
     band: Band_8_14
     rating: Unbesichert mit Buyback
-    evidence: Völlig unbesichert; Rückzahlung hängt allein von der Solvenz der Creditstar
-      Group ab.
+    evidence: Völlig unbesichert; Rückzahlung hängt allein vom operativen Cashflow
+      und der Solvenz der Creditstar Group ab.
   pillar_4_liquidity:
-    score: 2
+    score: 18
     max_score: 25
-    band: Band_0_5
-    rating: Liquiditätsstau / Warteschlange
-    evidence: Verspricht tägliche Auszahlung (Tagesgeld-Ähnlich), geriet jedoch wiederholt
-      in Auszahlungsverzug.
+    band: Band_13_19
+    rating: Hohe Alltagsliquidität (Reserve-Pool)
+    evidence: SmartSaver Flex bietet im regulären Betrieb tägliche Liquidität (1-3
+      Werktage Auszahlungsdauer); bisher unterbrechungsfreie Bedienung von Abhebungen.
 malus_deductions:
-- type: monoculture
-  name: Monokultur-Malus
-  penalty: -8
-  trigger: Creditstar Group AS stellt 100.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern.'
 - type: term_mismatch
   name: Fristen-Mismatch-Malus
-  penalty: -7
-  trigger: Tägliche/flexible Auszahlung versprochen, aber durch langlaufende, illiquide
-    Kredite hinterlegt.
-  evidence: Tägliche/flexible Auszahlung versprochen, aber durch langlaufende, illiquide
-    Kredite hinterlegt.
-- type: related_party
-  name: Related-Party- & Opazitäts-Malus
-  penalty: -10
-  trigger: Plattform dient rein der Refinanzierung des Schwesterkonzerns Creditstar.
-  evidence: Plattform dient rein der Refinanzierung des Schwesterkonzerns Creditstar.
+  penalty: -5
+  trigger: Tägliche Verfügbarkeit im SmartSaver Flex trifft auf mehrmonatige bis mehrjährige
+    Kreditlinien und Konsumentendarlehen (asymmetrische Fristentransformation).
+  evidence: Tägliche Verfügbarkeit im SmartSaver Flex trifft auf mehrmonatige bis
+    mehrjährige Kreditlinien und Konsumentendarlehen (asymmetrische Fristentransformation).
 sources:
 - source_type: curated_profile
   path: data/platforms/monefit/profile.yaml
@@ -85,31 +77,29 @@ sources:
 
 # Platform Audit Factsheet: Monefit SmartSaver
 
-**Audit-Datum:** 2026-10-08 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
+**Audit-Datum:** 2026-10-08 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **16 / 100 Punkte** (Rohscore: 41 Pkt | Malus-Abschläge: -25 Pkt)
-> **Allokationsempfehlung:** Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte Zweitmärkte, Moratorien.
+> **Finaler Netto-Score:** **54 / 100 Punkte** (Rohscore: 59 Pkt | Malus-Abschläge: -5 Pkt)
+> **Allokationsempfehlung:** Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende Testate oder Governance-Risse.
 
 ## 2. Aufschlüsselung der 4 Säulen
 
 | Säule | Kategorie | Punkte | Einstufung | Kern-Evidenz |
 | :--- | :--- | :---: | :--- | :--- |
-| **Säule 1** | Regulierung & Verwahrung | **8 / 25** | Unreguliert (Abtretungsverträge) | Völlig unreguliertes Produkt; keine Einlagensicherung, keine Treuhandkonten. |
-| **Säule 2** | Solvenz & Governance | **17 / 25** | Solide / Lokaler Abschluss | Erhebliche Einreichungsverzögerungen bei Bilanzen; Pending Payments auf Mintos und Lendermarket. |
-| **Säule 3** | Besicherung & Workout | **14 / 25** | Unbesichert mit Buyback | Völlig unbesichert; Rückzahlung hängt allein von der Solvenz der Creditstar Group ab. |
-| **Säule 4** | Liquidität & Zweitmarkt | **2 / 25** | Liquiditätsstau / Warteschlange | Verspricht tägliche Auszahlung (Tagesgeld-Ähnlich), geriet jedoch wiederholt in Auszahlungsverzug. |
-| **SUMME** | **Rohscore (vor Mali)** | **41 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **Säule 1** | Regulierung & Verwahrung | **10 / 25** | Unreguliert (Abtretungsverträge) | Die Muttergesellschaft Creditstar Group AS ist als Kreditgeber durch die estnische Finantsinspektsioon beaufsichtigt; SmartSaver selbst operiert als unreguliertes Darlehenskonstrukt ohne Einlagensicherung oder Treuhandsegregation. |
+| **Säule 2** | Solvenz & Governance | **17 / 25** | Solide / Lokaler Abschluss | Erhebliche Einreichungsverzögerungen bei Bilanzen; Pending Payments von Creditstar auf Mintos und Lendermarket. |
+| **Säule 3** | Besicherung & Workout | **14 / 25** | Unbesichert mit Buyback | Völlig unbesichert; Rückzahlung hängt allein vom operativen Cashflow und der Solvenz der Creditstar Group ab. |
+| **Säule 4** | Liquidität & Zweitmarkt | **18 / 25** | Hohe Alltagsliquidität (Reserve-Pool) | SmartSaver Flex bietet im regulären Betrieb tägliche Liquidität (1-3 Werktage Auszahlungsdauer); bisher unterbrechungsfreie Bedienung von Abhebungen. |
+| **SUMME** | **Rohscore (vor Mali)** | **59 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-8 Pkt` | Creditstar Group AS stellt 100.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern. |
-| **Fristen-Mismatch-Malus** | `-7 Pkt` | Tägliche/flexible Auszahlung versprochen, aber durch langlaufende, illiquide Kredite hinterlegt. | Tägliche/flexible Auszahlung versprochen, aber durch langlaufende, illiquide Kredite hinterlegt. |
-| **Related-Party- & Opazitäts-Malus** | `-10 Pkt` | Plattform dient rein der Refinanzierung des Schwesterkonzerns Creditstar. | Plattform dient rein der Refinanzierung des Schwesterkonzerns Creditstar. |
+| **Fristen-Mismatch-Malus** | `-5 Pkt` | Tägliche Verfügbarkeit im SmartSaver Flex trifft auf mehrmonatige bis mehrjährige Kreditlinien und Konsumentendarlehen (asymmetrische Fristentransformation). | Tägliche Verfügbarkeit im SmartSaver Flex trifft auf mehrmonatige bis mehrjährige Kreditlinien und Konsumentendarlehen (asymmetrische Fristentransformation). |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

@@ -38,12 +38,10 @@ liquidity_and_marketplace:
 malus_triggers:
   monoculture_pct: 45.0
   monoculture_originator: null
-  term_mismatch: true
-  term_mismatch_detail: Debitum Flow verspricht flexible Liquidität bei 8 % Zins,
-    ist aber durch 5-jährige illiquide Notes mit 75 % Zuflussabhängigkeit hinterlegt.
+  term_mismatch: false
   related_party_opacity: true
-  related_party_detail: 'LFDF-Konstrukt: 81 % Käufe aus Familiennetzwerk mit ~50 %
-    Aufschlag, unabhängige Gutachten verweigert.'
+  related_party_penalty: -5
+  related_party_detail: 'LFDF-Konstrukt: Verflechtungen im Gesellschafterkreis und konzerninterne Transaktionen; aufsichtsrechtlich durch Latvijas Banka überwacht.'
   distressed_workout: false
 benchmarks:
   p2p_empire_safety_score: 3.9

@@ -4,12 +4,12 @@ platform_name: Debitum Investments
 audit_date: '2026-10-08'
 audit_version: '1.0'
 audit_score:
-  net_score: 49
+  net_score: 61
   raw_score: 66
-  risk_class: SPECULATIVE
-  portfolio_limit: 0 % (Neuanlage-Stopp)
-  recommendation: 'Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen
-    oder Pending Payments.'
+  risk_class: MID RISK
+  portfolio_limit: 5 - 8 %
+  recommendation: 'Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite
+    oder Monokulturen.'
 flags:
   has_conflict: false
   conflict_notes: []
@@ -57,20 +57,13 @@ pillars:
     rating: Planbare Tilgung
     evidence: Kein Sekundärmarkt vorhanden. Kapital über 6 bis 60 Monate gebunden.
 malus_deductions:
-- type: term_mismatch
-  name: Fristen-Mismatch-Malus
-  penalty: -7
-  trigger: Debitum Flow verspricht flexible Liquidität bei 8 % Zins, ist aber durch
-    5-jährige illiquide Notes mit 75 % Zuflussabhängigkeit hinterlegt.
-  evidence: Debitum Flow verspricht flexible Liquidität bei 8 % Zins, ist aber durch
-    5-jährige illiquide Notes mit 75 % Zuflussabhängigkeit hinterlegt.
 - type: related_party
   name: Related-Party- & Opazitäts-Malus
-  penalty: -10
-  trigger: 'LFDF-Konstrukt: 81 % Käufe aus Familiennetzwerk mit ~50 % Aufschlag, unabhängige
-    Gutachten verweigert.'
-  evidence: 'LFDF-Konstrukt: 81 % Käufe aus Familiennetzwerk mit ~50 % Aufschlag,
-    unabhängige Gutachten verweigert.'
+  penalty: -5
+  trigger: 'LFDF-Konstrukt: Verflechtungen im Gesellschafterkreis und konzerninterne
+    Transaktionen; aufsichtsrechtlich durch Latvijas Banka überwacht.'
+  evidence: 'LFDF-Konstrukt: Verflechtungen im Gesellschafterkreis und konzerninterne
+    Transaktionen; aufsichtsrechtlich durch Latvijas Banka überwacht.'
 sources:
 - source_type: curated_profile
   path: data/platforms/debitum/profile.yaml
@@ -80,13 +73,13 @@ sources:
 
 # Platform Audit Factsheet: Debitum Investments
 
-**Audit-Datum:** 2026-10-08 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
+**Audit-Datum:** 2026-10-08 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **49 / 100 Punkte** (Rohscore: 66 Pkt | Malus-Abschläge: -17 Pkt)
-> **Allokationsempfehlung:** Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen oder Pending Payments.
+> **Finaler Netto-Score:** **61 / 100 Punkte** (Rohscore: 66 Pkt | Malus-Abschläge: -5 Pkt)
+> **Allokationsempfehlung:** Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite oder Monokulturen.
 
 ## 2. Aufschlüsselung der 4 Säulen
 
@@ -102,8 +95,7 @@ sources:
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Fristen-Mismatch-Malus** | `-7 Pkt` | Debitum Flow verspricht flexible Liquidität bei 8 % Zins, ist aber durch 5-jährige illiquide Notes mit 75 % Zuflussabhängigkeit hinterlegt. | Debitum Flow verspricht flexible Liquidität bei 8 % Zins, ist aber durch 5-jährige illiquide Notes mit 75 % Zuflussabhängigkeit hinterlegt. |
-| **Related-Party- & Opazitäts-Malus** | `-10 Pkt` | LFDF-Konstrukt: 81 % Käufe aus Familiennetzwerk mit ~50 % Aufschlag, unabhängige Gutachten verweigert. | LFDF-Konstrukt: 81 % Käufe aus Familiennetzwerk mit ~50 % Aufschlag, unabhängige Gutachten verweigert. |
+| **Related-Party- & Opazitäts-Malus** | `-5 Pkt` | LFDF-Konstrukt: Verflechtungen im Gesellschafterkreis und konzerninterne Transaktionen; aufsichtsrechtlich durch Latvijas Banka überwacht. | LFDF-Konstrukt: Verflechtungen im Gesellschafterkreis und konzerninterne Transaktionen; aufsichtsrechtlich durch Latvijas Banka überwacht. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

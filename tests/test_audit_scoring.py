@@ -181,6 +181,68 @@ class TestAuditScoring(unittest.TestCase):
         self.assertLess(res["net_score"], 40)
         self.assertEqual(res["risk_class"], "DISTRESSED")
 
+    def test_bondora_calibrated_scoring(self):
+        import yaml
+
+        with open("seed_platforms/bondora/profile.yaml", "r", encoding="utf-8") as f:
+            profile = yaml.safe_load(f)
+        res = self.scorer.score_platform(profile)
+        self.assertEqual(res["pillar_1"].final_score, 14)
+        self.assertEqual(res["pillar_2"].final_score, 22)
+        self.assertEqual(res["pillar_3"].final_score, 13)
+        self.assertEqual(res["pillar_4"].final_score, 18)
+        self.assertEqual(res["raw_score"], 67)
+        self.assertEqual(res["malus_total"], -6)
+        self.assertEqual(res["net_score"], 61)
+        self.assertEqual(res["risk_class"], "MID RISK")
+
+    def test_monefit_calibrated_scoring(self):
+        import yaml
+
+        with open("seed_platforms/monefit/profile.yaml", "r", encoding="utf-8") as f:
+            profile = yaml.safe_load(f)
+        res = self.scorer.score_platform(profile)
+        self.assertEqual(res["pillar_1"].final_score, 10)
+        self.assertEqual(res["pillar_2"].final_score, 17)
+        self.assertEqual(res["pillar_3"].final_score, 14)
+        self.assertEqual(res["pillar_4"].final_score, 18)
+        self.assertEqual(res["raw_score"], 59)
+        self.assertEqual(res["malus_total"], -5)
+        self.assertEqual(res["net_score"], 54)
+        self.assertEqual(res["risk_class"], "WATCHLIST")
+
+    def test_debitum_calibrated_scoring(self):
+        import yaml
+
+        with open("seed_platforms/debitum/profile.yaml", "r", encoding="utf-8") as f:
+            profile = yaml.safe_load(f)
+        res = self.scorer.score_platform(profile)
+        self.assertEqual(res["pillar_1"].final_score, 25)
+        self.assertEqual(res["pillar_2"].final_score, 19)
+        self.assertEqual(res["pillar_3"].final_score, 11)
+        self.assertEqual(res["pillar_4"].final_score, 11)
+        self.assertEqual(res["raw_score"], 66)
+        self.assertEqual(res["malus_total"], -5)
+        self.assertEqual(res["net_score"], 61)
+        self.assertEqual(res["risk_class"], "MID RISK")
+
+    def test_bondster_marketplace_originator_malus(self):
+        import yaml
+
+        with open("seed_platforms/bondster/profile.yaml", "r", encoding="utf-8") as f:
+            profile = yaml.safe_load(f)
+        res = self.scorer.score_platform(profile)
+        self.assertEqual(res["pillar_1"].final_score, 8)
+        self.assertEqual(res["pillar_2"].final_score, 17)
+        self.assertEqual(res["pillar_3"].final_score, 11)
+        self.assertEqual(res["pillar_4"].final_score, 18)
+        self.assertEqual(res["raw_score"], 54)
+        self.assertEqual(res["malus_total"], -10)
+        self.assertEqual(res["net_score"], 44)
+        self.assertEqual(res["risk_class"], "SPECULATIVE")
+        m_types = [m.type for m in res["malus_deductions"]]
+        self.assertIn("marketplace_originator_risk", m_types)
+
     def test_sqlite_persistence_and_delta(self):
         # 1. Erster Monat: 60 Punkte
         s1 = {

@@ -40,6 +40,9 @@ malus_triggers:
   term_mismatch: false
   related_party_opacity: false
   distressed_workout: false
+  marketplace_originator_risk: true
+  marketplace_originator_penalty: -10
+  marketplace_originator_detail: 'Wiederholte Insolvenzen und Zahlungsausfälle externer Kreditanbahner (Right Choice, Lime, EuroGroshi, russische Anbahner) mit zersplitterten Recovery-Verfahren.'
 benchmarks:
   p2p_empire_safety_score: 0.0
   p2p_empire_safety_band: Niedrig

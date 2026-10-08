@@ -79,8 +79,8 @@ def ensure_platform_profiles(
                         if seed_content != dest_content:
                             shutil.copy2(seed_path, dest)
                             updated_cnt += 1
-                            logger.debug(
-                                "[PLATFORMS] Profil für '%s' auf neueste Seed-Version aktualisiert.",
+                            logger.info(
+                                "✓ [PLATFORMS] Profil für '%s' auf neueste Seed-Version aktualisiert.",
                                 platform_name,
                             )
                     except Exception as err:
@@ -95,6 +95,10 @@ def ensure_platform_profiles(
                     "✓ [PLATFORMS] Autarker Profil-Sync abgeschlossen (%d initialisiert, %d aktualisiert).",
                     created_cnt,
                     updated_cnt,
+                )
+            else:
+                logger.info(
+                    "✓ [PLATFORMS] Auto-Seed Check: Alle Plattform-Profile sind aktuell (keine Änderungen erforderlich)."
                 )
             break
 

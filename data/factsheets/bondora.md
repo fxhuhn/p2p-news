@@ -4,12 +4,12 @@ platform_name: Bondora
 audit_date: '2026-10-08'
 audit_version: '1.0'
 audit_score:
-  net_score: 44
-  raw_score: 59
-  risk_class: SPECULATIVE
-  portfolio_limit: 0 % (Neuanlage-Stopp)
-  recommendation: 'Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen
-    oder Pending Payments.'
+  net_score: 61
+  raw_score: 67
+  risk_class: MID RISK
+  portfolio_limit: 5 - 8 %
+  recommendation: 'Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite
+    oder Monokulturen.'
 flags:
   has_conflict: false
   conflict_notes: []
@@ -32,7 +32,7 @@ benchmarks:
   lars_wrobbel_rank: Rang 9
 pillars:
   pillar_1_regulation:
-    score: 17
+    score: 14
     max_score: 25
     band: Band_14_20
     rating: National reguliert
@@ -45,32 +45,28 @@ pillars:
     rating: Sehr gut / Testiert
     evidence: Konzernabschluss unabhängig durch KPMG testiert; solide Profitabilität.
   pillar_3_collateral:
-    score: 11
+    score: 13
     max_score: 25
     band: Band_8_14
     rating: Unbesichert mit Buyback
-    evidence: Konsumentenkredite mit strukturellen Ausfällen; Go & Grow puffert diese
-      über Renditeabstand ab.
+    evidence: Konsumentenkredite mit statistischer Streuung über >100.000 Einzeldarlehen;
+      Go & Grow puffert Ausfälle über den Renditeabstand und interne Reserven ab.
   pillar_4_liquidity:
-    score: 9
+    score: 18
     max_score: 25
-    band: Band_6_12
-    rating: Illiquide / Langläufer ohne Zweitmarkt
-    evidence: Go & Grow verspricht tägliche Verfügbarkeit, behält sich jedoch vertraglich
-      Teilabhebungen im Krisenfall vor.
+    band: Band_13_19
+    rating: Hohe Alltagsliquidität (Reserve-Pool)
+    evidence: Go & Grow Reserve-Pool bietet im Normalbetrieb tägliche Verfügbarkeit;
+      vertragliche Teilauszahlungsklausel (Partial Payouts) als Sicherheitsventil
+      im Krisenfall.
 malus_deductions:
-- type: monoculture
-  name: Monokultur-Malus
-  penalty: -8
-  trigger: Bondora AS stellt 100.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern.'
 - type: term_mismatch
   name: Fristen-Mismatch-Malus
-  penalty: -7
-  trigger: Tägliche Verfügbarkeit versprochen, aber durch langlaufende unbesicherte
-    Konsumkredite (bis 5 Jahre) hinterlegt.
-  evidence: Tägliche Verfügbarkeit versprochen, aber durch langlaufende unbesicherte
-    Konsumkredite (bis 5 Jahre) hinterlegt.
+  penalty: -6
+  trigger: Tägliche Verfügbarkeit im Go & Grow Pool trifft auf mehrjährige Konsumkreditlaufzeiten
+    (Fristentransformation mit Teilauszahlungsrisiko).
+  evidence: Tägliche Verfügbarkeit im Go & Grow Pool trifft auf mehrjährige Konsumkreditlaufzeiten
+    (Fristentransformation mit Teilauszahlungsrisiko).
 sources:
 - source_type: curated_profile
   path: data/platforms/bondora/profile.yaml
@@ -80,30 +76,29 @@ sources:
 
 # Platform Audit Factsheet: Bondora
 
-**Audit-Datum:** 2026-10-08 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
+**Audit-Datum:** 2026-10-08 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **44 / 100 Punkte** (Rohscore: 59 Pkt | Malus-Abschläge: -15 Pkt)
-> **Allokationsempfehlung:** Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen oder Pending Payments.
+> **Finaler Netto-Score:** **61 / 100 Punkte** (Rohscore: 67 Pkt | Malus-Abschläge: -6 Pkt)
+> **Allokationsempfehlung:** Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite oder Monokulturen.
 
 ## 2. Aufschlüsselung der 4 Säulen
 
 | Säule | Kategorie | Punkte | Einstufung | Kern-Evidenz |
 | :--- | :--- | :---: | :--- | :--- |
-| **Säule 1** | Regulierung & Verwahrung | **17 / 25** | National reguliert | National lizenziert als Kreditgeber in Estland; kein Wertpapierinstitut, kein gesetzlicher 20k Entschädigungsschutz. |
+| **Säule 1** | Regulierung & Verwahrung | **14 / 25** | National reguliert | National lizenziert als Kreditgeber in Estland; kein Wertpapierinstitut, kein gesetzlicher 20k Entschädigungsschutz. |
 | **Säule 2** | Solvenz & Governance | **22 / 25** | Sehr gut / Testiert | Konzernabschluss unabhängig durch KPMG testiert; solide Profitabilität. |
-| **Säule 3** | Besicherung & Workout | **11 / 25** | Unbesichert mit Buyback | Konsumentenkredite mit strukturellen Ausfällen; Go & Grow puffert diese über Renditeabstand ab. |
-| **Säule 4** | Liquidität & Zweitmarkt | **9 / 25** | Illiquide / Langläufer ohne Zweitmarkt | Go & Grow verspricht tägliche Verfügbarkeit, behält sich jedoch vertraglich Teilabhebungen im Krisenfall vor. |
-| **SUMME** | **Rohscore (vor Mali)** | **59 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **Säule 3** | Besicherung & Workout | **13 / 25** | Unbesichert mit Buyback | Konsumentenkredite mit statistischer Streuung über >100.000 Einzeldarlehen; Go & Grow puffert Ausfälle über den Renditeabstand und interne Reserven ab. |
+| **Säule 4** | Liquidität & Zweitmarkt | **18 / 25** | Hohe Alltagsliquidität (Reserve-Pool) | Go & Grow Reserve-Pool bietet im Normalbetrieb tägliche Verfügbarkeit; vertragliche Teilauszahlungsklausel (Partial Payouts) als Sicherheitsventil im Krisenfall. |
+| **SUMME** | **Rohscore (vor Mali)** | **67 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-8 Pkt` | Bondora AS stellt 100.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern. |
-| **Fristen-Mismatch-Malus** | `-7 Pkt` | Tägliche Verfügbarkeit versprochen, aber durch langlaufende unbesicherte Konsumkredite (bis 5 Jahre) hinterlegt. | Tägliche Verfügbarkeit versprochen, aber durch langlaufende unbesicherte Konsumkredite (bis 5 Jahre) hinterlegt. |
+| **Fristen-Mismatch-Malus** | `-6 Pkt` | Tägliche Verfügbarkeit im Go & Grow Pool trifft auf mehrjährige Konsumkreditlaufzeiten (Fristentransformation mit Teilauszahlungsrisiko). | Tägliche Verfügbarkeit im Go & Grow Pool trifft auf mehrjährige Konsumkreditlaufzeiten (Fristentransformation mit Teilauszahlungsrisiko). |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

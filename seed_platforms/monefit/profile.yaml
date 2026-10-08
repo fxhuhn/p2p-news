@@ -10,15 +10,18 @@ regulation:
   custody: Betriebskonten der Creditstar Group
   investor_compensation: false
   contract_structure: Unbesicherte Darlehen an Creditstar Tochter
-  notes: Völlig unreguliertes Produkt; keine Einlagensicherung, keine Treuhandkonten.
+  parent_company_regulated: true
+  notes: Die Muttergesellschaft Creditstar Group AS ist als Kreditgeber durch die estnische
+    Finantsinspektsioon beaufsichtigt; SmartSaver selbst operiert als unreguliertes Darlehenskonstrukt
+    ohne Einlagensicherung oder Treuhandsegregation.
 governance_and_solvency:
   guarantor_group: Creditstar Group AS
   auditor: KPMG (verzögerte Berichterstattung)
   audit_opinion: Mit Hinweisen zur Refinanzierung
-  profitability: Creditstar unter hohem Refinanzierungsdruck (Anleihen-Fälligkeiten)
+  profitability: Zweistellige Millionengewinne, jedoch unter Refinanzierungsdruck durch Anleihen
   equity_ratio_pct: 16.0
   interest_coverage_ratio: 1.4
-  notes: Erhebliche Einreichungsverzögerungen bei Bilanzen; Pending Payments auf Mintos
+  notes: Erhebliche Einreichungsverzögerungen bei Bilanzen; Pending Payments von Creditstar auf Mintos
     und Lendermarket.
 collateral_and_workout:
   primary_asset_type: Unbesicherte Konsumentenkredite
@@ -27,25 +30,26 @@ collateral_and_workout:
   historical_loss_pct: 0.0
   current_npl_pct: 12.0
   buyback_grace_period_days: null
-  notes: Völlig unbesichert; Rückzahlung hängt allein von der Solvenz der Creditstar
-    Group ab.
+  notes: Völlig unbesichert; Rückzahlung hängt allein vom operativen Cashflow und der Solvenz
+    der Creditstar Group ab.
 liquidity_and_marketplace:
+  is_liquidity_pool: true
   secondary_market: false
   secondary_market_fee_pct: null
   secondary_market_waiting_days: null
   primary_loan_duration_days_avg: 30
-  withdrawal_queue_days: 10
-  notes: Verspricht tägliche Auszahlung (Tagesgeld-Ähnlich), geriet jedoch wiederholt
-    in Auszahlungsverzug.
+  withdrawal_queue_days: 0
+  notes: SmartSaver Flex bietet im regulären Betrieb tägliche Liquidität (1-3 Werktage Auszahlungsdauer);
+    bisher unterbrechungsfreie Bedienung von Abhebungen.
 malus_triggers:
-  monoculture_pct: 100.0
-  monoculture_originator: Creditstar Group AS
+  is_direct_lender: true
+  monoculture_pct: 0.0
+  monoculture_originator: null
   term_mismatch: true
-  term_mismatch_detail: Tägliche/flexible Auszahlung versprochen, aber durch langlaufende,
-    illiquide Kredite hinterlegt.
-  related_party_opacity: true
-  related_party_detail: Plattform dient rein der Refinanzierung des Schwesterkonzerns
-    Creditstar.
+  term_mismatch_penalty: -5
+  term_mismatch_detail: Tägliche Verfügbarkeit im SmartSaver Flex trifft auf mehrmonatige bis mehrjährige
+    Kreditlinien und Konsumentendarlehen (asymmetrische Fristentransformation).
+  related_party_opacity: false
   distressed_workout: false
 benchmarks:
   p2p_empire_safety_score: 0.0

@@ -28,22 +28,26 @@ collateral_and_workout:
   historical_loss_pct: 4.5
   current_npl_pct: 18.0
   buyback_grace_period_days: null
-  notes: Konsumentenkredite mit strukturellen Ausfällen; Go & Grow puffert diese über
-    Renditeabstand ab.
+  has_loss_buffer: true
+  notes: Konsumentenkredite mit statistischer Streuung über >100.000 Einzeldarlehen;
+    Go & Grow puffert Ausfälle über den Renditeabstand und interne Reserven ab.
 liquidity_and_marketplace:
+  is_liquidity_pool: true
   secondary_market: false
   secondary_market_fee_pct: null
   secondary_market_waiting_days: null
   primary_loan_duration_days_avg: 720
   withdrawal_queue_days: 0
-  notes: Go & Grow verspricht tägliche Verfügbarkeit, behält sich jedoch vertraglich
-    Teilabhebungen im Krisenfall vor.
+  notes: Go & Grow Reserve-Pool bietet im Normalbetrieb tägliche Verfügbarkeit; vertragliche
+    Teilauszahlungsklausel (Partial Payouts) als Sicherheitsventil im Krisenfall.
 malus_triggers:
-  monoculture_pct: 100.0
-  monoculture_originator: Bondora AS
+  is_direct_lender: true
+  monoculture_pct: 0.0
+  monoculture_originator: null
   term_mismatch: true
-  term_mismatch_detail: Tägliche Verfügbarkeit versprochen, aber durch langlaufende
-    unbesicherte Konsumkredite (bis 5 Jahre) hinterlegt.
+  term_mismatch_penalty: -6
+  term_mismatch_detail: Tägliche Verfügbarkeit im Go & Grow Pool trifft auf mehrjährige
+    Konsumkreditlaufzeiten (Fristentransformation mit Teilauszahlungsrisiko).
   related_party_opacity: false
   distressed_workout: false
 benchmarks:

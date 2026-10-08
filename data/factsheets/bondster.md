@@ -4,12 +4,12 @@ platform_name: Bondster
 audit_date: '2026-10-08'
 audit_version: '1.0'
 audit_score:
-  net_score: 60
-  raw_score: 60
-  risk_class: MID RISK
-  portfolio_limit: 5 - 8 %
-  recommendation: 'Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite
-    oder Monokulturen.'
+  net_score: 44
+  raw_score: 54
+  risk_class: SPECULATIVE
+  portfolio_limit: 0 % (Neuanlage-Stopp)
+  recommendation: 'Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen
+    oder Pending Payments.'
 flags:
   has_conflict: false
   conflict_notes: []
@@ -44,10 +44,10 @@ pillars:
     rating: Solide / Lokaler Abschluss
     evidence: Wiederholte Ausfälle externer Kreditanbahner (Right Choice, Lime, EuroGroshi).
   pillar_3_collateral:
-    score: 17
+    score: 11
     max_score: 25
-    band: Band_15_20
-    rating: Dinglich besichert (Mobiliar)
+    band: Band_8_14
+    rating: Unbesichert mit Buyback
     evidence: Ausfallquote überdurchschnittlich hoch; zersplitterter Workout-Prozess.
   pillar_4_liquidity:
     score: 18
@@ -55,7 +55,14 @@ pillars:
     band: Band_13_19
     rating: Gute Liquidität
     evidence: Gebührenfreier Sekundärmarkt vorhanden.
-malus_deductions: []
+malus_deductions:
+- type: marketplace_originator_risk
+  name: Marktplatz-Anbahnerausfall-Malus
+  penalty: -10
+  trigger: Wiederholte Insolvenzen und Zahlungsausfälle externer Kreditanbahner (Right
+    Choice, Lime, EuroGroshi, russische Anbahner) mit zersplitterten Recovery-Verfahren.
+  evidence: Wiederholte Insolvenzen und Zahlungsausfälle externer Kreditanbahner (Right
+    Choice, Lime, EuroGroshi, russische Anbahner) mit zersplitterten Recovery-Verfahren.
 sources:
 - source_type: curated_profile
   path: data/platforms/bondster/profile.yaml
@@ -65,13 +72,13 @@ sources:
 
 # Platform Audit Factsheet: Bondster
 
-**Audit-Datum:** 2026-10-08 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
+**Audit-Datum:** 2026-10-08 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **60 / 100 Punkte** (Rohscore: 60 Pkt | Malus-Abschläge: 0 Pkt)
-> **Allokationsempfehlung:** Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite oder Monokulturen.
+> **Finaler Netto-Score:** **44 / 100 Punkte** (Rohscore: 54 Pkt | Malus-Abschläge: -10 Pkt)
+> **Allokationsempfehlung:** Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen oder Pending Payments.
 
 ## 2. Aufschlüsselung der 4 Säulen
 
@@ -79,13 +86,15 @@ sources:
 | :--- | :--- | :---: | :--- | :--- |
 | **Säule 1** | Regulierung & Verwahrung | **8 / 25** | Unreguliert (Abtretungsverträge) | Unregulierter tschechischer P2P-Marktplatz. |
 | **Säule 2** | Solvenz & Governance | **17 / 25** | Solide / Lokaler Abschluss | Wiederholte Ausfälle externer Kreditanbahner (Right Choice, Lime, EuroGroshi). |
-| **Säule 3** | Besicherung & Workout | **17 / 25** | Dinglich besichert (Mobiliar) | Ausfallquote überdurchschnittlich hoch; zersplitterter Workout-Prozess. |
+| **Säule 3** | Besicherung & Workout | **11 / 25** | Unbesichert mit Buyback | Ausfallquote überdurchschnittlich hoch; zersplitterter Workout-Prozess. |
 | **Säule 4** | Liquidität & Zweitmarkt | **18 / 25** | Gute Liquidität | Gebührenfreier Sekundärmarkt vorhanden. |
-| **SUMME** | **Rohscore (vor Mali)** | **60 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **SUMME** | **Rohscore (vor Mali)** | **54 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
-Keine Malus-Abschläge wirksam. Das Portfolio weist weder unzulässige Monokulturen (>50 %), noch Fristen-Mismatches oder Governance-Opazität auf.
+| Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
+| :--- | :---: | :--- | :--- |
+| **Marktplatz-Anbahnerausfall-Malus** | `-10 Pkt` | Wiederholte Insolvenzen und Zahlungsausfälle externer Kreditanbahner (Right Choice, Lime, EuroGroshi, russische Anbahner) mit zersplitterten Recovery-Verfahren. | Wiederholte Insolvenzen und Zahlungsausfälle externer Kreditanbahner (Right Choice, Lime, EuroGroshi, russische Anbahner) mit zersplitterten Recovery-Verfahren. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 
