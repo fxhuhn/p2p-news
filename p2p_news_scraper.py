@@ -46,7 +46,6 @@ import os
 import re
 import sys
 import time
-import unicodedata
 from abc import ABC, abstractmethod
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
@@ -61,6 +60,8 @@ import trafilatura
 import yaml
 from bs4 import BeautifulSoup, Tag
 from trafilatura.settings import use_config
+
+from normalization import is_metric_url, normalize_text
 
 IGNORED_BINARY_EXTENSIONS: tuple[str, ...] = (
     ".pdf",
@@ -552,29 +553,10 @@ class KeywordClassifier:
 # ==============================================================================
 
 
-def normalize_text(raw_text: str) -> str:
-    """
-    Führt eine deterministische Text-Normalisierung durch:
-    1. Unicode-Normalisierung (NFC)
-    2. Maskierung flüchtiger Zeitstempel (z. B. 'Last update at ...') zur Vermeidung von Hash-Jitter
-    3. Whitespace-Bereinigung (Entfernung redundanter Leerzeichen, Tabs und Zeilenumbrüche)
-    """
-    if not raw_text:
-        return ""
-    normalized_unicode = unicodedata.normalize("NFC", raw_text)
-    # Maskiere dynamische Zeitstempel wie z. B. "Last update at 03-10-2026 12:12 UTC"
-    masked = re.sub(
-        r"Last update at \d{2}-\d{2}-\d{4} \d{2}:\d{2}(?::\d{2})? UTC",
-        "Last update at [TIMESTAMP]",
-        normalized_unicode,
-        flags=re.IGNORECASE,
-    )
-    return " ".join(masked.split())
-
-
-def compute_sha256_hash(text: str) -> str:
+def compute_sha256_hash(text: str, url: str | None = None) -> str:
     """Berechnet den hexadezimalen SHA-256-Hash über den normalisierten UTF-8-Text."""
-    normalized = normalize_text(text)
+    is_metric = is_metric_url(url)
+    normalized = normalize_text(text, is_metric=is_metric)
     return hashlib.sha256(normalized.encode("utf-8")).hexdigest()
 
 
@@ -2109,7 +2091,7 @@ class P2PNewsScraper:
                 html, url
             )
 
-        content_hash = compute_sha256_hash(content)
+        content_hash = compute_sha256_hash(content, url=url)
         scanned_at = datetime.now(timezone.utc).isoformat()
 
         return ArticleItem(
@@ -2208,7 +2190,12 @@ class P2PNewsScraper:
 
     def _log_item_result(self, result: ScanResult, is_overview: bool = False) -> None:
         prefix = f"[{result.provider_name.upper()}]"
-        type_str = "[ÜBERSICHT]" if is_overview else "[ARTIKEL]"
+        if is_overview:
+            type_str = "[ÜBERSICHT]"
+        elif is_metric_url(result.item.url):
+            type_str = "[STATISTIK]"
+        else:
+            type_str = "[ARTIKEL]"
         title_str = f"'{result.item.title}'" if result.item.title else "<Ohne Titel>"
         rel_path = result.file_path.relative_to(self.config.output_dir)
 

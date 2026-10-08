@@ -64,6 +64,69 @@ class TestTextNormalizationAndHashing(unittest.TestCase):
             compute_sha256_hash(text_at_1212), compute_sha256_hash(text_changed)
         )
 
+    def test_german_timestamp_and_comment_normalization(self) -> None:
+        """Prüft, dass deutsche Aktualisierungsstempel, relative Zeiten und Kommentare keinen Hash-Jitter erzeugen."""
+        t1 = "Artikel Body.\nZuletzt aktualisiert am 08. Oktober 2026 um 11:30 Uhr.\n14 Kommentare vorhanden."
+        t2 = "Artikel Body.\nAktualisiert am: 07.10.2026 um 09:00 Uhr.\n18 Kommentare vorhanden."
+        self.assertEqual(compute_sha256_hash(t1), compute_sha256_hash(t2))
+
+        # Relative Datumsangaben
+        r1 = "News Text. Gepostet vor 2 Stunden. Mehr Text."
+        r2 = "News Text. Gepostet vor 3 Tagen. Mehr Text."
+        self.assertEqual(compute_sha256_hash(r1), compute_sha256_hash(r2))
+
+    def test_blog_boilerplate_stripping(self) -> None:
+        base_article = (
+            "# Asterra Estate Erfahrungen\nSolide Plattform mit spanischen Krediten."
+        )
+        footer_v1 = "\n\n## Weitere Infos zu den aktiven P2P Plattformen\n- Mintos (25 EUR Bonus)\n- PeerBerry (0,5 %)"
+        footer_v2 = "\n\n## Weitere Infos zu den aktiven P2P Plattformen\n- Mintos (30 EUR Bonus)\n- PeerBerry (1,0 %)\n- Esketit"
+
+        doc1 = base_article + footer_v1
+        doc2 = base_article + footer_v2
+        self.assertEqual(compute_sha256_hash(doc1), compute_sha256_hash(doc2))
+
+        # Echte Änderung im Fließtext erzeugt weiterhin einen neuen Hash
+        doc_changed = (
+            "# Asterra Estate Erfahrungen\nProblem-Update: Verzögerungen in Spanien."
+            + footer_v1
+        )
+        self.assertNotEqual(compute_sha256_hash(doc1), compute_sha256_hash(doc_changed))
+
+    def test_metric_page_normalization(self) -> None:
+        """Prüft, dass Live-Statistikseiten resistent gegen Cent-Fluktuationen und Zeilentausch sind."""
+        metric_url = "https://robo.cash/de/statistics/"
+        # Fluktuierendes Portfolio
+        s1 = "Robocash Statistiken\nOffenes Portfolio\n67.918.411,25 €\nEnde"
+        s2 = "Robocash Statistiken\nOffenes Portfolio\n67.925.120,50 €\nEnde"
+        self.assertEqual(
+            compute_sha256_hash(s1, url=metric_url),
+            compute_sha256_hash(s2, url=metric_url),
+        )
+
+        # Bei Nicht-Metrik-Seiten (z. B. News) müssen Zahlenwerte erhalten bleiben
+        news_url = "https://robo.cash/de/news/quartalszahlen"
+        self.assertNotEqual(
+            compute_sha256_hash(s1, url=news_url),
+            compute_sha256_hash(s2, url=news_url),
+        )
+
+        # Zeilentausch bei PeerBerry-Statistikseite (dynamische Sortierung nach Volumen)
+        pb_url = "https://peerberry.com/peerberry-statistics/"
+        pb_v1 = "## Loans Outstanding by Loan Originator\n\nCredito365 MX\n\nCredito365 CO\n\nLendplus ZA"
+        pb_v2 = "## Loans Outstanding by Loan Originator\n\nCredito365 CO\n\nCredito365 MX\n\nLendplus ZA"
+        self.assertEqual(
+            compute_sha256_hash(pb_v1, url=pb_url),
+            compute_sha256_hash(pb_v2, url=pb_url),
+        )
+
+        # Neuer Originator hinzugefügt -> echter geänderter Hash
+        pb_v3 = "## Loans Outstanding by Loan Originator\n\nCredito365 CO\n\nCredito365 MX\n\nLendplus ZA\n\nNewOriginator DE"
+        self.assertNotEqual(
+            compute_sha256_hash(pb_v1, url=pb_url),
+            compute_sha256_hash(pb_v3, url=pb_url),
+        )
+
 
 class TestCloudflareDeobfuscation(unittest.TestCase):
     def test_decode_cloudflare_email(self) -> None:
