@@ -1,7 +1,7 @@
 ---
 platform: esketit
 platform_name: Esketit
-audit_date: '2026-10-07'
+audit_date: '2026-10-08'
 audit_version: '1.0'
 audit_score:
   net_score: 64
@@ -75,7 +75,7 @@ sources:
 
 # Platform Audit Factsheet: Esketit
 
-**Audit-Datum:** 2026-10-07 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
+**Audit-Datum:** 2026-10-08 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -110,4 +110,4 @@ sources:
 | **Lars Wrobbel / Passives Einkommen** | **Rang 12** (20/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-07.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-08.*

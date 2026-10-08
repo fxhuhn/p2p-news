@@ -1,7 +1,7 @@
 ---
 platform: debitum
 platform_name: Debitum Investments
-audit_date: '2026-10-07'
+audit_date: '2026-10-08'
 audit_version: '1.0'
 audit_score:
   net_score: 49
@@ -80,7 +80,7 @@ sources:
 
 # Platform Audit Factsheet: Debitum Investments
 
-**Audit-Datum:** 2026-10-07 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
+**Audit-Datum:** 2026-10-08 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -116,4 +116,4 @@ sources:
 | **Lars Wrobbel / Passives Einkommen** | **Rang 4** (31/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-07.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-08.*

@@ -1,11 +1,11 @@
 ---
 platform: hive5
 platform_name: hive5
-audit_date: '2026-10-07'
+audit_date: '2026-10-08'
 audit_version: '1.0'
 audit_score:
-  net_score: 57
-  raw_score: 63
+  net_score: 53
+  raw_score: 59
   risk_class: WATCHLIST
   portfolio_limit: 0 - 3 %
   recommendation: 'Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende
@@ -38,8 +38,7 @@ pillars:
     band: Band_6_13
     rating: Unreguliert (Abtretungsverträge)
     evidence: Operiert über kroatisches SPV (hive5 d.o.o.) mit Abtretungsverträgen.
-      Externe Zahlungsabwicklung über lizenziertes EMI (Paysera). Keine MiFID II /
-      ECSP-Lizenz.
+      Keine MiFID II / ECSP-Lizenz.
   pillar_2_solvency:
     score: 17
     max_score: 25
@@ -55,12 +54,12 @@ pillars:
     evidence: Unbesicherte Payday- und Konsumentenkredite der Konzerngesellschaften
       (Rupex, Tengo). Rückkaufverpflichtung nach 60 Tagen.
   pillar_4_liquidity:
-    score: 20
+    score: 16
     max_score: 25
-    band: Band_20_25
-    rating: Sehr liquide / Kurzläufer & Zweitmarkt
-    evidence: Sehr kurze Laufzeiten (meist 30-90 Tage, Ø 45 Tage) kombiniert mit dem
-      im Oktober 2026 (KW 41) eingeführten gebührenfreien Sekundärmarkt. Zügige Auszahlungen.
+    band: Band_13_19
+    rating: Gute Liquidität
+    evidence: Sehr kurze Laufzeiten (meist 30-90 Tage) sorgen für stetigen Rückfluss
+      ohne zwingenden Sekundärmarkt. Zügige Auszahlungen.
 malus_deductions:
 - type: monoculture
   name: Monokultur-Malus
@@ -76,12 +75,12 @@ sources:
 
 # Platform Audit Factsheet: hive5
 
-**Audit-Datum:** 2026-10-07 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
+**Audit-Datum:** 2026-10-08 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **57 / 100 Punkte** (Rohscore: 63 Pkt | Malus-Abschläge: -6 Pkt)
+> **Finaler Netto-Score:** **53 / 100 Punkte** (Rohscore: 59 Pkt | Malus-Abschläge: -6 Pkt)
 > **Allokationsempfehlung:** Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende Testate oder Governance-Risse.
 
 > [!NOTE]
@@ -92,11 +91,11 @@ sources:
 
 | Säule | Kategorie | Punkte | Einstufung | Kern-Evidenz |
 | :--- | :--- | :---: | :--- | :--- |
-| **Säule 1** | Regulierung & Verwahrung | **10 / 25** | Unreguliert (Abtretungsverträge) | Operiert über kroatisches SPV (hive5 d.o.o.) mit Abtretungsverträgen. Externe Zahlungsabwicklung über lizenziertes EMI (Paysera). Keine MiFID II / ECSP-Lizenz. |
+| **Säule 1** | Regulierung & Verwahrung | **10 / 25** | Unreguliert (Abtretungsverträge) | Operiert über kroatisches SPV (hive5 d.o.o.) mit Abtretungsverträgen. Keine MiFID II / ECSP-Lizenz. |
 | **Säule 2** | Solvenz & Governance | **17 / 25** | Solide / Lokaler Abschluss | Gehört zur Hive Finance Gruppe. Starkes Wachstum, Management berichtet Profitabilität, jedoch noch kein unabhängiges Big-Four / Tier-2 Testat. |
 | **Säule 3** | Besicherung & Workout | **16 / 25** | Unbesichert mit Buyback | Unbesicherte Payday- und Konsumentenkredite der Konzerngesellschaften (Rupex, Tengo). Rückkaufverpflichtung nach 60 Tagen. |
-| **Säule 4** | Liquidität & Zweitmarkt | **20 / 25** | Sehr liquide / Kurzläufer & Zweitmarkt | Sehr kurze Laufzeiten (meist 30-90 Tage, Ø 45 Tage) kombiniert mit dem im Oktober 2026 (KW 41) eingeführten gebührenfreien Sekundärmarkt. Zügige Auszahlungen. |
-| **SUMME** | **Rohscore (vor Mali)** | **63 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **Säule 4** | Liquidität & Zweitmarkt | **16 / 25** | Gute Liquidität | Sehr kurze Laufzeiten (meist 30-90 Tage) sorgen für stetigen Rückfluss ohne zwingenden Sekundärmarkt. Zügige Auszahlungen. |
+| **SUMME** | **Rohscore (vor Mali)** | **59 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
@@ -115,4 +114,4 @@ sources:
 | **Lars Wrobbel / Passives Einkommen** | **Rang 18** (15/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-07.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-08.*
