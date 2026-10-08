@@ -61,11 +61,23 @@ class RankingGenerator:
             key=lambda x: (x["net_score"], x["raw_score"], x["pillar_1"]), reverse=True
         )
 
+        # YAML Frontmatter
+        now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        frontmatter = [
+            "---",
+            f"title: 'P2P Platform Audit Ranking – {year_month}'",
+            f"audit_date: '{audit_date}'",
+            f"year_month: '{year_month}'",
+            f"platforms_count: {len(enriched_scores)}",
+            "model: 'Mathematisches Nettomodell (Max. 100 Pkt - Mali)'",
+            f"generated_at: '{now_iso}'",
+            "---",
+            "",
+        ]
+
         # Markdown Aufbau
         lines = [
             f"# P2P Platform Audit Ranking – {year_month}",
-            "",
-            f"**Stichtag:** {audit_date} | **Geprüfte Plattformen:** {len(enriched_scores)} | **Modell:** Mathematisches Nettomodell (Max. 100 Pkt - Mali)",
             "",
             "## 1. Master-Rangliste aller Plattformen",
             "",
@@ -231,6 +243,6 @@ class RankingGenerator:
 
         target_file = self.output_dir / f"audit-ranking-{year_month}.md"
         with open(target_file, "w", encoding="utf-8") as f:
-            f.write("\n".join(lines))
+            f.write("\n".join(frontmatter + lines))
 
         return target_file

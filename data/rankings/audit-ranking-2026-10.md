@@ -1,6 +1,13 @@
-# P2P Platform Audit Ranking – 2026-10
+---
+title: 'P2P Platform Audit Ranking – 2026-10'
+audit_date: '2026-10-08'
+year_month: '2026-10'
+platforms_count: 31
+model: 'Mathematisches Nettomodell (Max. 100 Pkt - Mali)'
+generated_at: '2026-10-08T12:47:06.373946+00:00'
+---
 
-**Stichtag:** 2026-10-08 | **Geprüfte Plattformen:** 31 | **Modell:** Mathematisches Nettomodell (Max. 100 Pkt - Mali)
+# P2P Platform Audit Ranking – 2026-10
 
 ## 1. Master-Rangliste aller Plattformen
 

@@ -304,6 +304,13 @@ class TestAuditScoring(unittest.TestCase):
         rank_file = gen.generate_monthly_ranking("2026-10-08")
         content = rank_file.read_text(encoding="utf-8")
 
+        # Frontmatter enthält Metadaten
+        self.assertTrue(content.startswith("---\n"))
+        self.assertIn("audit_date: '2026-10-08'", content)
+        self.assertIn("platforms_count: 1", content)
+        self.assertNotIn("**Stichtag:**", content)
+        self.assertNotIn("**Geprüfte Plattformen:**", content)
+
         # Tabelle enthält Δ Vormonat
         self.assertIn("Δ Vormonat", content)
         # Redundanter Delta-Report entfällt
