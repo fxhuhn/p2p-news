@@ -44,8 +44,8 @@ benchmarks:
   p2p_empire_safety_score: 7.3
   p2p_empire_safety_band: Mittel
   p2p_empire_portfolio_perf: 100.0
-  lars_wrobbel_score: 21
-  lars_wrobbel_rank: Rang 11
+  lars_wrobbel_score: 24
+  lars_wrobbel_rank: Rang 15
   rethink_p2p_score: 6.4
   rethink_p2p_rank: Platz 8
   rethink_p2p_red_flags: '0'

@@ -41,14 +41,15 @@ malus_triggers:
   term_mismatch: false
   related_party_opacity: true
   related_party_penalty: -5
-  related_party_detail: 'LFDF-Konstrukt: Verflechtungen im Gesellschafterkreis und konzerninterne Transaktionen; aufsichtsrechtlich durch Latvijas Banka überwacht.'
+  related_party_detail: 'LFDF-Konstrukt: Verflechtungen im Gesellschafterkreis und
+    konzerninterne Transaktionen; aufsichtsrechtlich durch Latvijas Banka überwacht.'
   distressed_workout: false
 benchmarks:
   p2p_empire_safety_score: 3.9
   p2p_empire_safety_band: Niedrig
   p2p_empire_portfolio_perf: 85.0
   lars_wrobbel_score: 31
-  lars_wrobbel_rank: Rang 4
+  lars_wrobbel_rank: Rang 7
   rethink_p2p_score: 6.0
   rethink_p2p_rank: Platz 14
   rethink_p2p_red_flags: '-19'

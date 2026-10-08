@@ -10,15 +10,20 @@ regulation:
   custody: Getrennte Firmenkonten (keine individuellen IBANs)
   investor_compensation: false
   contract_structure: Abtretungsverträge (Assignment Agreements)
-  notes: Unreguliert über Kroatien/Litauen, aber getrennt geführte Bankkonten. Keine gesetzliche Anlegerentschädigung.
+  notes: Unreguliert über Kroatien/Litauen, aber getrennt geführte Bankkonten. Keine
+    gesetzliche Anlegerentschädigung.
 governance_and_solvency:
   guarantor_group: Aventus Group / Gofingo Group
   auditor: BDO / Grant Thornton (testierte Konzernabschlüsse)
   audit_opinion: Unqualified / Ohne Einschränkung
-  profitability: Stetig hochprofitabel (H1 2026 Nettogewinn 49,1 Mio. €, EK 264,2 Mio. €)
+  profitability: Stetig hochprofitabel (H1 2026 Nettogewinn 49,1 Mio. €, EK 264,2
+    Mio. €)
   equity_ratio_pct: 31.0
   interest_coverage_ratio: 4.2
-  notes: Wirtschaftlich getragen durch hochprofitable Aventus Group (H1 2026 Nettogewinn 49,1 Mio. €, Eigenkapital 264,2 Mio. €). Ausstehendes Portfolio übersteigt 155 Mio. € bei 120.000 Investoren (91 % Loyalty-Konzentration). 100 % Rückzahlung aller Kriegs-Kredite centgenau aus Konzerngewinnen.
+  notes: Wirtschaftlich getragen durch hochprofitable Aventus Group (H1 2026 Nettogewinn
+    49,1 Mio. €, Eigenkapital 264,2 Mio. €). Ausstehendes Portfolio übersteigt 155
+    Mio. € bei 120.000 Investoren (91 % Loyalty-Konzentration). 100 % Rückzahlung
+    aller Kriegs-Kredite centgenau aus Konzerngewinnen.
 collateral_and_workout:
   primary_asset_type: Kurzfristige Konsumentenkredite & Immobilienkredite
   security_type: 60-Tage Rückkaufgarantie + Gruppengarantie
@@ -26,14 +31,17 @@ collateral_and_workout:
   historical_loss_pct: 0.0
   current_npl_pct: 0.0
   buyback_grace_period_days: 60
-  notes: 0 % realisierter Kapitalverlust seit Launch 2017. 100 % Rückzahlung aller kriegsbetroffenen Kredite (über 50 Mio. €) aus operativen Konzerngewinnen der Aventus Group.
+  notes: 0 % realisierter Kapitalverlust seit Launch 2017. 100 % Rückzahlung aller
+    kriegsbetroffenen Kredite (über 50 Mio. €) aus operativen Konzerngewinnen der
+    Aventus Group.
 liquidity_and_marketplace:
   secondary_market: true
   secondary_market_fee_pct: 0.0
   secondary_market_waiting_days: 0
   primary_loan_duration_days_avg: 30
   withdrawal_queue_days: 0
-  notes: Sehr kurze originäre Kreditlaufzeiten (>70 % unter 60 Tagen, Ø 30 Tage) kombiniert mit seit 15. Januar 2026 aktivem, gebührenfreiem Sekundärmarkt ohne Mindesthaltedauer.
+  notes: Sehr kurze originäre Kreditlaufzeiten (>70 % unter 60 Tagen, Ø 30 Tage) kombiniert
+    mit seit 15. Januar 2026 aktivem, gebührenfreiem Sekundärmarkt ohne Mindesthaltedauer.
 malus_triggers:
   monoculture_pct: 88.0
   monoculture_originator: Aventus Group
@@ -45,7 +53,7 @@ benchmarks:
   p2p_empire_safety_band: Hoch
   p2p_empire_portfolio_perf: 100.0
   lars_wrobbel_score: 30
-  lars_wrobbel_rank: Rang 5
+  lars_wrobbel_rank: Rang 9
   rethink_p2p_score: 7.6
   rethink_p2p_rank: Platz 5
   rethink_p2p_red_flags: '0'

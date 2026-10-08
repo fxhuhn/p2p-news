@@ -28,8 +28,8 @@ benchmarks:
   p2p_empire_safety_score: 0.0
   p2p_empire_safety_band: Niedrig
   p2p_empire_portfolio_perf: 70.0
-  lars_wrobbel_score: 16
-  lars_wrobbel_rank: Rang 14
+  lars_wrobbel_score: 17
+  lars_wrobbel_rank: Rang 20
 pillars:
   pillar_1_regulation:
     score: 10
@@ -109,7 +109,7 @@ sources:
 | **P2P Game Rating** | **50 / 100** (Platz 21 von 40) | Thomas P2P Rating (von 40 Plattformen) |
 | **P2P Empire Safety Score** | **0.0 / 10** (Niedrig) | Unabhängiger Testbericht Jakub Krejci |
 | **P2P Empire Portfolio Performance** | **70.0 %** | Reale Rückzahlungsquote im Portfolio |
-| **Lars Wrobbel / Passives Einkommen** | **Rang 14** (16/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
+| **Lars Wrobbel / Passives Einkommen** | **Rang 20** (17/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
 
 ---
 *Automatisch generiert durch das P2P Audit Scoring System am 2026-10-08.*

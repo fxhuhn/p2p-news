@@ -10,7 +10,8 @@ regulation:
   custody: Externe Zahlungsabwicklung via Paysera
   investor_compensation: false
   contract_structure: Kroatische Abtretungsverträge (hive5 d.o.o.)
-  notes: Operiert über kroatisches SPV (hive5 d.o.o.) mit Abtretungsverträgen. Externe Zahlungsabwicklung über lizenziertes EMI (Paysera). Keine MiFID II / ECSP-Lizenz.
+  notes: Operiert über kroatisches SPV (hive5 d.o.o.) mit Abtretungsverträgen. Externe
+    Zahlungsabwicklung über lizenziertes EMI (Paysera). Keine MiFID II / ECSP-Lizenz.
 governance_and_solvency:
   guarantor_group: Hive Finance Gruppe (Rupex, Tengo, Ekspres Pozyczka)
   auditor: null
@@ -18,7 +19,8 @@ governance_and_solvency:
   profitability: Management berichtet Profitabilität im rasanten Wachstum
   equity_ratio_pct: 20.0
   interest_coverage_ratio: 2.5
-  notes: Gehört zur Hive Finance Gruppe. Starkes Wachstum, Management berichtet Profitabilität, jedoch noch kein unabhängiges Big-Four / Tier-2 Testat.
+  notes: Gehört zur Hive Finance Gruppe. Starkes Wachstum, Management berichtet Profitabilität,
+    jedoch noch kein unabhängiges Big-Four / Tier-2 Testat.
 collateral_and_workout:
   primary_asset_type: Konsumentenkredite & Kurzzeit-Darlehen
   security_type: 60-Tage Buyback-Garantie der Anbahner
@@ -26,14 +28,16 @@ collateral_and_workout:
   historical_loss_pct: 0.0
   current_npl_pct: 3.0
   buyback_grace_period_days: 60
-  notes: Unbesicherte Payday- und Konsumentenkredite der Konzerngesellschaften (Rupex, Tengo). Rückkaufverpflichtung nach 60 Tagen.
+  notes: Unbesicherte Payday- und Konsumentenkredite der Konzerngesellschaften (Rupex,
+    Tengo). Rückkaufverpflichtung nach 60 Tagen.
 liquidity_and_marketplace:
   secondary_market: true
   secondary_market_fee_pct: 0.0
   secondary_market_waiting_days: 0
   primary_loan_duration_days_avg: 45
   withdrawal_queue_days: 0
-  notes: Sehr kurze Laufzeiten (meist 30-90 Tage, Ø 45 Tage) kombiniert mit dem im Oktober 2026 (KW 41) eingeführten gebührenfreien Sekundärmarkt. Zügige Auszahlungen.
+  notes: Sehr kurze Laufzeiten (meist 30-90 Tage, Ø 45 Tage) kombiniert mit dem im
+    Oktober 2026 (KW 41) eingeführten gebührenfreien Sekundärmarkt. Zügige Auszahlungen.
 malus_triggers:
   monoculture_pct: 90.0
   monoculture_originator: Hive Finance Gruppe (Rupex / Tengo)
@@ -44,8 +48,8 @@ benchmarks:
   p2p_empire_safety_score: 5.0
   p2p_empire_safety_band: Mittel
   p2p_empire_portfolio_perf: 95.0
-  lars_wrobbel_score: 15
-  lars_wrobbel_rank: Rang 18
+  lars_wrobbel_score: null
+  lars_wrobbel_rank: Nicht gelistet
   rethink_p2p_score: 1.2
   rethink_p2p_rank: Platz 30
   rethink_p2p_red_flags: '-34'

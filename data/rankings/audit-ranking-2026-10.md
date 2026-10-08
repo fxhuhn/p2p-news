@@ -5,7 +5,7 @@ year_month: '2026-10'
 platforms_count: 31
 model: 'Mathematisches Nettomodell (Max. 100 Pkt - Mali)'
 generator: 'P2P Audit Scoring System'
-generated_at: '2026-10-08T13:33:49.820270+00:00'
+generated_at: '2026-10-08T14:36:10.534278+00:00'
 ---
 
 # P2P Platform Audit Ranking – 2026-10
@@ -82,23 +82,23 @@ Abgleich unseres mathematischen Netto-Scores mit den externen Experten-Rankings:
 | [Lande](../factsheets/lande.md) | **87** | `TOP TIER` | **7.7** (Platz 4) | **78** (Platz 5 von 40) | **8.1** | **33** |
 | [Crowdpear](../factsheets/crowdpear.md) | **86** | `TOP TIER` | **7.8** (Platz 3) | - | **8.5** | **33** |
 | [Indemo](../factsheets/indemo.md) | **83** | `TOP TIER` | **6.0** (Platz 14) | **61** (Platz 13 von 40) | **8.8** | **27** |
-| [Insoil](../factsheets/insoil.md) | **81** | `TOP TIER` | **5.7** (Platz 16) `RF: -7` | **58** (Platz 15 von 40) | **6.5** | **30** |
+| [Insoil](../factsheets/insoil.md) | **81** | `TOP TIER` | **5.7** (Platz 16) `RF: -7` | **58** (Platz 15 von 40) | **6.5** | **32** |
 | [Mintos](../factsheets/mintos.md) | **78** | `TOP TIER` | **6.2** (Platz 11) | **75** (Platz 7 von 40) | **6.2** | **34** |
-| [Capitalia](../factsheets/capitalia.md) | **77** | `TOP TIER` | - | **78** (Platz 4 von 40) | **6.9** | **33** |
+| [Capitalia](../factsheets/capitalia.md) | **77** | `TOP TIER` | - | **78** (Platz 4 von 40) | **6.9** | **31** |
 | [Nectaro](../factsheets/nectaro.md) | **73** | `TOP TIER` | **8.0** (Platz 2) | **58** (Platz 16 von 40) | **8.5** | **22** |
-| [Afranga](../factsheets/afranga.md) | **72** | `TOP TIER` | **6.4** (Platz 8) | **60** (Platz 14 von 40) | **7.3** | **21** |
-| [Fagura](../factsheets/fagura.md) | **71** | `TOP TIER` | - | - | **6.0** | **12** |
+| [Afranga](../factsheets/afranga.md) | **72** | `TOP TIER` | **6.4** (Platz 8) | **60** (Platz 14 von 40) | **7.3** | **24** |
+| [Fagura](../factsheets/fagura.md) | **71** | `TOP TIER` | - | - | **6.0** | - |
 | [Twino](../factsheets/twino.md) | **67** | `MID RISK` | **6.5** (Platz 6) | **57** (Platz 17 von 40) | **6.2** | **30** |
-| [Stockestate](../factsheets/stockestate.md) | **66** | `MID RISK` | - | - | **4.5** | **8** |
-| [Income](../factsheets/income.md) | **66** | `MID RISK` | **6.2** (Platz 11) | **52** (Platz 19 von 40) | **8.1** | **25** |
+| [Stockestate](../factsheets/stockestate.md) | **66** | `MID RISK` | - | - | **4.5** | - |
+| [Income](../factsheets/income.md) | **66** | `MID RISK` | **6.2** (Platz 11) | **52** (Platz 19 von 40) | **8.1** | **26** |
 | [Peerberry](../factsheets/peerberry.md) | **65** | `MID RISK` | **7.6** (Platz 5) | **44** (Platz 23 von 40) | **8.8** | **30** |
-| [Viainvest](../factsheets/viainvest.md) | **64** | `MID RISK` | **5.4** (Platz 21) `RF: -5` | **70** (Platz 9 von 40) | **0.8** | **29** |
+| [Viainvest](../factsheets/viainvest.md) | **64** | `MID RISK` | **5.4** (Platz 21) `RF: -5` | **70** (Platz 9 von 40) | **0.8** | **30** |
 | [Esketit](../factsheets/esketit.md) | **64** | `MID RISK` | **4.8** (Platz 23) `RF: -5` | **29** (Platz 31 von 40) | **6.2** | **20** |
 | [Bondora](../factsheets/bondora.md) | **61** | `MID RISK` | **5.5** (Platz 19) | **64** (Platz 10 von 40) | **6.9** | **25** |
 | [Debitum](../factsheets/debitum.md) | **61** | `MID RISK` | **6.0** (Platz 14) `RF: -19` | **61** (Platz 12 von 40) | **3.9** | **31** |
 | [Robocash](../factsheets/robocash.md) | **60** | `MID RISK` | **5.7** (Platz 16) `RF: -7` | **39** (Platz 26 von 40) | **4.6** | **28** |
-| [Hive5](../factsheets/hive5.md) | **57** | `WATCHLIST` | **1.2** (Platz 30) `RF: -34` | - | **5.0** | **15** |
-| [Monefit](../factsheets/monefit.md) | **54** | `WATCHLIST` | **4.8** (Platz 23) | **50** (Platz 21 von 40) | **0.0** | **16** |
+| [Hive5](../factsheets/hive5.md) | **57** | `WATCHLIST` | **1.2** (Platz 30) `RF: -34` | - | **5.0** | - |
+| [Monefit](../factsheets/monefit.md) | **54** | `WATCHLIST` | **4.8** (Platz 23) | **50** (Platz 21 von 40) | **0.0** | **17** |
 | [Modena](../factsheets/modena.md) | **53** | `WATCHLIST` | **5.6** (Platz 18) | **51** (Platz 20 von 40) | **8.5** | - |
 | [Revest](../factsheets/revest.md) | **51** | `WATCHLIST` | - | **38** (Platz 28 von 40) | **5.4** | - |
 | [Loanch](../factsheets/loanch.md) | **47** | `SPECULATIVE` | **3.9** (Platz 25) `RF: -10` | **38** (Platz 27 von 40) | **0.0** | - |
@@ -107,5 +107,5 @@ Abgleich unseres mathematischen Netto-Scores mit den externen Experten-Rankings:
 | [Swaper](../factsheets/swaper.md) | **28** | `DISTRESSED` | - | **36** (Platz 29 von 40) | **1.1** | - |
 | [Estateguru](../factsheets/estateguru.md) | **27** | `DISTRESSED` | **3.8** (Platz 26) `RF: -17` | **48** (Platz 22 von 40) | **0.0** | - |
 | [Lendermarket](../factsheets/lendermarket.md) | **24** | `DISTRESSED` | **6.4** (Platz 8) `RF: -12` | **61** (Platz 11 von 40) | **5.8** | - |
-| [Asterra](../factsheets/asterra.md) | **13** | `DISTRESSED` | - | **14** (Platz 36 von 40) | **2.5** | **5** |
+| [Asterra](../factsheets/asterra.md) | **13** | `DISTRESSED` | - | **14** (Platz 36 von 40) | **2.5** | **9** |
 | [Ventus](../factsheets/ventus.md) | **0** | `DISTRESSED` | - | **0** (Platz 40 von 40) | **0.0** | - |
