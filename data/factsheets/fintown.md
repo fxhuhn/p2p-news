@@ -1,7 +1,7 @@
 ---
 platform: fintown
 platform_name: Fintown
-audit_date: '2026-10-08'
+audit_date: '2026-10-09'
 audit_version: '1.0'
 audit_score:
   net_score: 29
@@ -79,7 +79,7 @@ sources:
 
 # Platform Audit Factsheet: Fintown
 
-**Audit-Datum:** 2026-10-08 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
+**Audit-Datum:** 2026-10-09 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -115,4 +115,4 @@ sources:
 | **Lars Wrobbel / Passives Einkommen** | **Rang 19** (19/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-08.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-09.*

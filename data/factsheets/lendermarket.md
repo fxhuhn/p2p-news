@@ -1,7 +1,7 @@
 ---
 platform: lendermarket
 platform_name: Lendermarket
-audit_date: '2026-10-08'
+audit_date: '2026-10-09'
 audit_version: '1.0'
 audit_score:
   net_score: 24
@@ -77,7 +77,7 @@ sources:
 
 # Platform Audit Factsheet: Lendermarket
 
-**Audit-Datum:** 2026-10-08 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
+**Audit-Datum:** 2026-10-09 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -113,4 +113,4 @@ sources:
 | **Lars Wrobbel / Passives Einkommen** | **Nicht gelistet** (N/A/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-08.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-09.*

@@ -1,7 +1,7 @@
 ---
 platform: indemo
 platform_name: Indemo
-audit_date: '2026-10-08'
+audit_date: '2026-10-09'
 audit_version: '1.0'
 audit_score:
   net_score: 83
@@ -68,7 +68,7 @@ sources:
 
 # Platform Audit Factsheet: Indemo
 
-**Audit-Datum:** 2026-10-08 | **Klasse:** `TOP TIER` | **Depot-Limit:** `8 - 15 %`
+**Audit-Datum:** 2026-10-09 | **Klasse:** `TOP TIER` | **Depot-Limit:** `8 - 15 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -101,4 +101,4 @@ Keine Malus-Abschläge wirksam. Das Portfolio weist weder unzulässige Monokultu
 | **Lars Wrobbel / Passives Einkommen** | **Rang 12** (27/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-08.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-09.*

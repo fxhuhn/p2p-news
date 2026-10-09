@@ -1,7 +1,7 @@
 ---
 platform: hive5
 platform_name: hive5
-audit_date: '2026-10-08'
+audit_date: '2026-10-09'
 audit_version: '1.0'
 audit_score:
   net_score: 45
@@ -78,7 +78,7 @@ sources:
 
 # Platform Audit Factsheet: hive5
 
-**Audit-Datum:** 2026-10-08 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
+**Audit-Datum:** 2026-10-09 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -118,4 +118,4 @@ sources:
 | **Lars Wrobbel / Passives Einkommen** | **Nicht gelistet** (N/A/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-08.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-09.*

@@ -1,7 +1,7 @@
 ---
 platform: stockestate
 platform_name: Stockestate
-audit_date: '2026-10-08'
+audit_date: '2026-10-09'
 audit_version: '1.0'
 audit_score:
   net_score: 54
@@ -72,7 +72,7 @@ sources:
 
 # Platform Audit Factsheet: Stockestate
 
-**Audit-Datum:** 2026-10-08 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
+**Audit-Datum:** 2026-10-09 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -110,4 +110,4 @@ Keine Malus-Abschläge wirksam. Das Portfolio weist weder unzulässige Monokultu
 | **Lars Wrobbel / Passives Einkommen** | **Nicht gelistet** (N/A/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-08.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-09.*
