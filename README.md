@@ -313,7 +313,7 @@ docker run --rm -v $(pwd)/data:/app/data --env-file .env ghcr.io/fxhuhn/p2p-news
 ### Ausführen via Docker Compose
 ```bash
 # 1. Neuestes Image von GHCR laden & 24/7 Scheduler-Daemon starten (Europe/Berlin Timezone)
-# - Wöchentlich (Montag 06:00 Uhr): Scraping, Fakten-Clustering & Newsletter-Draft
+# - Wöchentlich (Montag 06:30 Uhr): Scraping, Fakten-Clustering & Newsletter-Release
 # - Monatlich (1. des Monats 07:00 Uhr): Audit-Scoring & Plattform-Rankings
 docker compose up -d
 

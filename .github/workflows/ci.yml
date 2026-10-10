@@ -3,8 +3,12 @@ name: CI Quality Gate & Container Verification
 on:
   push:
     branches: [ "main", "master" ]
+    paths-ignore:
+      - "data/**"
   pull_request:
     branches: [ "main", "master" ]
+    paths-ignore:
+      - "data/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

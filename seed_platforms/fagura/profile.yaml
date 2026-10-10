@@ -54,6 +54,10 @@ benchmarks:
   rethink_p2p_red_flags: null
   p2p_game_score: null
   p2p_game_rank: Nicht gelistet
+  external_review_urls:
+    - https://p2pempire.com/de/bewertung/fagura
+    - https://passives-einkommen-mit-p2p.de/fagura-erfahrungen/
+    - https://p2pmarketdata.com/platforms/fagura
 data_gaps:
 - Langfristige Ausfallraten nach Ausweitung auf Rumänien noch in Konsolidierung
 has_conflict: false

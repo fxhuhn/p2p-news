@@ -222,6 +222,22 @@ class FactsheetGenerator:
                 f"| **P2P Empire Safety Score** | **{b.p2p_empire_safety_score if b.p2p_empire_safety_score is not None else 'N/A'} / 10** ({b.p2p_empire_safety_band or 'Kein Test'}) | Unabhängiger Testbericht Jakub Krejci |",
                 f"| **P2P Empire Portfolio Performance** | **{b.p2p_empire_portfolio_perf if b.p2p_empire_portfolio_perf is not None else 'N/A'} %** | Reale Rückzahlungsquote im Portfolio |",
                 f"| **Lars Wrobbel / Passives Einkommen** | **{b.lars_wrobbel_rank or 'Kein Rating'}** ({b.lars_wrobbel_score if b.lars_wrobbel_score is not None else 'N/A'}/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |",
+            ]
+        )
+
+        if b.external_review_urls:
+            lines.extend(
+                [
+                    "",
+                    "### Externe Analysen & Testberichte",
+                    "",
+                ]
+            )
+            for url in b.external_review_urls:
+                lines.append(f"- [{url}]({url})")
+
+        lines.extend(
+            [
                 "",
                 "---",
                 f"*Automatisch generiert durch das P2P Audit Scoring System am {audit_date}.*",

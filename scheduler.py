@@ -2,8 +2,8 @@
 Autarker Zeitplan-Daemon für periodische P2P-News-Pipelines via 'schedule'.
 
 Führt zwei periodische Hintergrund-Jobs aus:
-1. Wöchentlich (Montag um 06:00 Uhr Berliner Zeit):
-   Scraping, Fakten-Clustering & Newsletter-Draft (pipeline_orchestrator.py).
+1. Wöchentlich (Montag um 06:30 Uhr Berliner Zeit):
+   Scraping, Fakten-Clustering & Newsletter-Release (pipeline_orchestrator.py).
 2. Monatlich (am 1. Tag des Monats um 07:00 Uhr Berliner Zeit):
    Vollständiges 4-Säulen-Audit-Scoring & Plattform-Rankings (run_audit_scoring.py).
 
@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import os
 import signal
 import sys
 import time
@@ -47,10 +48,15 @@ def handle_shutdown(signum: int, frame: FrameType | None) -> None:
 
 
 def job_weekly_newsletter(data_dir: Path | str = "data") -> bool:
-    """Führt den wöchentlichen Scraping- und Newsletter-Draft-Lauf durch."""
+    """Führt den wöchentlichen Scraping- und Newsletter-Lauf durch (direkte finale Veröffentlichung)."""
     logger.info("=== [SCHEDULER] Starte wöchentlichen News- & Newsletter-Lauf ===")
     try:
-        ret = run_pipeline(data_dir=data_dir, do_scrape=True, is_publish=False)
+        ret = run_pipeline(
+            data_dir=data_dir,
+            do_scrape=True,
+            is_publish=True,
+            is_approved=True,
+        )
         if ret == 0:
             logger.info(
                 "=== [SCHEDULER] Wöchentlicher Lauf erfolgreich abgeschlossen ==="
@@ -95,7 +101,7 @@ def job_monthly_scoring(data_dir: Path | str = "data", force: bool = False) -> b
 
 
 def setup_schedule(
-    weekly_time: str = "06:00",
+    weekly_time: str = "06:30",
     monthly_time: str = "07:00",
     data_dir: Path | str = "data",
 ) -> None:
@@ -174,14 +180,13 @@ def initial_startup_check_and_sync(data_dir: Path | str = "data") -> None:
     except Exception as exc:
         logger.warning("[STARTUP] Fehler bei initialer Quellen-Aktualisierung: %s", exc)
 
-    # 4. Report-Verfügbarkeit prüfen: Existiert bereits ein Newsletter für die Zielwoche?
+    # 4. Report-Verfügbarkeit prüfen: Existiert bereits ein finaler Newsletter für die Zielwoche?
     target_week = get_target_newsletter_week()
-    draft_file = base / "newsletters" / "drafts" / f"newsletter-{target_week}.draft.md"
     published_file = base / "newsletters" / f"newsletter-{target_week}.md"
 
-    if not draft_file.exists() and not published_file.exists():
+    if not published_file.exists():
         logger.info(
-            "[STARTUP] Kein Newsletter für Zielwoche %s vorhanden. Erzeuge initialen Entwurf...",
+            "[STARTUP] Kein veröffentlichter Newsletter für Zielwoche %s vorhanden. Erzeuge finale Ausgabe...",
             target_week,
         )
         try:
@@ -189,15 +194,16 @@ def initial_startup_check_and_sync(data_dir: Path | str = "data") -> None:
                 week=target_week,
                 data_dir=base,
                 do_scrape=False,
-                is_publish=False,
+                is_publish=True,
+                is_approved=True,
             )
             logger.info(
-                "✓ [STARTUP] Initialer Newsletter-Entwurf für %s erfolgreich erzeugt.",
+                "✓ [STARTUP] Finaler Newsletter für %s erfolgreich erzeugt.",
                 target_week,
             )
         except Exception as exc:
             logger.warning(
-                "[STARTUP] Initialer Newsletter-Entwurf konnte nicht erzeugt werden: %s",
+                "[STARTUP] Finaler Newsletter konnte nicht erzeugt werden: %s",
                 exc,
             )
     else:
@@ -237,12 +243,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument(
         "--weekly-time",
-        default="06:00",
-        help="Uhrzeit für den wöchentlichen Montags-Lauf (HH:MM, Standard: 06:00)",
+        default=os.environ.get("WEEKLY_TIME", "06:30"),
+        help="Uhrzeit für den wöchentlichen Montags-Lauf (HH:MM, Standard: 06:30)",
     )
     parser.add_argument(
         "--monthly-time",
-        default="07:00",
+        default=os.environ.get("MONTHLY_TIME", "07:00"),
         help="Uhrzeit für den monatlichen Lauf am 1. (HH:MM, Standard: 07:00)",
     )
     parser.add_argument(

@@ -106,5 +106,11 @@ Keine Malus-Abschläge wirksam. Das Portfolio weist weder unzulässige Monokultu
 | **P2P Empire Portfolio Performance** | **85.0 %** | Reale Rückzahlungsquote im Portfolio |
 | **Lars Wrobbel / Passives Einkommen** | **Nicht gelistet** (N/A/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
 
+### Externe Analysen & Testberichte
+
+- [https://p2pempire.com/de/bewertung/fagura](https://p2pempire.com/de/bewertung/fagura)
+- [https://passives-einkommen-mit-p2p.de/fagura-erfahrungen/](https://passives-einkommen-mit-p2p.de/fagura-erfahrungen/)
+- [https://p2pmarketdata.com/platforms/fagura](https://p2pmarketdata.com/platforms/fagura)
+
 ---
 *Automatisch generiert durch das P2P Audit Scoring System am 2026-10-09.*

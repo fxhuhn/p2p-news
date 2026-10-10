@@ -26,6 +26,20 @@ def test_setup_schedule() -> None:
     assert "days" in units
 
 
+def test_setup_schedule_default_times() -> None:
+    """Prüft, ob setup_schedule standardmäßig 06:30 (wöchentlich) und 07:00 (monatlich) setzt."""
+    schedule.clear()
+    scheduler.setup_schedule()
+    jobs = schedule.get_jobs()
+    assert len(jobs) == 2
+    weekly_job = next(j for j in jobs if j.unit == "weeks")
+    assert weekly_job.at_time is not None
+    assert weekly_job.at_time.strftime("%H:%M") == "06:30"
+    daily_job = next(j for j in jobs if j.unit == "days")
+    assert daily_job.at_time is not None
+    assert daily_job.at_time.strftime("%H:%M") == "07:00"
+
+
 @patch("scheduler.run_pipeline")
 def test_job_weekly_newsletter_success(mock_run_pipeline: MagicMock) -> None:
     """Prüft erfolgreichen Durchlauf des wöchentlichen Jobs."""
@@ -33,7 +47,7 @@ def test_job_weekly_newsletter_success(mock_run_pipeline: MagicMock) -> None:
     result = scheduler.job_weekly_newsletter()
     assert result is True
     mock_run_pipeline.assert_called_once_with(
-        data_dir="data", do_scrape=True, is_publish=False
+        data_dir="data", do_scrape=True, is_publish=True, is_approved=True
     )
 
 
@@ -177,12 +191,12 @@ def test_initial_startup_check_and_sync_existing_data(
         "# Ranking", encoding="utf-8"
     )
 
-    # Newsletter-Draft anlegen
+    # Finalen Newsletter anlegen
     target_week = scheduler.get_target_newsletter_week()
-    drafts_dir = tmp_path / "newsletters" / "drafts"
-    drafts_dir.mkdir(parents=True)
-    (drafts_dir / f"newsletter-{target_week}.draft.md").write_text(
-        "# Draft", encoding="utf-8"
+    newsletters_dir = tmp_path / "newsletters"
+    newsletters_dir.mkdir(parents=True)
+    (newsletters_dir / f"newsletter-{target_week}.md").write_text(
+        "# Published Newsletter", encoding="utf-8"
     )
 
     scheduler.initial_startup_check_and_sync(data_dir=tmp_path)

@@ -571,6 +571,7 @@ class BaseProvider(ABC):
     name: str
     base_url: str
     is_platform: bool = False
+    subpages: list[str] = []
 
     @abstractmethod
     def extract_links(
@@ -1006,6 +1007,15 @@ class PassivesEinkommenProvider(BaseProvider):
                 elif "erfahrungen" in path:
                     erfahrungen_urls.append(cleaned_url)
 
+        # Konfigurierte Subpages (z. B. isolierte Erfahrungsberichte)
+        for sub in getattr(self, "subpages", []):
+            full_sub = urljoin(self.base_url, sub)
+            cleaned_sub = urlparse(full_sub)._replace(fragment="", query="").geturl()
+            if "erfahrungen" in cleaned_sub.lower():
+                erfahrungen_urls.append(cleaned_sub)
+            else:
+                news_urls.append(cleaned_sub)
+
         # Aktuelle News-Detailbeiträge zuerst, danach statische Erfahrungsberichte
         combined = list(dict.fromkeys(news_urls)) + list(
             dict.fromkeys(erfahrungen_urls)
@@ -1388,6 +1398,20 @@ def load_providers_from_yaml(
                 auto_discover=bool(p_conf.get("auto_discover", True)),
             )
             providers[str(p_name)] = PlatformProvider(cfg)
+
+    # Aggregatoren deklarativ aus providers.yaml anpassen (z. B. subpages oder base_url)
+    aggregators_data = data.get("aggregators", {})
+    if isinstance(aggregators_data, dict):
+        for a_name, a_conf in aggregators_data.items():
+            if not isinstance(a_conf, dict) or a_name not in providers:
+                continue
+            prov = providers[a_name]
+            base_u = a_conf.get("base_url")
+            if base_u:
+                prov.base_url = str(base_u)
+            sub_pages = a_conf.get("subpages", [])
+            if isinstance(sub_pages, list):
+                prov.subpages = [str(s) for s in sub_pages]
 
     if "nectaro" not in providers:
         providers["nectaro"] = NectaroPlatformProvider()

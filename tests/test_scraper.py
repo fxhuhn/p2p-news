@@ -288,6 +288,24 @@ class TestProviderImplementations(unittest.TestCase):
             self.passives_einkommen.extract_platform_name(url_review), "nectaro"
         )
 
+        # Test subpages support for passives-einkommen
+        prov_with_sub = PassivesEinkommenProvider()
+        prov_with_sub.subpages = [
+            "https://passives-einkommen-mit-p2p.de/fagura-erfahrungen/",
+            "https://passives-einkommen-mit-p2p.de/p2p-kredite-40-26-news/",
+        ]
+        sample_html = "<html><body><a href='/p2p-kredite-41-26/'>KW41</a></body></html>"
+        extracted = prov_with_sub.extract_links(sample_html)
+        self.assertIn(
+            "https://passives-einkommen-mit-p2p.de/fagura-erfahrungen/", extracted
+        )
+        self.assertIn(
+            "https://passives-einkommen-mit-p2p.de/p2p-kredite-40-26-news/", extracted
+        )
+        self.assertIn(
+            "https://passives-einkommen-mit-p2p.de/p2p-kredite-41-26/", extracted
+        )
+
     def test_p2p_anlage_provider(self) -> None:
         url_news = "https://p2p-anlage.de/2026/09/zahlen-bericht/"
         self.assertEqual(
