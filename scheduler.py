@@ -47,16 +47,33 @@ def handle_shutdown(signum: int, frame: FrameType | None) -> None:
     _running = False
 
 
-def job_weekly_newsletter(data_dir: Path | str = "data") -> bool:
+def job_weekly_newsletter(
+    data_dir: Path | str = "data",
+    force: bool = False,
+    force_revision: bool = False,
+) -> bool:
     """Führt den wöchentlichen Scraping- und Newsletter-Lauf durch (direkte finale Veröffentlichung)."""
-    logger.info("=== [SCHEDULER] Starte wöchentlichen News- & Newsletter-Lauf ===")
+    is_force = force or force_revision
+    logger.info(
+        "=== [SCHEDULER] Starte wöchentlichen News- & Newsletter-Lauf%s ===",
+        " (FORCE / neue Revision)" if is_force else "",
+    )
     try:
-        ret = run_pipeline(
-            data_dir=data_dir,
-            do_scrape=True,
-            is_publish=True,
-            is_approved=True,
-        )
+        if is_force:
+            ret = run_pipeline(
+                data_dir=data_dir,
+                do_scrape=True,
+                is_publish=True,
+                is_approved=True,
+                force_revision=True,
+            )
+        else:
+            ret = run_pipeline(
+                data_dir=data_dir,
+                do_scrape=True,
+                is_publish=True,
+                is_approved=True,
+            )
         if ret == 0:
             logger.info(
                 "=== [SCHEDULER] Wöchentlicher Lauf erfolgreich abgeschlossen ==="
@@ -66,6 +83,12 @@ def job_weekly_newsletter(data_dir: Path | str = "data") -> bool:
             "=== [SCHEDULER] Wöchentlicher Lauf mit Returncode %d beendet ===", ret
         )
         return False
+    except FileExistsError as exc:
+        logger.warning(
+            "=== [SCHEDULER] Newsletter für Zielwoche existiert bereits (%s). Write-Once Schutz aktiv. ===",
+            exc,
+        )
+        return True
     except Exception as exc:
         logger.exception(
             "=== [SCHEDULER] Unerwarteter Fehler im wöchentlichen Lauf: %s ===", exc
@@ -104,16 +127,20 @@ def setup_schedule(
     weekly_time: str = "06:30",
     monthly_time: str = "07:00",
     data_dir: Path | str = "data",
+    force_weekly: bool = False,
 ) -> None:
     """Registriert alle periodischen Jobs in 'schedule'."""
     schedule.clear()
-    schedule.every().monday.at(weekly_time).do(job_weekly_newsletter, data_dir=data_dir)
+    schedule.every().monday.at(weekly_time).do(
+        job_weekly_newsletter, data_dir=data_dir, force=force_weekly
+    )
     schedule.every().day.at(monthly_time).do(
         job_monthly_scoring, data_dir=data_dir, force=False
     )
     logger.info(
-        "Zeitplan initialisiert: Wöchentlich montags um %s | Monatlich am 1. um %s (Europe/Berlin)",
+        "Zeitplan initialisiert: Wöchentlich montags um %s%s | Monatlich am 1. um %s (Europe/Berlin)",
         weekly_time,
+        " (force_weekly aktiv)" if force_weekly else "",
         monthly_time,
     )
 
@@ -262,6 +289,17 @@ def main(argv: list[str] | None = None) -> int:
         help="Führt den monatlichen Job sofort einmal aus und beendet",
     )
     parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Erzwingt Ausführung / neue Revisionsstufe bei sofortigem Lauf (--run-weekly-now)",
+    )
+    parser.add_argument(
+        "--force-weekly",
+        action="store_true",
+        default=os.environ.get("FORCE_WEEKLY", "").lower() in ("true", "1", "yes"),
+        help="Erzwingt bei jedem wöchentlichen Lauf eine neue Revisionsstufe (.v2.md etc.)",
+    )
+    parser.add_argument(
         "--skip-startup-sync",
         action="store_true",
         help="Überspringt den initialen Startup-Check und Quell-Aktualisierung",
@@ -274,7 +312,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.run_weekly_now:
-        success = job_weekly_newsletter(data_dir=args.data_dir)
+        success = job_weekly_newsletter(
+            data_dir=args.data_dir, force=args.force or args.force_weekly
+        )
         return 0 if success else 1
 
     if args.run_monthly_now:
@@ -285,6 +325,7 @@ def main(argv: list[str] | None = None) -> int:
         weekly_time=args.weekly_time,
         monthly_time=args.monthly_time,
         data_dir=args.data_dir,
+        force_weekly=args.force_weekly,
     )
 
     if args.dry_run:

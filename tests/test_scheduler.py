@@ -67,6 +67,31 @@ def test_job_weekly_newsletter_exception(mock_run_pipeline: MagicMock) -> None:
     assert result is False
 
 
+@patch("scheduler.run_pipeline")
+def test_job_weekly_newsletter_file_exists_handled(
+    mock_run_pipeline: MagicMock,
+) -> None:
+    """Prüft, dass FileExistsError bei Write-Once Schutz abgefangen wird und True liefert."""
+    mock_run_pipeline.side_effect = FileExistsError("Datei existiert bereits")
+    result = scheduler.job_weekly_newsletter()
+    assert result is True
+
+
+@patch("scheduler.run_pipeline")
+def test_job_weekly_newsletter_forced(mock_run_pipeline: MagicMock) -> None:
+    """Prüft, dass force=True force_revision=True an run_pipeline übergibt."""
+    mock_run_pipeline.return_value = 0
+    result = scheduler.job_weekly_newsletter(force=True)
+    assert result is True
+    mock_run_pipeline.assert_called_once_with(
+        data_dir="data",
+        do_scrape=True,
+        is_publish=True,
+        is_approved=True,
+        force_revision=True,
+    )
+
+
 @patch("scheduler.run_full_audit")
 def test_job_monthly_scoring_skipped_when_not_first(
     mock_run_full_audit: MagicMock,
@@ -118,6 +143,15 @@ def test_main_dry_run() -> None:
     """Prüft den CLI-Dry-Run-Modus."""
     exit_code = scheduler.main(["--dry-run"])
     assert exit_code == 0
+
+
+@patch("scheduler.job_weekly_newsletter")
+def test_main_run_weekly_now_force(mock_weekly: MagicMock) -> None:
+    """Prüft, dass --run-weekly-now mit --force das Flag force=True übergibt."""
+    mock_weekly.return_value = True
+    exit_code = scheduler.main(["--run-weekly-now", "--force"])
+    assert exit_code == 0
+    mock_weekly.assert_called_once_with(data_dir="data", force=True)
 
 
 def test_get_target_newsletter_week_monday() -> None:

@@ -550,7 +550,8 @@ class TestManifestAndLifecycle(unittest.TestCase):
     def test_write_once_lifecycle_protection(self) -> None:
         """Schutz vor unbeabsichtigtem Überschreiben von Veröffentlichungen."""
         with tempfile.TemporaryDirectory() as tmp_dir:
-            gen = NewsletterGenerator(data_dir=tmp_dir)
+            tmp = Path(tmp_dir)
+            gen = NewsletterGenerator(data_dir=tmp)
 
             fact = ExtractedFact(
                 fact_id="f-01",
@@ -605,11 +606,22 @@ class TestManifestAndLifecycle(unittest.TestCase):
                     custom_client=mock_client,
                 )
 
-            # 2. Publish mit --approve gelingt
+            draft_file = (
+                tmp
+                / "newsletters"
+                / "drafts"
+                / f"newsletter-{digest.iso_week}.draft.md"
+            )
+            draft_file.parent.mkdir(parents=True, exist_ok=True)
+            draft_file.write_text("Draft content", encoding="utf-8")
+            self.assertTrue(draft_file.exists())
+
+            # 2. Publish mit --approve gelingt und räumt Entwurf auf
             out_path, _ = gen.generate(
                 digest, is_publish=True, is_approved=True, custom_client=mock_client
             )
             self.assertTrue(out_path.exists())
+            self.assertFalse(draft_file.exists())
 
             # 3. Zweiter Publish ohne --force-revision wirft FileExistsError (Write-Once Schutz!)
             with self.assertRaises(FileExistsError):
@@ -631,6 +643,25 @@ class TestManifestAndLifecycle(unittest.TestCase):
             )
             self.assertTrue(v2_path.name.endswith(".v2.md"))
             self.assertTrue(v2_path.exists())
+
+    def test_pipeline_orchestrator_existing_release_returns_zero(self) -> None:
+        """Prüft, dass run_pipeline bei bereits veröffentlichter Ausgabe ohne --force-revision mit Code 0 abschließt."""
+        from pipeline_orchestrator import run_pipeline
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp = Path(tmp_dir)
+            target_week = "2026-W41"
+            nl_dir = tmp / "newsletters"
+            nl_dir.mkdir(parents=True)
+            (nl_dir / f"newsletter-{target_week}.md").write_text(
+                "# Already published", encoding="utf-8"
+            )
+
+            # run_pipeline mit is_publish=True sollte 0 zurückgeben und bestehende Datei belassen
+            ret = run_pipeline(
+                week=target_week, data_dir=tmp, is_publish=True, is_approved=True
+            )
+            self.assertEqual(ret, 0)
 
 
 if __name__ == "__main__":

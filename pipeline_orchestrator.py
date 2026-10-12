@@ -135,6 +135,17 @@ def run_pipeline(
             items_cnt,
         )
 
+    # Vorab-Prüfung: Falls Veröffentlichung gewünscht, aber Datei bereits existiert (Write-Once)
+    target_file = base / "newsletters" / f"newsletter-{target_week}.md"
+    if is_publish and not force_revision and target_file.exists():
+        logger.warning(
+            "Newsletter für Woche %s existiert bereits (%s). "
+            "Write-Once Schutz aktiv: Bestehende Veröffentlichung bleibt unverändert.",
+            target_week,
+            target_file,
+        )
+        return 0
+
     # Stufe 1: Fakten-Dossier (falls noch nicht vorhanden oder neu erzeugt werden soll)
     digest_path = base / "digests" / f"digest-{target_week}.json"
     if not digest_path.exists():

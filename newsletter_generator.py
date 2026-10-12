@@ -130,6 +130,18 @@ class NewsletterGenerator:
         total_facts = sum(len(c.facts) for c in digest.clusters)
 
         draft_file = self.drafts_dir / f"newsletter-{digest.iso_week}.draft.md"
+        target_file = self.newsletters_dir / f"newsletter-{digest.iso_week}.md"
+        if is_publish:
+            if not is_approved:
+                raise ValueError(
+                    "Veröffentlichung erfordert explizite Bestätigung mit --approve!"
+                )
+            if target_file.exists() and not force_revision:
+                raise FileExistsError(
+                    f"Datei {target_file} existiert bereits! Write-Once Schutz aktiv. "
+                    f"Nutze --force-revision für eine neue Version."
+                )
+
         markdown_content = ""
         verified_sentences = 0
         rejected_sentences = 0
@@ -332,6 +344,18 @@ class NewsletterGenerator:
             logger.info(
                 "[%s] Finaler Newsletter veröffentlicht: %s", active_run_id, target_file
             )
+
+            # Erfolgreich versiegelten Entwurf aufräumen
+            if draft_file.exists():
+                try:
+                    draft_file.unlink()
+                    logger.info(
+                        "[%s] Entwurf nach Versiegelung aufgeräumt: %s",
+                        active_run_id,
+                        draft_file,
+                    )
+                except OSError:
+                    pass
 
             # Revisions-Manifest mit Hash-Kette schreiben
             digest_path = self.data_dir / "digests" / f"digest-{digest.iso_week}.json"
