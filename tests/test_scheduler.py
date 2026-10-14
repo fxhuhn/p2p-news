@@ -282,6 +282,43 @@ def test_initial_startup_check_and_sync_existing_data(
     mock_run_pipeline.assert_not_called()
 
 
+@patch("scheduler.run_pipeline")
+@patch("scheduler.run_full_audit")
+@patch("scheduler.ensure_platform_profiles")
+@patch("scheduler.job_daily_ingestion")
+def test_initial_startup_check_and_sync_executes_ingestion_first(
+    mock_ingestion: MagicMock,
+    mock_ensure_profiles: MagicMock,
+    mock_run_audit: MagicMock,
+    mock_run_pipeline: MagicMock,
+    tmp_path: Path,
+) -> None:
+    """Prüft, dass der tägliche Ingestion-Lauf (Scraper & RSS) beim Startup als allererstes ausgeführt wird."""
+    calls: list[str] = []
+
+    def fake_ingestion(*args: object, **kwargs: object) -> bool:
+        calls.append("ingestion")
+        return True
+
+    def fake_profiles(*args: object, **kwargs: object) -> list[str]:
+        calls.append("profiles")
+        return []
+
+    def fake_audit(*args: object, **kwargs: object) -> tuple[int, Path]:
+        calls.append("audit")
+        return (0, Path("test"))
+
+    mock_ingestion.side_effect = fake_ingestion
+    mock_ensure_profiles.side_effect = fake_profiles
+    mock_run_audit.side_effect = fake_audit
+
+    scheduler.initial_startup_check_and_sync(data_dir=tmp_path)
+
+    assert len(calls) >= 2
+    assert calls[0] == "ingestion"
+    assert calls[1] == "profiles"
+
+
 def test_entrypoint_script_flag_delegation() -> None:
     """Prüft, dass entrypoint.sh CLI-Flags (-c) und explizite Python-Aufrufe korrekt delegiert."""
     entrypoint = Path(__file__).parent.parent / "entrypoint.sh"

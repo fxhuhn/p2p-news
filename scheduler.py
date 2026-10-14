@@ -194,9 +194,9 @@ def setup_schedule(
 
 def initial_startup_check_and_sync(data_dir: Path | str = "data") -> None:
     """
-    Führt beim Container-Start einen initialen Check und eine Quellen-Aktualisierung durch:
-    1. Datenbank- & Plattform-Check (Profil-Integrität & Initial-Ranking).
-    2. Quellen direkt aktualisieren (Scraping & Item-Extraktion).
+    Führt beim Container-Start oder Neustart des Schedulers sofort einen Abgleich durch:
+    1. Direkter Ingestion-Lauf: RSS-Feeds & Web-Scraping sofort ausführen (Stage 0) und alle Datumsangaben synchronisieren.
+    2. Datenbank- & Plattform-Check: Profil-Integrität & Initial-Ranking.
     3. Konsistenzprüfung für Reports (stets verfügbare Rankings und Newsletter).
     """
     base = Path(data_dir)
@@ -204,11 +204,17 @@ def initial_startup_check_and_sync(data_dir: Path | str = "data") -> None:
         "=== [STARTUP] Starte initialen System-Check & Quellen-Aktualisierung ==="
     )
 
-    # 1. Plattform-Profile prüfen und ggf. seeden
+    # 1. Quellen direkt beim Start aktualisieren (RSS-Feeds & Web-Scraping via Ingestion-Job)
+    logger.info(
+        "[STARTUP] Aktualisiere Quellen direkt beim Start (Multi-Provider Scraper & RSS-Ingestion)..."
+    )
+    job_daily_ingestion(data_dir=base)
+
+    # 2. Plattform-Profile prüfen und ggf. seeden
     profiles = ensure_platform_profiles(data_dir=base)
     logger.info("[STARTUP] Plattform-Profile geprüft: %d Profile aktiv.", len(profiles))
 
-    # 2. Prüfen, ob bereits ein Plattform-Ranking existiert
+    # 3. Prüfen, ob bereits ein Plattform-Ranking existiert
     rankings_dir = base / "rankings"
     has_ranking = rankings_dir.exists() and bool(list(rankings_dir.glob("*.md")))
     if not has_ranking:
@@ -226,12 +232,6 @@ def initial_startup_check_and_sync(data_dir: Path | str = "data") -> None:
             )
     else:
         logger.info("✓ [STARTUP] Bestehendes Plattform-Ranking vorhanden.")
-
-    # 3. Quellen direkt aktualisieren (Web-Scraping & Item-Extraktion via Ingestion-Job)
-    logger.info(
-        "[STARTUP] Aktualisiere Quellen (Multi-Provider Scraper & RSS-Ingestion)..."
-    )
-    job_daily_ingestion(data_dir=base)
 
     # 4. Report-Verfügbarkeit prüfen: Existiert bereits ein finaler Newsletter für die Zielwoche?
     target_week = get_target_newsletter_week()
