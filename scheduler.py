@@ -233,13 +233,13 @@ def initial_startup_check_and_sync(data_dir: Path | str = "data") -> None:
     else:
         logger.info("✓ [STARTUP] Bestehendes Plattform-Ranking vorhanden.")
 
-    # 4. Report-Verfügbarkeit prüfen: Existiert bereits ein finaler Newsletter für die Zielwoche?
+    # 4. Report-Verfügbarkeit prüfen: Bei Neustart maximal Entwurf (Draft) erzeugen
     target_week = get_target_newsletter_week()
     published_file = base / "newsletters" / f"newsletter-{target_week}.md"
 
     if not published_file.exists():
         logger.info(
-            "[STARTUP] Kein veröffentlichter Newsletter für Zielwoche %s vorhanden. Erzeuge finale Ausgabe...",
+            "[STARTUP] Kein veröffentlichter Newsletter für Zielwoche %s vorhanden. Erzeuge Entwurf (Draft)...",
             target_week,
         )
         try:
@@ -247,21 +247,21 @@ def initial_startup_check_and_sync(data_dir: Path | str = "data") -> None:
                 week=target_week,
                 data_dir=base,
                 do_scrape=False,
-                is_publish=True,
-                is_approved=True,
+                is_publish=False,
+                is_approved=False,
             )
             logger.info(
-                "✓ [STARTUP] Finaler Newsletter für %s erfolgreich erzeugt.",
+                "✓ [STARTUP] Newsletter-Entwurf für %s erfolgreich erzeugt.",
                 target_week,
             )
         except Exception as exc:
             logger.warning(
-                "[STARTUP] Finaler Newsletter konnte nicht erzeugt werden: %s",
+                "[STARTUP] Newsletter-Entwurf konnte nicht erzeugt werden: %s",
                 exc,
             )
     else:
         logger.info(
-            "✓ [STARTUP] Newsletter-Bericht für Woche %s ist einsatzbereit.",
+            "✓ [STARTUP] Finaler Newsletter für Woche %s ist bereits vorhanden.",
             target_week,
         )
 

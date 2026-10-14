@@ -238,7 +238,14 @@ def test_initial_startup_check_and_sync_bootstrap(
     mock_run_audit.assert_called_once_with(data_dir=tmp_path)
     assert mock_scraper_cls.called
     mock_process_items.assert_called_once_with(data_dir=tmp_path)
-    mock_run_pipeline.assert_called_once()
+    target_week = scheduler.get_target_newsletter_week()
+    mock_run_pipeline.assert_called_once_with(
+        week=target_week,
+        data_dir=tmp_path,
+        do_scrape=False,
+        is_publish=False,
+        is_approved=False,
+    )
 
 
 @patch("scheduler.run_pipeline")
