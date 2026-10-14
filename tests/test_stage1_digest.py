@@ -18,10 +18,67 @@ from digest_schemas import ExtractedFact, FactEvidence, TopicCluster, WeeklyDige
 from item_models import NewsItem
 from item_store import ItemStore
 from verifier_stage1 import Stage1Verifier
-from watermark_manager import WatermarkManager
+from watermark_manager import (
+    WatermarkManager,
+    get_previous_iso_week,
+    load_previous_newsletter_mentions,
+)
 
 
 class TestWatermarkManager(unittest.TestCase):
+    def test_get_previous_iso_week(self) -> None:
+        self.assertEqual(get_previous_iso_week("2026-W41"), "2026-W40")
+        self.assertEqual(get_previous_iso_week("2026-W40"), "2026-W39")
+        self.assertEqual(get_previous_iso_week("2026-W01"), "2025-W52")
+        with self.assertRaises(ValueError):
+            get_previous_iso_week("invalid-week")
+
+    def test_load_previous_newsletter_mentions(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            base = Path(tmp_dir)
+            digests_dir = base / "digests"
+            digests_dir.mkdir(parents=True)
+            manifest = digests_dir / "digest-2026-W40.manifest.json"
+            manifest.write_text(
+                json.dumps(
+                    {
+                        "inputs": {
+                            "item_hashes": {"item-id-123": "hash123"},
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            digest = digests_dir / "digest-2026-W40.json"
+            digest.write_text(
+                json.dumps(
+                    {
+                        "clusters": [
+                            {
+                                "source_items": [
+                                    {
+                                        "item_id": "item-id-456",
+                                        "url": "https://test.com/from-digest",
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+            nl_dir = base / "newsletters"
+            nl_dir.mkdir(parents=True)
+            (nl_dir / "newsletter-2026-W40.md").write_text(
+                "# W40\n\n- [Titel](https://test.com/from-nl)\n", encoding="utf-8"
+            )
+
+            ids, urls = load_previous_newsletter_mentions(base, "2026-W40")
+            self.assertIn("item-id-123", ids)
+            self.assertIn("item-id-456", ids)
+            self.assertIn("https://test.com/from-digest", urls)
+            self.assertIn("https://test.com/from-nl", urls)
+
     def test_watermark_update_and_selection(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             wm_file = Path(tmp_dir) / "watermark.json"
@@ -72,6 +129,123 @@ class TestWatermarkManager(unittest.TestCase):
             )
             self.assertEqual(len(selected), 1)
             self.assertEqual(selected[0].item_id, "item-new")
+
+    def test_select_items_nachzuegler_und_alter_ausschluss(self) -> None:
+        """
+        Prüft:
+        - Meldung aus Zielwoche W (2026-W41) wird selektiert
+        - Nachzügler aus W-1 (2026-W40) wird selektiert, WENN noch nicht im W40 Newsletter erwähnt
+        - Vorwochen-Meldung aus W-1 wird IGNORIERT, wenn bereits im W40 Newsletter erwähnt
+        - Veraltete Meldungen (W-2 oder älter, z. B. KW 35) werden STRIKT ausgeschlossen
+        """
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            base_dir = Path(tmp_dir)
+            wm_file = base_dir / "watermark.json"
+            wm_mgr = WatermarkManager(watermark_path=wm_file)
+            store = ItemStore(items_dir=base_dir / "items")
+
+            # Vorherigen Newsletter für W40 anlegen
+            nl_dir = base_dir / "newsletters"
+            nl_dir.mkdir(parents=True)
+            (nl_dir / "newsletter-2026-W40.md").write_text(
+                "# Newsletter KW 40\n\n"
+                "- [Erwähnte Vorwochenmeldung](https://test.com/w40-already-covered)\n",
+                encoding="utf-8",
+            )
+
+            # Item 1: Aktuelle Woche (2026-W41)
+            item_w41 = NewsItem(
+                item_id="item-w41",
+                provider="p2p-game",
+                source_tier="primary",
+                url="https://p2p-game.com/p2p-news/2026-10-12-estateguru.html",
+                title="EstateGuru Update W41",
+                published_date="2026-10-12",  # KW 42 bzw. W41
+                first_seen_at="2026-10-12T10:00:00+00:00",
+                last_seen_at="2026-10-12T10:00:00+00:00",
+                item_content_hash="h-w41",
+                page_snapshot_hash="s-w41",
+                content_plain="Text W41",
+            )
+            # Item 2: Nachzügler aus W40 (2026-10-02), NICHT im Newsletter
+            item_w40_nachzuegler = NewsItem(
+                item_id="item-w40-late",
+                provider="nectaro",
+                source_tier="primary",
+                url="https://nectaro.eu/blog/late-update",
+                title="Nectaro Nachzügler W40",
+                published_date="2026-10-02",  # 2026-W40
+                first_seen_at="2026-10-05T08:00:00+00:00",
+                last_seen_at="2026-10-05T08:00:00+00:00",
+                item_content_hash="h-w40-late",
+                page_snapshot_hash="s-w40-late",
+                content_plain="Text W40 Nachzügler",
+            )
+            # Item 3: W40 Meldung, die BEREITS im W40 Newsletter war
+            item_w40_already = NewsItem(
+                item_id="item-w40-covered",
+                provider="rethink-p2p",
+                source_tier="secondary",
+                url="https://test.com/w40-already-covered",
+                title="Bereits erwähnte Meldung",
+                published_date="2026-10-01",  # 2026-W40
+                first_seen_at="2026-10-01T10:00:00+00:00",
+                last_seen_at="2026-10-01T10:00:00+00:00",
+                item_content_hash="h-w40-cov",
+                page_snapshot_hash="s-w40-cov",
+                content_plain="Text W40 Already",
+            )
+            # Item 4: Uralt-Meldung aus KW 35 (2026-08-24) -> MUSS ausgeschlossen werden
+            item_w35_old = NewsItem(
+                item_id="item-w35-old",
+                provider="passives-einkommen",
+                source_tier="secondary",
+                url="https://passives-einkommen-mit-p2p.de/p2p-kredite-35-26-ventus/",
+                title="Ventus Reorganisation KW 35",
+                published_date="2026-08-24",  # 2026-W35
+                first_seen_at="2026-10-05T08:00:00+00:00",
+                last_seen_at="2026-10-05T08:00:00+00:00",
+                item_content_hash="h-w35",
+                page_snapshot_hash="s-w35",
+                content_plain="Text W35 Alt",
+            )
+
+            store.upsert_item(item_w41)
+            store.upsert_item(item_w40_nachzuegler)
+            store.upsert_item(item_w40_already)
+            store.upsert_item(item_w35_old)
+
+            # Prüfe Zielwoche 2026-W41 (Woche von 2026-10-05 bis 2026-10-11)
+            # Montag 2026-10-05 ist KW 41. Erstellen wir ein echtes KW 41 Item:
+            item_kw41_real = NewsItem(
+                item_id="item-kw41-real",
+                provider="mintos",
+                source_tier="primary",
+                url="https://mintos.com/blog/w41-update",
+                title="Mintos KW41 Update",
+                published_date="2026-10-07",  # 2026-W41
+                first_seen_at="2026-10-07T10:00:00+00:00",
+                last_seen_at="2026-10-07T10:00:00+00:00",
+                item_content_hash="h-kw41",
+                page_snapshot_hash="s-kw41",
+                content_plain="Text Mintos KW41",
+            )
+            store.upsert_item(item_kw41_real)
+
+            selected = wm_mgr.select_items_for_run(
+                store=store,
+                iso_week="2026-W41",
+            )
+
+            selected_ids = {x.item_id for x in selected}
+            # 1. KW 41 Item muss enthalten sein
+            self.assertIn("item-kw41-real", selected_ids)
+            # 2. W40 Nachzügler muss enthalten sein
+            self.assertIn("item-w40-late", selected_ids)
+            # 3. Bereits erwähnte W40 Meldung darf NICHT enthalten sein
+            self.assertNotIn("item-w40-covered", selected_ids)
+            # 4. KW 35 Uralt-Meldung darf KEINESFALLS enthalten sein
+            self.assertNotIn("item-w35-old", selected_ids)
 
 
 class TestStage1Verifier(unittest.TestCase):

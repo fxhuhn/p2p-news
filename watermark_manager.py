@@ -9,14 +9,101 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timezone
+import re
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 from item_models import NewsItem
 from item_store import ItemStore
 
 logger = logging.getLogger("watermark_manager")
+
+
+def get_previous_iso_week(iso_week: str) -> str:
+    """Berechnet die ISO-Kalenderwoche der direkten Vorwoche (W-1)."""
+    match = re.match(r"^(\d{4})-W(\d{2})$", iso_week)
+    if not match:
+        raise ValueError(f"Ungültiges ISO-Wochenformat: {iso_week}")
+    year, week = int(match.group(1)), int(match.group(2))
+    current_monday = datetime.fromisocalendar(year, week, 1)
+    prev_monday = current_monday - timedelta(days=7)
+    prev_year, prev_week, _ = prev_monday.isocalendar()
+    return f"{prev_year}-W{prev_week:02d}"
+
+
+def load_previous_newsletter_mentions(
+    base_dir: Path, prev_iso_week: str
+) -> tuple[set[str], set[str]]:
+    """
+    Lädt alle Item-IDs und URLs, die bereits im vorherigen Digest oder Newsletter (W-1) erwähnt wurden.
+    Gibt (mentioned_item_ids, mentioned_urls) zurück.
+    """
+    mentioned_ids: set[str] = set()
+    mentioned_urls: set[str] = set()
+
+    # 1. Manifest aus Stufe 1: data/digests/digest-{prev_iso_week}.manifest.json
+    manifest_path = base_dir / "digests" / f"digest-{prev_iso_week}.manifest.json"
+    if manifest_path.exists():
+        try:
+            data = json.loads(manifest_path.read_text(encoding="utf-8"))
+            item_hashes = data.get("inputs", {}).get("item_hashes", {})
+            if isinstance(item_hashes, dict):
+                mentioned_ids.update(item_hashes.keys())
+        except Exception as exc:
+            logger.warning(
+                "Konnte Vorwochen-Manifest %s nicht lesen: %s", manifest_path, exc
+            )
+
+    # 2. Digest-Cluster aus Stufe 1: data/digests/digest-{prev_iso_week}.json
+    digest_path = base_dir / "digests" / f"digest-{prev_iso_week}.json"
+    if digest_path.exists():
+        try:
+            data = json.loads(digest_path.read_text(encoding="utf-8"))
+            for cluster in data.get("clusters", []):
+                for src in cluster.get("source_items", []):
+                    item_id = src.get("item_id")
+                    if item_id:
+                        mentioned_ids.add(str(item_id))
+                    url = src.get("url")
+                    if url:
+                        mentioned_urls.add(str(url).strip())
+                        clean_url = (
+                            urlparse(str(url))
+                            ._replace(fragment="", query="")
+                            .geturl()
+                            .rstrip("/")
+                        )
+                        mentioned_urls.add(clean_url)
+        except Exception as exc:
+            logger.warning(
+                "Konnte Vorwochen-Digest %s nicht lesen: %s", digest_path, exc
+            )
+
+    # 3. Newsletter-Markdown: data/newsletters/newsletter-{prev_iso_week}*.md
+    newsletters_dir = base_dir / "newsletters"
+    if newsletters_dir.exists():
+        for nl_file in newsletters_dir.glob(f"newsletter-{prev_iso_week}*.md"):
+            try:
+                content = nl_file.read_text(encoding="utf-8")
+                found_urls = re.findall(r"\[.*?\]\((https?://[^)]+)\)", content)
+                for u in found_urls:
+                    clean = u.strip()
+                    mentioned_urls.add(clean)
+                    clean_norm = (
+                        urlparse(clean)
+                        ._replace(fragment="", query="")
+                        .geturl()
+                        .rstrip("/")
+                    )
+                    mentioned_urls.add(clean_norm)
+            except Exception as exc:
+                logger.warning(
+                    "Konnte Newsletter-Datei %s nicht analysieren: %s", nl_file, exc
+                )
+
+    return mentioned_ids, mentioned_urls
 
 
 class WatermarkManager:
@@ -79,7 +166,10 @@ class WatermarkManager:
         Selektiert Items für den aktuellen Lauf.
 
         Modus 1 (ISO-Woche explizit):
-        Filtert nach Kalenderwoche (z. B. '2026-W40') anhand von published_date oder first_seen_at.
+        Filtert nach Kalenderwoche (z. B. '2026-W41') anhand von published_date.
+        Lässt Nachzügler aus der direkten Vorwoche (W-1) zu, sofern sie im vorherigen
+        Newsletter / Digest noch nicht erwähnt wurden.
+        Schließt ältere Meldungen (W-2 oder älter) strikt aus.
 
         Modus 2 (Exactly-Once via Watermark):
         first_seen_at > last_watermark AND first_seen_at <= current_run_time
@@ -89,30 +179,105 @@ class WatermarkManager:
 
         if iso_week:
             # Modus 1: Spezifische Kalenderwoche (Format: YYYY-Wxx)
+            prev_iso_week = get_previous_iso_week(iso_week)
+            base_dir = (
+                store.items_dir.parent
+                if hasattr(store, "items_dir")
+                else self.watermark_path.parent
+            )
+            prev_mentioned_ids, prev_mentioned_urls = load_previous_newsletter_mentions(
+                base_dir, prev_iso_week
+            )
+
             for item in all_items:
                 if not include_baseline and item.is_baseline:
                     continue
-                # Priorisiere strikt das redaktionelle Veröffentlichungsdatum
+
+                item_iso_week: str | None = None
+                has_explicit_date = False
+
+                # 1. Priorisiere strikt das redaktionelle Veröffentlichungsdatum
                 if item.published_date:
                     try:
                         dt = datetime.fromisoformat(item.published_date)
-                        if (
+                        item_iso_week = (
                             f"{dt.isocalendar().year}-W{dt.isocalendar().week:02d}"
-                            == iso_week
-                        ):
-                            selected.append(item)
+                        )
+                        has_explicit_date = True
                     except Exception:
                         pass
-                elif item.first_seen_at:
+
+                # 2. Datum aus URL-Slug prüfen (z. B. 2026-10-12 oder p2p-kredite-35-26)
+                if not item_iso_week:
+                    date_match = re.search(r"(\d{4}-\d{2}-\d{2})", item.url)
+                    if date_match:
+                        try:
+                            dt = datetime.fromisoformat(date_match.group(1))
+                            item_iso_week = (
+                                f"{dt.isocalendar().year}-W{dt.isocalendar().week:02d}"
+                            )
+                            has_explicit_date = True
+                        except Exception:
+                            pass
+                    else:
+                        kw_match = re.search(r"p2p-kredite-(\d{1,2})-(\d{2})", item.url)
+                        if kw_match:
+                            try:
+                                kw = int(kw_match.group(1))
+                                year = 2000 + int(kw_match.group(2))
+                                dt = datetime.fromisocalendar(year, kw, 1)
+                                item_iso_week = f"{dt.isocalendar().year}-W{dt.isocalendar().week:02d}"
+                                has_explicit_date = True
+                            except Exception:
+                                pass
+
+                # 3. Fallback auf first_seen_at (NUR für die aktuelle Woche W zulässig!)
+                if not item_iso_week and item.first_seen_at:
                     try:
                         dt = datetime.fromisoformat(item.first_seen_at[:10])
-                        if (
+                        cand_week = (
                             f"{dt.isocalendar().year}-W{dt.isocalendar().week:02d}"
-                            == iso_week
-                        ):
-                            selected.append(item)
+                        )
+                        if cand_week == iso_week:
+                            item_iso_week = cand_week
                     except Exception:
                         pass
+
+                if not item_iso_week:
+                    continue
+
+                # Filterung nach Kalenderwoche
+                if item_iso_week == iso_week:
+                    # Direkte Meldung der Zielwoche
+                    selected.append(item)
+                elif item_iso_week == prev_iso_week and has_explicit_date:
+                    # Nachzügler aus der Vorwoche W-1: Nur zulassen, wenn noch nicht im vorherigen Newsletter erwähnt
+                    clean_url = (
+                        urlparse(item.url)
+                        ._replace(fragment="", query="")
+                        .geturl()
+                        .rstrip("/")
+                    )
+                    if (
+                        item.item_id not in prev_mentioned_ids
+                        and item.url.strip() not in prev_mentioned_urls
+                        and clean_url not in prev_mentioned_urls
+                    ):
+                        logger.info(
+                            "Nachzügler aus Vorwoche %s zugelassen (nicht in letztem Newsletter): %s [%s]",
+                            prev_iso_week,
+                            item.title,
+                            item.url,
+                        )
+                        selected.append(item)
+                    else:
+                        logger.debug(
+                            "Vorwochen-Item %s übersprungen, da bereits im letzten Newsletter erwähnt.",
+                            item.title,
+                        )
+                else:
+                    # W-2 oder älter: Strikt ausschließen!
+                    continue
 
             # Sortierung: Schweregrad (critical > high > medium > low), Tier (primary vor secondary), Neueste zuerst
             severity_weights = {"critical": 3, "high": 2, "medium": 1, "low": 0}

@@ -10,6 +10,7 @@ from pathlib import Path
 
 from p2p_news_scraper import (
     ArticleItem,
+    ContentExtractor,
     ContentType,
     KeywordClassifier,
     MarkdownStorageManager,
@@ -18,8 +19,10 @@ from p2p_news_scraper import (
     P2PEmpireProvider,
     P2PGameProvider,
     PassivesEinkommenProvider,
+    PlatformConfig,
     PlatformProvider,
     RethinkP2PProvider,
+    RSSFeedItem,
     compute_sha256_hash,
     decode_cloudflare_email,
     detect_provider_for_url,
@@ -27,6 +30,7 @@ from p2p_news_scraper import (
     load_providers_from_yaml,
     normalize_text,
     parse_markdown_with_frontmatter,
+    parse_rss_feed_items,
     sanitize_cloudflare_artifacts,
     serialize_markdown_with_frontmatter,
 )
@@ -223,6 +227,148 @@ class TestProviderImplementations(unittest.TestCase):
             self.p2p_game.classify_content_type(url_review), ContentType.ERFAHRUNGEN
         )
         self.assertEqual(self.p2p_game.extract_platform_name(url_review), "nectaro")
+
+    def test_parse_rss_feed_items_rss2(self) -> None:
+        sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <title>P2P News Feed</title>
+                <link>https://p2p-game.com/p2p-news/index.html</link>
+                <item>
+                    <title>EstateGuru expandiert nach Deutschland</title>
+                    <link>https://p2p-game.com/p2p-news/2026-10-12-estateguru-germany.html</link>
+                    <guid>https://p2p-game.com/p2p-news/2026-10-12-estateguru-germany.html</guid>
+                    <pubDate>Mon, 12 Oct 2026 08:00:00 +0200</pubDate>
+                    <category>EstateGuru</category>
+                    <description>EstateGuru startet neue Kredite in Deutschland.</description>
+                </item>
+            </channel>
+        </rss>
+        """
+        items = parse_rss_feed_items(sample_rss)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0].title, "EstateGuru expandiert nach Deutschland")
+        self.assertEqual(
+            items[0].url,
+            "https://p2p-game.com/p2p-news/2026-10-12-estateguru-germany.html",
+        )
+        self.assertEqual(items[0].published_date, "2026-10-12")
+        self.assertEqual(items[0].category, "EstateGuru")
+
+    def test_parse_rss_feed_items_atom(self) -> None:
+        sample_atom = """<?xml version="1.0" encoding="utf-8"?>
+        <feed xmlns="http://www.w3.org/2005/Atom">
+            <title>Plattform Feed</title>
+            <entry>
+                <title>Mintos Q3 Zahlen</title>
+                <link href="https://mintos.com/blog/q3-2026"/>
+                <id>urn:uuid:12345</id>
+                <updated>2026-10-14T10:00:00Z</updated>
+                <category term="mintos"/>
+                <summary>Mintos vermeldet Rekordvolumen.</summary>
+            </entry>
+        </feed>
+        """
+        items = parse_rss_feed_items(sample_atom)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0].title, "Mintos Q3 Zahlen")
+        self.assertEqual(items[0].url, "https://mintos.com/blog/q3-2026")
+        self.assertEqual(items[0].published_date, "2026-10-14")
+        self.assertEqual(items[0].category, "mintos")
+
+    def test_p2p_game_rss_extract_links_and_caching(self) -> None:
+        sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <item>
+                    <title>EstateGuru Deutschland</title>
+                    <link>https://p2p-game.com/p2p-news/2026-10-12-estateguru-germany.html</link>
+                    <pubDate>Mon, 12 Oct 2026 08:00:00 +0200</pubDate>
+                    <category>EstateGuru</category>
+                </item>
+            </channel>
+        </rss>
+        """
+        provider = P2PGameProvider()
+        links = provider.extract_links(sample_rss)
+        self.assertEqual(
+            links, ["https://p2p-game.com/p2p-news/2026-10-12-estateguru-germany.html"]
+        )
+
+        # Prüfe, dass Plattformname aus RSS-Kategorie abgeleitet wird
+        self.assertEqual(
+            provider.extract_platform_name(links[0]),
+            "estateguru",
+        )
+
+    def test_p2p_game_extract_content_with_quelle_and_rss_date(self) -> None:
+        provider = P2PGameProvider()
+        provider._rss_cache[
+            "https://p2p-game.com/p2p-news/2026-10-12-estateguru.html"
+        ] = RSSFeedItem(
+            url="https://p2p-game.com/p2p-news/2026-10-12-estateguru.html",
+            title="EstateGuru Update",
+            published_date="2026-10-12",
+            category="EstateGuru",
+            description=None,
+        )
+
+        sample_html = """
+        <html>
+        <head><title>EstateGuru Update</title></head>
+        <body>
+            <article>
+                <h1>EstateGuru Update</h1>
+                <p>EstateGuru finanziert neue Immobilienprojekte in Deutschland.</p>
+                <a class="nl nl-quelle" href="https://estateguru.co/blog/de-expansion">Originalmeldung</a>
+            </article>
+        </body>
+        </html>
+        """
+        res = provider.extract_content(
+            sample_html,
+            "https://p2p-game.com/p2p-news/2026-10-12-estateguru.html",
+            ContentExtractor(),
+        )
+        self.assertIsNotNone(res)
+        assert res is not None
+        content, title, date, author = res
+        self.assertEqual(date, "2026-10-12")
+        self.assertIn("[📰 Quelle](https://estateguru.co/blog/de-expansion)", content)
+
+    def test_p2p_game_generate_filename_detail_article(self) -> None:
+        provider = P2PGameProvider()
+        item = ArticleItem(
+            url="https://p2p-game.com/p2p-news/2026-10-12-estateguru-germany.html",
+            title="EstateGuru",
+            published_date="2026-10-12",
+            author=None,
+            content="Text",
+            content_hash="h1",
+            scanned_at="2026-10-12T10:00:00Z",
+        )
+        filename = provider.generate_filename(item)
+        self.assertEqual(filename, "2026-10-12-estateguru-germany.md")
+
+    def test_platform_provider_rss_feed_offline(self) -> None:
+        sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <item>
+                    <title>Nectaro September Update</title>
+                    <link>https://nectaro.eu/blog/september-update</link>
+                </item>
+            </channel>
+        </rss>
+        """
+        cfg = PlatformConfig(
+            name="nectaro",
+            base_url="https://nectaro.eu",
+            rss_url="https://nectaro.eu/feed.xml",
+        )
+        provider = PlatformProvider(cfg)
+        links = provider.extract_links(sample_rss)
+        self.assertIn("https://nectaro.eu/blog/september-update", links)
 
     def test_rethink_p2p_provider(self) -> None:
         url_news = "https://rethink-p2p.de/news/bondora-update/"

@@ -309,10 +309,9 @@ def run_stage1_pipeline(
         include_baseline=include_baseline,
     )
     if not selected_items:
-        logger.warning("Keine Items für Woche %s gefunden.", iso_week)
-        all_items = store.get_all_items()
-        selected_items = all_items[:15]
-        logger.info("Verwende %d Fallback-Items für den Testlauf.", len(selected_items))
+        raise ValueError(
+            f"Keine relevanten News-Items für Kalenderwoche {iso_week} gefunden."
+        )
 
     # Obergrenze festlegen, um Token-Erschöpfung (Free-Tier Limit 250k TPM) zu verhindern
     max_items = limit

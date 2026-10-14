@@ -214,6 +214,7 @@ class ItemExtractor:
         if self._is_overview_page(markdown_body, fm):
             items = self._split_overview_page(
                 markdown_body=markdown_body,
+                frontmatter=fm,
                 provider=provider,
                 page_url=page_url,
                 page_first_seen=page_first_seen,
@@ -241,10 +242,17 @@ class ItemExtractor:
     def _is_overview_page(self, body: str, frontmatter: dict[str, Any]) -> bool:
         """Erkennt, ob eine Datei eine Übersichtsseite mit mehreren Meldungen ist."""
         url = frontmatter.get("url", "")
-        if any(
-            marker in url
-            for marker in ["/nachrichten", "/news/", "/p2p-kredite-plattform-news"]
-        ):
+        parsed = urlparse(url)
+        path = parsed.path.rstrip("/")
+        # Reine Übersichts-Pfade
+        if path in (
+            "/nachrichten",
+            "/news",
+            "/p2p-kredite-plattform-news",
+            "/p2p-news",
+            "/p2p-news/index.html",
+            "/p2p-kredite-news",
+        ) or url.rstrip("/").endswith(("/news", "/nachrichten", "/p2p-kredite-news")):
             return True
 
         # Zähle ## Headings
@@ -264,6 +272,7 @@ class ItemExtractor:
     def _split_overview_page(
         self,
         markdown_body: str,
+        frontmatter: dict[str, Any],
         provider: str,
         page_url: str,
         page_first_seen: str,
@@ -272,6 +281,7 @@ class ItemExtractor:
         is_baseline: bool,
     ) -> list[NewsItem]:
         """Zerlegt eine Übersichtsseite in einzelne NewsItems."""
+        parent_published_date = frontmatter.get("published_date")
         items: list[NewsItem] = []
 
         # Strategie 1: P2P Game Format
@@ -319,6 +329,23 @@ class ItemExtractor:
                 published_date = parse_german_date(date_match.group(1))
                 # Entferne die Datumszeile aus dem Rohinhalt
                 section_raw = section_raw[date_match.end() :].strip()
+
+            # Fallback 1: Vom übergeordneten Frontmatter erben (z. B. Weekly News Post)
+            if not published_date and parent_published_date:
+                published_date = str(parent_published_date)
+
+            # Fallback 2: Kalenderwoche aus Slug ermitteln (z. B. p2p-kredite-35-26 -> KW 35 2026)
+            if not published_date:
+                kw_match = re.search(r"p2p-kredite-(\d{1,2})-(\d{2})", page_url)
+                if kw_match:
+                    try:
+                        kw = int(kw_match.group(1))
+                        year = 2000 + int(kw_match.group(2))
+                        published_date = datetime.fromisocalendar(year, kw, 1).strftime(
+                            "%Y-%m-%d"
+                        )
+                    except Exception:
+                        pass
 
             # Extrahiere mögliche direkte Detail-Links im Abschnitt
             item_url = self._extract_best_url(

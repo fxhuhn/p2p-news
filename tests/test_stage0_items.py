@@ -174,6 +174,50 @@ Letzte Woche hatte ich darüber berichtet, dass die lettische Zentralbank der SI
         items = self.extractor.extract_items(pdf_md, frontmatter=fm)
         self.assertEqual(len(items), 0)
 
+    def test_overview_split_inherits_parent_published_date(self) -> None:
+        raw_md = (
+            "## Meldung Eins\n\nErster Text ohne Datumszeile.\n\n"
+            "---\n\n"
+            "## Meldung Zwei\n\nZweiter Text ohne Datumszeile."
+        )
+        fm = {
+            "source": "passives-einkommen",
+            "url": "https://passives-einkommen-mit-p2p.de/p2p-kredite-news/",
+            "published_date": "2026-10-14",
+        }
+        items = self.extractor.extract_items(raw_md, frontmatter=fm)
+        self.assertEqual(len(items), 2)
+        self.assertEqual(items[0].published_date, "2026-10-14")
+        self.assertEqual(items[1].published_date, "2026-10-14")
+
+    def test_overview_split_derives_date_from_kw_slug(self) -> None:
+        raw_md = (
+            "## Ventus Restrukturierung\n\nText zu Ventus.\n\n"
+            "---\n\n"
+            "## Bondster News\n\nText zu Bondster."
+        )
+        fm = {
+            "source": "passives-einkommen",
+            "url": "https://passives-einkommen-mit-p2p.de/p2p-kredite-35-26-ventus-energy-restrukturierung/",
+        }
+        items = self.extractor.extract_items(raw_md, frontmatter=fm)
+        self.assertEqual(len(items), 2)
+        # KW 35 2026 Montag ist 2026-08-24
+        self.assertEqual(items[0].published_date, "2026-08-24")
+        self.assertEqual(items[1].published_date, "2026-08-24")
+
+    def test_detail_article_with_news_in_path_not_treated_as_overview(self) -> None:
+        raw_md = "## Einzelner Artikel\n\nDies ist ein normaler Fließtext-Artikel mit nur einer H2-Überschrift."
+        fm = {
+            "source": "rethink-p2p",
+            "url": "https://rethink-p2p.de/news/2026-10-12-einzelmeldung/",
+            "title": "Einzelner Artikel",
+            "published_date": "2026-10-12",
+        }
+        items = self.extractor.extract_items(raw_md, frontmatter=fm)
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0].title, "Einzelner Artikel")
+
 
 class TestItemStore(unittest.TestCase):
     def test_upsert_preserves_first_seen_at(self) -> None:

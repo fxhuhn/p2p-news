@@ -12,7 +12,7 @@ Ein modulares, produktionsreifes Python 3.11+ Tool zum Scannen von P2P-Lending-N
 | Provider-Key | Name / Blog | Start-URL |
 |---|---|---|
 | `p2p-empire` | P2P Empire | `https://p2pempire.com/de/nachrichten` |
-| `p2p-game` | P2P Game | `https://p2p-game.com/p2p-kredite-plattform-news` |
+| `p2p-game` | P2P Game | `https://p2p-game.com/p2p-news/index.html` |
 | `rethink-p2p` | re:think P2P | `https://rethink-p2p.de/news/` |
 | `passives-einkommen` | Passives Einkommen mit P2P (Lars Wrobbel) | `https://passives-einkommen-mit-p2p.de/p2p-kredite-news/` |
 | `p2p-anlage` | P2P-Anlage.de | `https://p2p-anlage.de` |
