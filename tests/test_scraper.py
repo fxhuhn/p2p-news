@@ -405,6 +405,91 @@ class TestProviderImplementations(unittest.TestCase):
         self.assertEqual(title, "Ventus Energy Restrukturierung")
         self.assertEqual(author, "P2P Empire")
 
+    def test_p2p_empire_rss_filters_out_404_placeholder_and_external_links(
+        self,
+    ) -> None:
+        sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <item>
+                    <title>Indemo Housing Decree Update</title>
+                    <link>https://drive.google.com/file/d/123/view</link>
+                    <pubDate>Mon, 12 Oct 2026 10:00:00 +0200</pubDate>
+                    <description>CEO Update zu Spanien.</description>
+                </item>
+                <item>
+                    <title>Fintown YouTube Interview</title>
+                    <link>https://www.youtube.com/watch?v=xyz</link>
+                    <pubDate>Sun, 11 Oct 2026 09:00:00 +0200</pubDate>
+                    <description>Neues Videointerview.</description>
+                </item>
+                <item>
+                    <title>Plattform News Feed Entry</title>
+                    <link>https://p2pempire.com/de/p2p-empire-newsfeed</link>
+                    <pubDate>Sat, 10 Oct 2026 08:00:00 +0200</pubDate>
+                    <description>Kurzes Update ohne externe URL.</description>
+                </item>
+                <item>
+                    <title>Echtes Empire Review</title>
+                    <link>https://p2pempire.com/de/erfahrungen/bondora</link>
+                    <pubDate>Fri, 09 Oct 2026 07:00:00 +0200</pubDate>
+                    <description>Neuer Testbericht.</description>
+                </item>
+            </channel>
+        </rss>
+        """
+        provider = P2PEmpireProvider()
+        links = provider.extract_links(sample_rss)
+        # External URLs and 404 placeholder must NOT be scraped as HTML subpages
+        self.assertNotIn("https://drive.google.com/file/d/123/view", links)
+        self.assertNotIn("https://www.youtube.com/watch?v=xyz", links)
+        self.assertNotIn("https://p2pempire.com/de/p2p-empire-newsfeed", links)
+        # Real internal platform article/review must be collected
+        self.assertIn("https://p2pempire.com/de/erfahrungen/bondora", links)
+
+        # But all items must be cached in _rss_cache for overview generation
+        self.assertIn("https://drive.google.com/file/d/123/view", provider._rss_cache)
+        self.assertIn(
+            "https://p2pempire.com/de/p2p-empire-newsfeed", provider._rss_cache
+        )
+
+    def test_p2p_empire_extract_content_overview_from_rss_cache(self) -> None:
+        provider = P2PEmpireProvider()
+        provider._rss_cache["https://drive.google.com/file/d/123/view"] = RSSFeedItem(
+            url="https://drive.google.com/file/d/123/view",
+            title="Indemo Housing Decree Update",
+            published_date="2026-10-12",
+            category="Indemo",
+            description="CEO Update zu Spanien.",
+        )
+        provider._rss_cache["https://p2pempire.com/de/p2p-empire-newsfeed"] = (
+            RSSFeedItem(
+                url="https://p2pempire.com/de/p2p-empire-newsfeed",
+                title="Kurzmeldung ohne Link",
+                published_date="2026-10-11",
+                category="News",
+                description="Allgemeines Plattform-Update.",
+            )
+        )
+        res = provider.extract_content(
+            "<html><body></body></html>",
+            "https://p2pempire.com/de/nachrichten",
+            ContentExtractor(),
+        )
+        self.assertIsNotNone(res)
+        assert res is not None
+        content, title, date, author = res
+        self.assertEqual(title, "P2P News | Aktuelle Neuigkeiten")
+        self.assertEqual(author, "P2P Empire")
+        # Ensure external link has markdown source link
+        self.assertIn(
+            "[📰 Originalquelle](https://drive.google.com/file/d/123/view)", content
+        )
+        # Ensure 404 dummy link does NOT have [📰 Originalquelle](...p2p-empire-newsfeed)
+        self.assertNotIn("/p2p-empire-newsfeed", content)
+        self.assertIn("## Kurzmeldung ohne Link", content)
+        self.assertIn("Allgemeines Plattform-Update.", content)
+
     def test_rethink_p2p_rss_extract_links_and_caching(self) -> None:
         sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
         <rss version="2.0">

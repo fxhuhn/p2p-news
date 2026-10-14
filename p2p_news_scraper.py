@@ -817,6 +817,10 @@ class P2PEmpireProvider(BaseProvider):
             "/de/nachrichten",
             "/de/ratgeber",
             "/de/p2p-kredite-risiko",
+            "/de/p2p-empire-newsfeed",
+            "/p2p-empire-newsfeed",
+            "/en/lender-risk",
+            "/de/lender-risk",
         }
     )
 
@@ -860,15 +864,16 @@ class P2PEmpireProvider(BaseProvider):
                 clean_url = parsed._replace(fragment="", query="").geturl()
                 self._rss_cache[f_item.url] = f_item
                 self._rss_cache[clean_url] = f_item
-                path = parsed.path.rstrip("/")
-                if path not in self.NON_ARTICLE_PATHS and path != "":
-                    if not any(
-                        path.endswith(ext)
-                        for ext in [".svg", ".png", ".jpg", ".pdf", ".css", ".js"]
-                    ):
-                        collected_urls.append(clean_url)
+                if parsed.netloc.lower() == "p2pempire.com":
+                    path = parsed.path.rstrip("/")
+                    if path not in self.NON_ARTICLE_PATHS and path != "":
+                        if not any(
+                            path.endswith(ext)
+                            for ext in [".svg", ".png", ".jpg", ".pdf", ".css", ".js"]
+                        ):
+                            collected_urls.append(clean_url)
 
-        # 2. HTML-Links von Übersichtsseite
+        # 2. HTML-Links von Übersichtsseite (Erfahrungsberichte)
         if html_content and not html_content.strip().startswith(
             ("<?xml", "<rss", "<feed")
         ):
@@ -936,12 +941,48 @@ class P2PEmpireProvider(BaseProvider):
                 author = "P2P Empire"
             return content, title, published_date, author
 
+        # Falls RSS-Cache befüllt ist, vollständige News-Liste aus dem Feed generieren (30 Einträge statt 10)
+        if self._rss_cache:
+            lines: list[str] = [
+                "# P2P News | Aktuelle Neuigkeiten",
+                "",
+                "Überblick über die neuesten Nachrichten aus der P2P-Lending Industrie",
+                "",
+            ]
+            latest_date = None
+            seen_titles: set[str] = set()
+            for r_item in self._rss_cache.values():
+                if not r_item.title or r_item.title in seen_titles:
+                    continue
+                seen_titles.add(r_item.title)
+                if not latest_date and r_item.published_date:
+                    latest_date = r_item.published_date
+
+                lines.append(f"## {r_item.title}")
+                if r_item.published_date:
+                    lines.append(f"*{r_item.published_date}*")
+                lines.append("")
+                if r_item.description:
+                    lines.append(r_item.description)
+                    lines.append("")
+                clean_r_url = (r_item.url or "").rstrip("/")
+                if clean_r_url and not clean_r_url.endswith("/p2p-empire-newsfeed"):
+                    lines.append(f"[📰 Originalquelle]({clean_r_url})")
+                    lines.append("")
+                lines.append("---")
+                lines.append("")
+
+            if seen_titles:
+                full_content = "\n".join(lines).strip()
+                page_title = "P2P News | Aktuelle Neuigkeiten"
+                return full_content, page_title, latest_date, "P2P Empire"
+
         soup = BeautifulSoup(html_content, "html.parser")
         boxes = soup.find_all("div", class_="news-box-wrapper")
         if not boxes:
             return None
 
-        lines: list[str] = [
+        lines = [
             "# P2P News | Aktuelle Neuigkeiten",
             "",
             "Überblick über die neuesten Nachrichten aus der P2P-Lending Industrie",
