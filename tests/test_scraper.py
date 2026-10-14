@@ -350,6 +350,192 @@ class TestProviderImplementations(unittest.TestCase):
         filename = provider.generate_filename(item)
         self.assertEqual(filename, "2026-10-12-estateguru-germany.md")
 
+    def test_p2p_empire_rss_extract_links_and_caching(self) -> None:
+        sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <item>
+                    <title>Ventus Energy Restrukturierung</title>
+                    <link>https://p2pempire.com/de/nachrichten/ventus-restrukturierung</link>
+                    <pubDate>Mon, 12 Oct 2026 10:00:00 +0200</pubDate>
+                    <category>Ventus</category>
+                    <description>Restrukturierungsplan angekündigt.</description>
+                </item>
+            </channel>
+        </rss>
+        """
+        provider = P2PEmpireProvider()
+        links = provider.extract_links(sample_rss)
+        self.assertEqual(
+            links, ["https://p2pempire.com/de/nachrichten/ventus-restrukturierung"]
+        )
+        self.assertEqual(provider.extract_platform_name(links[0]), "ventus")
+
+    def test_p2p_empire_extract_content_detail_article(self) -> None:
+        provider = P2PEmpireProvider()
+        provider._rss_cache[
+            "https://p2pempire.com/de/nachrichten/ventus-restrukturierung"
+        ] = RSSFeedItem(
+            url="https://p2pempire.com/de/nachrichten/ventus-restrukturierung",
+            title="Ventus Energy Restrukturierung",
+            published_date="2026-10-12",
+            category="Ventus",
+            description="Restrukturierungsplan für Anleger.",
+        )
+        sample_html = """
+        <html>
+        <head><title>Ventus News</title></head>
+        <body>
+            <article>
+                <h1>Ventus Energy Restrukturierung</h1>
+                <p>Ventus Energy hat Einzelheiten zum Restrukturierungsplan veröffentlicht.</p>
+            </article>
+        </body>
+        </html>
+        """
+        res = provider.extract_content(
+            sample_html,
+            "https://p2pempire.com/de/nachrichten/ventus-restrukturierung",
+            ContentExtractor(),
+        )
+        self.assertIsNotNone(res)
+        assert res is not None
+        content, title, date, author = res
+        self.assertEqual(date, "2026-10-12")
+        self.assertEqual(title, "Ventus Energy Restrukturierung")
+        self.assertEqual(author, "P2P Empire")
+
+    def test_rethink_p2p_rss_extract_links_and_caching(self) -> None:
+        sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <item>
+                    <title>P2P Kredite Monatsrückblick September 2026</title>
+                    <link>https://rethink-p2p.de/p2p-kredite-monatsrueckblick-september-2026/</link>
+                    <pubDate>Fri, 02 Oct 2026 09:00:00 +0200</pubDate>
+                    <category>Monatsrückblick</category>
+                    <description>Ausführliche Analyse aller Plattformen.</description>
+                </item>
+            </channel>
+        </rss>
+        """
+        provider = RethinkP2PProvider()
+        links = provider.extract_links(sample_rss)
+        self.assertIn(
+            "https://rethink-p2p.de/p2p-kredite-monatsrueckblick-september-2026/",
+            links,
+        )
+
+        sample_html = """
+        <html>
+        <head><title>Rückblick</title></head>
+        <body>
+            <article>
+                <h1>P2P Kredite Monatsrückblick September 2026</h1>
+                <p>Der September war geprägt von Zinsanpassungen.</p>
+            </article>
+        </body>
+        </html>
+        """
+        res = provider.extract_content(
+            sample_html,
+            "https://rethink-p2p.de/p2p-kredite-monatsrueckblick-september-2026/",
+            ContentExtractor(),
+        )
+        self.assertIsNotNone(res)
+        assert res is not None
+        content, title, date, author = res
+        self.assertEqual(date, "2026-10-02")
+        self.assertEqual(author, "Denny Neidhardt")
+
+    def test_passives_einkommen_rss_extract_links_and_caching(self) -> None:
+        sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <item>
+                    <title>P2P Kredite W41 - Ventus Energy Restrukturierung</title>
+                    <link>https://passives-einkommen-mit-p2p.de/p2p-kredite-41-26-ventus-energy-restrukturierung/</link>
+                    <pubDate>Sun, 11 Oct 2026 08:30:00 +0200</pubDate>
+                    <category>P2P Kredite News</category>
+                    <description>News der Woche 41.</description>
+                </item>
+            </channel>
+        </rss>
+        """
+        provider = PassivesEinkommenProvider()
+        links = provider.extract_links(sample_rss)
+        self.assertEqual(
+            links,
+            [
+                "https://passives-einkommen-mit-p2p.de/p2p-kredite-41-26-ventus-energy-restrukturierung/"
+            ],
+        )
+
+        sample_html = """
+        <html>
+        <head><title>P2P Kredite News</title></head>
+        <body>
+            <article>
+                <h1>P2P Kredite W41 - Ventus Energy Restrukturierung</h1>
+                <p>In den heutigen P2P Kredite News geht es um Ventus Energy.</p>
+            </article>
+        </body>
+        </html>
+        """
+        res = provider.extract_content(
+            sample_html,
+            "https://passives-einkommen-mit-p2p.de/p2p-kredite-41-26-ventus-energy-restrukturierung/",
+            ContentExtractor(),
+        )
+        self.assertIsNotNone(res)
+        assert res is not None
+        content, title, date, author = res
+        self.assertEqual(date, "2026-10-11")
+        self.assertEqual(author, "Lars Wrobbel")
+
+    def test_p2p_anlage_rss_extract_links_and_caching(self) -> None:
+        sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <item>
+                    <title>Debitum Investments Update</title>
+                    <link>https://p2p-anlage.de/2026/10/debitum-investments-update/</link>
+                    <pubDate>Mon, 12 Oct 2026 11:00:00 +0200</pubDate>
+                    <category>Debitum</category>
+                    <description>Neues Update zu Debitum.</description>
+                </item>
+            </channel>
+        </rss>
+        """
+        provider = P2PAnlageProvider()
+        links = provider.extract_links(sample_rss)
+        self.assertEqual(
+            links, ["https://p2p-anlage.de/2026/10/debitum-investments-update/"]
+        )
+        self.assertEqual(provider.extract_platform_name(links[0]), "debitum")
+
+        sample_html = """
+        <html>
+        <head><title>Debitum News</title></head>
+        <body>
+            <article>
+                <h1>Debitum Investments Update</h1>
+                <p>Aktuelle Entwicklungen bei Debitum Investments.</p>
+            </article>
+        </body>
+        </html>
+        """
+        res = provider.extract_content(
+            sample_html,
+            "https://p2p-anlage.de/2026/10/debitum-investments-update/",
+            ContentExtractor(),
+        )
+        self.assertIsNotNone(res)
+        assert res is not None
+        content, title, date, author = res
+        self.assertEqual(date, "2026-10-12")
+        self.assertEqual(title, "Debitum Investments Update")
+
     def test_platform_provider_rss_feed_offline(self) -> None:
         sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
         <rss version="2.0">

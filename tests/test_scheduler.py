@@ -15,29 +15,69 @@ import scheduler
 
 
 def test_setup_schedule() -> None:
-    """Prüft, ob setup_schedule zwei Jobs mit korrekten Zeiten registriert."""
+    """Prüft, ob setup_schedule drei Jobs mit korrekten Zeiten registriert."""
     schedule.clear()
-    scheduler.setup_schedule(weekly_time="06:30", monthly_time="07:45")
+    scheduler.setup_schedule(
+        daily_time="05:30", weekly_time="06:30", monthly_time="07:45"
+    )
     jobs = schedule.get_jobs()
-    assert len(jobs) == 2
-    # Ein Job wöchentlich, ein Job täglich
+    assert len(jobs) == 3
+    # Ein Job wöchentlich, zwei Jobs täglich
     units = {j.unit for j in jobs}
     assert "weeks" in units
     assert "days" in units
+    day_times = {
+        j.at_time.strftime("%H:%M") for j in jobs if j.unit == "days" and j.at_time
+    }
+    assert "05:30" in day_times
+    assert "07:45" in day_times
 
 
 def test_setup_schedule_default_times() -> None:
-    """Prüft, ob setup_schedule standardmäßig 06:30 (wöchentlich) und 07:00 (monatlich) setzt."""
+    """Prüft, ob setup_schedule standardmäßig 06:00 (täglich), 06:30 (wöchentlich) und 07:00 (monatlich) setzt."""
     schedule.clear()
     scheduler.setup_schedule()
     jobs = schedule.get_jobs()
-    assert len(jobs) == 2
+    assert len(jobs) == 3
     weekly_job = next(j for j in jobs if j.unit == "weeks")
     assert weekly_job.at_time is not None
     assert weekly_job.at_time.strftime("%H:%M") == "06:30"
-    daily_job = next(j for j in jobs if j.unit == "days")
-    assert daily_job.at_time is not None
-    assert daily_job.at_time.strftime("%H:%M") == "07:00"
+    day_times = {
+        j.at_time.strftime("%H:%M") for j in jobs if j.unit == "days" and j.at_time
+    }
+    assert "06:00" in day_times
+    assert "07:00" in day_times
+
+
+@patch("item_extractor.process_all_scraped_news")
+@patch("p2p_news_scraper.P2PNewsScraper")
+def test_job_daily_ingestion_success(
+    mock_scraper_cls: MagicMock,
+    mock_process_items: MagicMock,
+) -> None:
+    """Prüft den erfolgreichen Ablauf des täglichen Ingestion-Jobs (Stage 0)."""
+    mock_process_items.return_value = (5, 25)
+    result = scheduler.job_daily_ingestion(data_dir="data")
+    assert result is True
+    assert mock_scraper_cls.called
+    mock_process_items.assert_called_once()
+
+
+@patch("p2p_news_scraper.P2PNewsScraper")
+def test_job_daily_ingestion_exception(mock_scraper_cls: MagicMock) -> None:
+    """Prüft, dass Exceptions im täglichen Ingestion-Job abgefangen werden."""
+    mock_scraper_cls.side_effect = RuntimeError("Scraper Fehler")
+    result = scheduler.job_daily_ingestion(data_dir="data")
+    assert result is False
+
+
+@patch("scheduler.job_daily_ingestion")
+def test_main_run_daily_now(mock_daily: MagicMock) -> None:
+    """Prüft den CLI-Aufruf --run-daily-now."""
+    mock_daily.return_value = True
+    exit_code = scheduler.main(["--run-daily-now"])
+    assert exit_code == 0
+    mock_daily.assert_called_once_with(data_dir="data")
 
 
 @patch("scheduler.run_pipeline")

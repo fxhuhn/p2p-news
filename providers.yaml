@@ -194,17 +194,21 @@ platforms:
 aggregators:
   p2p-empire:
     base_url: "https://p2pempire.com/de/nachrichten"
+    rss_url: "https://p2pempire.com/de/feed"
   p2p-game:
     base_url: "https://p2p-game.com/p2p-news/index.html"
     rss_url: "https://p2p-game.com/p2p-news/feed.xml"
   rethink-p2p:
     base_url: "https://rethink-p2p.de/news/"
+    rss_url: "https://rethink-p2p.de/feed/"
   passives-einkommen:
     base_url: "https://passives-einkommen-mit-p2p.de/p2p-kredite-news/"
+    rss_url: "https://passives-einkommen-mit-p2p.de/feed/"
     subpages:
       - "https://passives-einkommen-mit-p2p.de/fagura-erfahrungen/"
   p2p-anlage:
     base_url: "https://p2p-anlage.de"
+    rss_url: "https://p2p-anlage.de/feed/"
 
 # ------------------------------------------------------------------------------
 # 3. Keyword-Klassifikation (Plattformen, Themen, Sentiment)

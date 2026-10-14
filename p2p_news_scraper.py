@@ -802,6 +802,7 @@ class P2PEmpireProvider(BaseProvider):
 
     name: str = "p2p-empire"
     base_url: str = "https://p2pempire.com/de/nachrichten"
+    rss_url: str | None = "https://p2pempire.com/de/feed"
 
     NON_ARTICLE_PATHS: frozenset[str] = frozenset(
         {
@@ -819,37 +820,91 @@ class P2PEmpireProvider(BaseProvider):
         }
     )
 
+    def __init__(
+        self,
+        rss_url: str | None = None,
+        base_url: str | None = None,
+    ) -> None:
+        if base_url:
+            self.base_url = base_url
+        if rss_url:
+            self.rss_url = rss_url
+        self._rss_cache: dict[str, RSSFeedItem] = {}
+
     def extract_links(
         self, html_content: str, client: httpx.Client | None = None
     ) -> list[str]:
-        soup = BeautifulSoup(html_content, "html.parser")
         collected_urls: list[str] = []
+        feed_xml: str | None = None
 
-        news_containers = soup.find_all(
-            "div", class_=["news-box-wrapper", "news-wrapper"]
-        )
-        search_targets = news_containers if news_containers else [soup]
+        # 1. RSS-Feed bevorzugt oder wenn XML übergeben wurde
+        if html_content.strip().startswith(("<?xml", "<rss", "<feed")):
+            feed_xml = html_content
+        elif self.rss_url and client is not None:
+            try:
+                resp = client.get(self.rss_url)
+                if resp.status_code == 200:
+                    feed_xml = resp.text
+            except Exception as exc:
+                logger.warning(
+                    "[%s] Konnte RSS-Feed (%s) nicht abrufen: %s",
+                    self.name,
+                    self.rss_url,
+                    exc,
+                )
 
-        for container in search_targets:
-            for anchor in container.find_all("a", href=True):
-                raw_href = anchor["href"].strip()
-                if not raw_href or raw_href.startswith(
-                    ("#", "javascript:", "mailto:", "tel:")
-                ):
-                    continue
+        if feed_xml:
+            feed_items = parse_rss_feed_items(feed_xml, base_url=self.base_url)
+            for f_item in feed_items:
+                parsed = urlparse(f_item.url)
+                clean_url = parsed._replace(fragment="", query="").geturl()
+                self._rss_cache[f_item.url] = f_item
+                self._rss_cache[clean_url] = f_item
+                path = parsed.path.rstrip("/")
+                if path not in self.NON_ARTICLE_PATHS and path != "":
+                    if not any(
+                        path.endswith(ext)
+                        for ext in [".svg", ".png", ".jpg", ".pdf", ".css", ".js"]
+                    ):
+                        collected_urls.append(clean_url)
 
-                full_url = urljoin(self.base_url, raw_href)
-                parsed = urlparse(full_url)
-                cleaned_url = parsed._replace(fragment="").geturl()
+        # 2. HTML-Links von Übersichtsseite
+        if html_content and not html_content.strip().startswith(
+            ("<?xml", "<rss", "<feed")
+        ):
+            soup = BeautifulSoup(html_content, "html.parser")
+            news_containers = soup.find_all(
+                "div", class_=["news-box-wrapper", "news-wrapper"]
+            )
+            search_targets = news_containers if news_containers else [soup]
 
-                if parsed.netloc.lower() == "p2pempire.com":
-                    path = parsed.path.rstrip("/")
-                    if path not in self.NON_ARTICLE_PATHS and path != "":
-                        if not any(
-                            path.endswith(ext)
-                            for ext in [".svg", ".png", ".jpg", ".pdf", ".css", ".js"]
-                        ):
-                            collected_urls.append(cleaned_url)
+            for container in search_targets:
+                for anchor in container.find_all("a", href=True):
+                    raw_href = anchor["href"].strip()
+                    if not raw_href or raw_href.startswith(
+                        ("#", "javascript:", "mailto:", "tel:")
+                    ):
+                        continue
+
+                    full_url = urljoin(self.base_url, raw_href)
+                    parsed = urlparse(full_url)
+                    cleaned_url = parsed._replace(fragment="").geturl()
+
+                    if parsed.netloc.lower() == "p2pempire.com":
+                        path = parsed.path.rstrip("/")
+                        if path not in self.NON_ARTICLE_PATHS and path != "":
+                            if not any(
+                                path.endswith(ext)
+                                for ext in [
+                                    ".svg",
+                                    ".png",
+                                    ".jpg",
+                                    ".pdf",
+                                    ".css",
+                                    ".js",
+                                ]
+                            ):
+                                collected_urls.append(cleaned_url)
 
         return list(dict.fromkeys(collected_urls))
 
@@ -861,10 +916,25 @@ class P2PEmpireProvider(BaseProvider):
     ) -> tuple[str, str | None, str | None, str | None] | None:
         """
         Extrahiert die News-Beiträge der P2P Empire Übersichtsseite unter Beibehaltung
-        der 'h2' (##) Überschriften, Veröffentlichungsdaten und Bewertungs-Links.
+        der 'h2' (##) Überschriften, Veröffentlichungsdaten und Bewertungs-Links bzw.
+        nutzt bei Detail-Artikeln die RSS-Metadaten.
         """
         if url.rstrip("/") != self.base_url.rstrip("/"):
-            return None
+            canonical_url = urlparse(url)._replace(fragment="", query="").geturl()
+            rss_item = self._rss_cache.get(url) or self._rss_cache.get(canonical_url)
+            content, title, published_date, author = content_extractor.extract(
+                html_content, url
+            )
+            if rss_item:
+                if rss_item.published_date:
+                    published_date = rss_item.published_date
+                if (not title or title == "P2P Empire") and rss_item.title:
+                    title = rss_item.title
+                if not content and rss_item.description:
+                    content = rss_item.description
+            if not author:
+                author = "P2P Empire"
+            return content, title, published_date, author
 
         soup = BeautifulSoup(html_content, "html.parser")
         boxes = soup.find_all("div", class_="news-box-wrapper")
@@ -925,6 +995,11 @@ class P2PEmpireProvider(BaseProvider):
         return ContentType.NEWS
 
     def extract_platform_name(self, url: str) -> str | None:
+        clean_url = urlparse(url)._replace(fragment="", query="").geturl()
+        rss_item = self._rss_cache.get(url) or self._rss_cache.get(clean_url)
+        if rss_item and rss_item.category:
+            return rss_item.category.strip().lower()
+
         path = urlparse(url).path.rstrip("/")
         parts = [p for p in path.split("/") if p]
         if "erfahrungen" in parts:
@@ -1091,7 +1166,7 @@ class P2PGameProvider(BaseProvider):
         canonical_url = urlparse(url)._replace(fragment="", query="").geturl()
         rss_item = self._rss_cache.get(url) or self._rss_cache.get(canonical_url)
         if rss_item:
-            if not published_date and rss_item.published_date:
+            if rss_item.published_date:
                 published_date = rss_item.published_date
             if (not title or title == "P2P News") and rss_item.title:
                 title = rss_item.title
@@ -1143,35 +1218,82 @@ class P2PGameProvider(BaseProvider):
 
 
 class RethinkP2PProvider(BaseProvider):
-    """Provider-Implementierung für https://rethink-p2p.de/news/."""
+    """Provider-Implementierung für https://rethink-p2p.de/news/ (hybrid: data-nf Widget & RSS-Feed)."""
 
     name: str = "rethink-p2p"
     base_url: str = "https://rethink-p2p.de/news/"
+    rss_url: str | None = "https://rethink-p2p.de/feed/"
+
+    def __init__(
+        self,
+        rss_url: str | None = None,
+        base_url: str | None = None,
+    ) -> None:
+        if base_url:
+            self.base_url = base_url
+        if rss_url:
+            self.rss_url = rss_url
+        self._rss_cache: dict[str, RSSFeedItem] = {}
 
     def extract_links(
         self, html_content: str, client: httpx.Client | None = None
     ) -> list[str]:
-        soup = BeautifulSoup(html_content, "html.parser")
         news_urls: list[str] = []
         erfahrungen_urls: list[str] = []
+        feed_xml: str | None = None
 
-        for anchor in soup.find_all("a", href=True):
-            raw_href = anchor["href"].strip()
-            if not raw_href or raw_href.startswith(
-                ("#", "javascript:", "mailto:", "tel:")
-            ):
-                continue
+        # 1. RSS-Feed abrufen / parsen
+        if html_content.strip().startswith(("<?xml", "<rss", "<feed")):
+            feed_xml = html_content
+        elif self.rss_url and client is not None:
+            try:
+                resp = client.get(self.rss_url)
+                if resp.status_code == 200:
+                    feed_xml = resp.text
+            except Exception as exc:
+                logger.warning(
+                    "[%s] Konnte RSS-Feed (%s) nicht abrufen: %s",
+                    self.name,
+                    self.rss_url,
+                    exc,
+                )
 
-            full_url = urljoin(self.base_url, raw_href)
-            parsed = urlparse(full_url)
-            cleaned_url = parsed._replace(fragment="", query="").geturl()
+        if feed_xml:
+            feed_items = parse_rss_feed_items(feed_xml, base_url=self.base_url)
+            for f_item in feed_items:
+                parsed = urlparse(f_item.url)
+                clean_url = parsed._replace(fragment="", query="").geturl()
+                self._rss_cache[f_item.url] = f_item
+                self._rss_cache[clean_url] = f_item
+                if parsed.netloc.lower() == "rethink-p2p.de":
+                    path = parsed.path.strip("/")
+                    if "erfahrungen" in path:
+                        erfahrungen_urls.append(clean_url)
+                    else:
+                        news_urls.append(clean_url)
 
-            if parsed.netloc.lower() == "rethink-p2p.de":
-                path = parsed.path.strip("/")
-                if path.startswith("news/") and path != "news":
-                    news_urls.append(cleaned_url)
-                elif "erfahrungen" in path:
-                    erfahrungen_urls.append(cleaned_url)
+        # 2. HTML-Links von Übersichtsseite (data-nf News-Widget & Erfahrungsberichte)
+        if html_content and not html_content.strip().startswith(
+            ("<?xml", "<rss", "<feed")
+        ):
+            soup = BeautifulSoup(html_content, "html.parser")
+            for anchor in soup.find_all("a", href=True):
+                raw_href = anchor["href"].strip()
+                if not raw_href or raw_href.startswith(
+                    ("#", "javascript:", "mailto:", "tel:")
+                ):
+                    continue
+
+                full_url = urljoin(self.base_url, raw_href)
+                parsed = urlparse(full_url)
+                cleaned_url = parsed._replace(fragment="", query="").geturl()
+
+                if parsed.netloc.lower() == "rethink-p2p.de":
+                    path = parsed.path.strip("/")
+                    if path.startswith("news/") and path != "news":
+                        news_urls.append(cleaned_url)
+                    elif "erfahrungen" in path:
+                        erfahrungen_urls.append(cleaned_url)
 
         # Aktuelle News-Artikel zuerst, danach Plattform-Erfahrungsberichte
         combined = list(dict.fromkeys(news_urls)) + list(
@@ -1186,11 +1308,25 @@ class RethinkP2PProvider(BaseProvider):
         content_extractor: ContentExtractor,
     ) -> tuple[str, str | None, str | None, str | None] | None:
         """
-        Extrahiert die vollständigen News-Beiträge der rethink-p2p Übersichtsseite aus dem
-        embedded 'data-nf' JSON-Datensatz, um Textabschneidungen (...) in den HTML-Karten zu verhindern.
+        Extrahiert die News-Beiträge der rethink-p2p Übersichtsseite aus dem
+        embedded 'data-nf' JSON-Datensatz bzw. Detailartikel unter Nutzung der RSS-Metadaten.
         """
         if url.rstrip("/") != self.base_url.rstrip("/"):
-            return None
+            canonical_url = urlparse(url)._replace(fragment="", query="").geturl()
+            rss_item = self._rss_cache.get(url) or self._rss_cache.get(canonical_url)
+            content, title, published_date, author = content_extractor.extract(
+                html_content, url
+            )
+            if rss_item:
+                if rss_item.published_date:
+                    published_date = rss_item.published_date
+                if not title and rss_item.title:
+                    title = rss_item.title
+                if not content and rss_item.description:
+                    content = rss_item.description
+            if not author:
+                author = "Denny Neidhardt"
+            return content, title, published_date, author
 
         soup = BeautifulSoup(html_content, "html.parser")
         div_nf = soup.find("div", attrs={"data-nf": True})
@@ -1271,6 +1407,11 @@ class RethinkP2PProvider(BaseProvider):
         return ContentType.NEWS
 
     def extract_platform_name(self, url: str) -> str | None:
+        clean_url = urlparse(url)._replace(fragment="", query="").geturl()
+        rss_item = self._rss_cache.get(url) or self._rss_cache.get(clean_url)
+        if rss_item and rss_item.category:
+            return rss_item.category.strip().lower()
+
         path = urlparse(url).path.strip("/").lower()
         match = re.search(r"([a-z0-9\-]+)-erfahrungen", path, re.IGNORECASE)
         if match:
@@ -1291,40 +1432,94 @@ class RethinkP2PProvider(BaseProvider):
 
 
 class PassivesEinkommenProvider(BaseProvider):
-    """Provider-Implementierung für https://passives-einkommen-mit-p2p.de/p2p-kredite-news/ (Lars Wrobbel)."""
+    """Provider-Implementierung für https://passives-einkommen-mit-p2p.de/p2p-kredite-news/ (Lars Wrobbel, inkl. RSS)."""
 
     name: str = "passives-einkommen"
     base_url: str = "https://passives-einkommen-mit-p2p.de/p2p-kredite-news/"
+    rss_url: str | None = "https://passives-einkommen-mit-p2p.de/feed/"
+
+    def __init__(
+        self,
+        rss_url: str | None = None,
+        base_url: str | None = None,
+        subpages: list[str] | None = None,
+    ) -> None:
+        if base_url:
+            self.base_url = base_url
+        if rss_url:
+            self.rss_url = rss_url
+        self.subpages: list[str] = list(subpages or [])
+        self._rss_cache: dict[str, RSSFeedItem] = {}
 
     def extract_links(
         self, html_content: str, client: httpx.Client | None = None
     ) -> list[str]:
-        soup = BeautifulSoup(html_content, "html.parser")
         news_urls: list[str] = []
         erfahrungen_urls: list[str] = []
+        feed_xml: str | None = None
 
-        for anchor in soup.find_all("a", href=True):
-            raw_href = anchor["href"].strip()
-            if not raw_href or raw_href.startswith(
-                ("#", "javascript:", "mailto:", "tel:")
-            ):
-                continue
+        # 1. RSS-Feed abrufen / parsen
+        if html_content.strip().startswith(("<?xml", "<rss", "<feed")):
+            feed_xml = html_content
+        elif self.rss_url and client is not None:
+            try:
+                resp = client.get(self.rss_url)
+                if resp.status_code == 200:
+                    feed_xml = resp.text
+            except Exception as exc:
+                logger.warning(
+                    "[%s] Konnte RSS-Feed (%s) nicht abrufen: %s",
+                    self.name,
+                    self.rss_url,
+                    exc,
+                )
 
-            full_url = urljoin(self.base_url, raw_href)
-            parsed = urlparse(full_url)
-            cleaned_url = parsed._replace(fragment="", query="").geturl()
+        if feed_xml:
+            feed_items = parse_rss_feed_items(feed_xml, base_url=self.base_url)
+            for f_item in feed_items:
+                parsed = urlparse(f_item.url)
+                clean_url = parsed._replace(fragment="", query="").geturl()
+                self._rss_cache[f_item.url] = f_item
+                self._rss_cache[clean_url] = f_item
+                if parsed.netloc.lower() == "passives-einkommen-mit-p2p.de":
+                    path = parsed.path.strip("/")
+                    if any(
+                        ignore in path
+                        for ignore in ["wp-content", "author", "category", "tag"]
+                    ):
+                        continue
+                    if re.search(r"p2p-kredite-\d+-\d+", path):
+                        news_urls.append(clean_url)
+                    elif "erfahrungen" in path:
+                        erfahrungen_urls.append(clean_url)
 
-            if parsed.netloc.lower() == "passives-einkommen-mit-p2p.de":
-                path = parsed.path.strip("/")
-                if any(
-                    ignore in path
-                    for ignore in ["wp-content", "author", "category", "tag"]
+        # 2. HTML-Links von Übersichtsseite
+        if html_content and not html_content.strip().startswith(
+            ("<?xml", "<rss", "<feed")
+        ):
+            soup = BeautifulSoup(html_content, "html.parser")
+            for anchor in soup.find_all("a", href=True):
+                raw_href = anchor["href"].strip()
+                if not raw_href or raw_href.startswith(
+                    ("#", "javascript:", "mailto:", "tel:")
                 ):
                     continue
-                if re.search(r"p2p-kredite-\d+-\d+", path):
-                    news_urls.append(cleaned_url)
-                elif "erfahrungen" in path:
-                    erfahrungen_urls.append(cleaned_url)
+
+                full_url = urljoin(self.base_url, raw_href)
+                parsed = urlparse(full_url)
+                cleaned_url = parsed._replace(fragment="", query="").geturl()
+
+                if parsed.netloc.lower() == "passives-einkommen-mit-p2p.de":
+                    path = parsed.path.strip("/")
+                    if any(
+                        ignore in path
+                        for ignore in ["wp-content", "author", "category", "tag"]
+                    ):
+                        continue
+                    if re.search(r"p2p-kredite-\d+-\d+", path):
+                        news_urls.append(cleaned_url)
+                    elif "erfahrungen" in path:
+                        erfahrungen_urls.append(cleaned_url)
 
         # Konfigurierte Subpages (z. B. isolierte Erfahrungsberichte)
         for sub in getattr(self, "subpages", []):
@@ -1341,6 +1536,32 @@ class PassivesEinkommenProvider(BaseProvider):
         combined = news_urls + list(dict.fromkeys(erfahrungen_urls))
         return list(dict.fromkeys(combined))
 
+    def extract_content(
+        self,
+        html_content: str,
+        url: str,
+        content_extractor: ContentExtractor,
+    ) -> tuple[str, str | None, str | None, str | None] | None:
+        """
+        Extrahiert Detail-Artikel von Lars Wrobbel und verknüpft sie mit den
+        Metadaten (pubDate, Titel) aus dem RSS-Feed.
+        """
+        canonical_url = urlparse(url)._replace(fragment="", query="").geturl()
+        rss_item = self._rss_cache.get(url) or self._rss_cache.get(canonical_url)
+        content, title, published_date, author = content_extractor.extract(
+            html_content, url
+        )
+        if rss_item:
+            if rss_item.published_date:
+                published_date = rss_item.published_date
+            if not title and rss_item.title:
+                title = rss_item.title
+            if not content and rss_item.description:
+                content = rss_item.description
+        if not author:
+            author = "Lars Wrobbel"
+        return content, title, published_date, author
+
     def classify_content_type(self, url: str) -> ContentType:
         path = urlparse(url).path.lower()
         if "erfahrungen" in path:
@@ -1348,6 +1569,11 @@ class PassivesEinkommenProvider(BaseProvider):
         return ContentType.NEWS
 
     def extract_platform_name(self, url: str) -> str | None:
+        clean_url = urlparse(url)._replace(fragment="", query="").geturl()
+        rss_item = self._rss_cache.get(url) or self._rss_cache.get(clean_url)
+        if rss_item and rss_item.category:
+            return rss_item.category.strip().lower()
+
         path = urlparse(url).path.strip("/").lower()
         match = re.search(r"([a-z0-9\-]+)-erfahrungen", path, re.IGNORECASE)
         if match:
@@ -1367,35 +1593,108 @@ class PassivesEinkommenProvider(BaseProvider):
 
 
 class P2PAnlageProvider(BaseProvider):
-    """Provider-Implementierung für https://p2p-anlage.de."""
+    """Provider-Implementierung für https://p2p-anlage.de (inkl. RSS-Feed)."""
 
     name: str = "p2p-anlage"
     base_url: str = "https://p2p-anlage.de"
+    rss_url: str | None = "https://p2p-anlage.de/feed/"
+
+    def __init__(
+        self,
+        rss_url: str | None = None,
+        base_url: str | None = None,
+    ) -> None:
+        if base_url:
+            self.base_url = base_url
+        if rss_url:
+            self.rss_url = rss_url
+        self._rss_cache: dict[str, RSSFeedItem] = {}
 
     def extract_links(
         self, html_content: str, client: httpx.Client | None = None
     ) -> list[str]:
-        soup = BeautifulSoup(html_content, "html.parser")
         collected_urls: list[str] = []
+        feed_xml: str | None = None
 
-        for anchor in soup.find_all("a", href=True):
-            raw_href = anchor["href"].strip()
-            if not raw_href or raw_href.startswith(
-                ("#", "javascript:", "mailto:", "tel:")
-            ):
-                continue
+        # 1. RSS/Atom-Feed abrufen / parsen
+        if html_content.strip().startswith(("<?xml", "<rss", "<feed")):
+            feed_xml = html_content
+        elif self.rss_url and client is not None:
+            try:
+                resp = client.get(self.rss_url)
+                if resp.status_code == 200:
+                    feed_xml = resp.text
+            except Exception as exc:
+                logger.warning(
+                    "[%s] Konnte RSS-Feed (%s) nicht abrufen: %s",
+                    self.name,
+                    self.rss_url,
+                    exc,
+                )
 
-            full_url = urljoin(self.base_url, raw_href)
-            parsed = urlparse(full_url)
-            cleaned_url = parsed._replace(fragment="", query="").geturl()
+        if feed_xml:
+            feed_items = parse_rss_feed_items(feed_xml, base_url=self.base_url)
+            for f_item in feed_items:
+                parsed = urlparse(f_item.url)
+                clean_url = parsed._replace(fragment="", query="").geturl()
+                self._rss_cache[f_item.url] = f_item
+                self._rss_cache[clean_url] = f_item
+                if parsed.netloc.lower() == "p2p-anlage.de":
+                    path = parsed.path.strip("/")
+                    if any(
+                        ignore in path
+                        for ignore in ["wp-content", "author", "category", "tag"]
+                    ):
+                        continue
+                    collected_urls.append(clean_url)
 
-            if parsed.netloc.lower() == "p2p-anlage.de":
-                path = parsed.path.strip("/")
-                # Artikel mit Datums-Pfad YYYY/MM/...
-                if re.match(r"^\d{4}/\d{2}/[a-z0-9\-]+", path):
-                    collected_urls.append(cleaned_url)
+        # 2. HTML-Links von Übersichtsseite (Fallback)
+        if html_content and not html_content.strip().startswith(
+            ("<?xml", "<rss", "<feed")
+        ):
+            soup = BeautifulSoup(html_content, "html.parser")
+            for anchor in soup.find_all("a", href=True):
+                raw_href = anchor["href"].strip()
+                if not raw_href or raw_href.startswith(
+                    ("#", "javascript:", "mailto:", "tel:")
+                ):
+                    continue
+
+                full_url = urljoin(self.base_url, raw_href)
+                parsed = urlparse(full_url)
+                cleaned_url = parsed._replace(fragment="", query="").geturl()
+
+                if parsed.netloc.lower() == "p2p-anlage.de":
+                    path = parsed.path.strip("/")
+                    # Artikel mit Datums-Pfad YYYY/MM/...
+                    if re.match(r"^\d{4}/\d{2}/[a-z0-9\-]+", path):
+                        collected_urls.append(cleaned_url)
 
         return list(dict.fromkeys(collected_urls))
+
+    def extract_content(
+        self,
+        html_content: str,
+        url: str,
+        content_extractor: ContentExtractor,
+    ) -> tuple[str, str | None, str | None, str | None] | None:
+        """
+        Extrahiert Detail-Artikel von p2p-anlage.de und verknüpft sie mit den
+        Metadaten (pubDate, Titel) aus dem RSS-Feed.
+        """
+        canonical_url = urlparse(url)._replace(fragment="", query="").geturl()
+        rss_item = self._rss_cache.get(url) or self._rss_cache.get(canonical_url)
+        content, title, published_date, author = content_extractor.extract(
+            html_content, url
+        )
+        if rss_item:
+            if rss_item.published_date:
+                published_date = rss_item.published_date
+            if not title and rss_item.title:
+                title = rss_item.title
+            if not content and rss_item.description:
+                content = rss_item.description
+        return content, title, published_date, author
 
     def classify_content_type(self, url: str) -> ContentType:
         path = urlparse(url).path.lower()
@@ -1404,6 +1703,11 @@ class P2PAnlageProvider(BaseProvider):
         return ContentType.NEWS
 
     def extract_platform_name(self, url: str) -> str | None:
+        clean_url = urlparse(url)._replace(fragment="", query="").geturl()
+        rss_item = self._rss_cache.get(url) or self._rss_cache.get(clean_url)
+        if rss_item and rss_item.category:
+            return rss_item.category.strip().lower()
+
         path = urlparse(url).path.strip("/").lower()
         known_platforms = [
             "mypeak",

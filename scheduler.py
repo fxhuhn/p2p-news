@@ -1,10 +1,13 @@
 """
 Autarker Zeitplan-Daemon für periodische P2P-News-Pipelines via 'schedule'.
 
-Führt zwei periodische Hintergrund-Jobs aus:
-1. Wöchentlich (Montag um 06:30 Uhr Berliner Zeit):
+Führt drei periodische Hintergrund-Jobs aus:
+1. Täglich (jeden Tag um 06:00 Uhr Berliner Zeit):
+   Quellen-Ingestion (Stage 0: Web-Scraping, RSS-Feeds & Item-Extraktion in den Flat-File Store).
+   Läuft rein deterministisch ohne LLM-Aufrufe / Tokens, damit News aus RSS-Feeds lückenlos erhalten bleiben.
+2. Wöchentlich (Montag um 06:30 Uhr Berliner Zeit):
    Scraping, Fakten-Clustering & Newsletter-Release (pipeline_orchestrator.py).
-2. Monatlich (am 1. Tag des Monats um 07:00 Uhr Berliner Zeit):
+3. Monatlich (am 1. Tag des Monats um 07:00 Uhr Berliner Zeit):
    Vollständiges 4-Säulen-Audit-Scoring & Plattform-Rankings (run_audit_scoring.py).
 
 Unterstützt sauberes Signal-Handling (SIGTERM, SIGINT) für Graceful Shutdown in Containern.
@@ -45,6 +48,47 @@ def handle_shutdown(signum: int, frame: FrameType | None) -> None:
         "Signal %s (%d) empfangen. Beende Scheduler geordnet...", sig_name, signum
     )
     _running = False
+
+
+def job_daily_ingestion(data_dir: Path | str = "data") -> bool:
+    """
+    Führt den täglichen Quellen-Ingestion-Lauf durch (Stage 0: Scraping, RSS-Feeds & Item-Extraktion).
+
+    Arbeitet rein lokal/deterministisch (Trafilatura, ElementTree, SHA-256 Hashing)
+    ohne jegliche LLM-Kosten oder Token-Verbrauch. Sichert Artikel aus Feeds mit
+    Limitierung (z. B. 10 Beiträge) lückenlos in den Flat-File Store (data/items/).
+    """
+    base = Path(data_dir)
+    logger.info("=== [SCHEDULER] Starte täglichen Ingestion-Lauf (Stage 0) ===")
+    try:
+        from item_extractor import process_all_scraped_news
+        from p2p_news_scraper import (
+            P2PNewsScraper,
+            ScraperConfig,
+            load_classifier_from_yaml,
+            load_providers_from_yaml,
+        )
+
+        providers_map = load_providers_from_yaml("providers.yaml")
+        classifier = load_classifier_from_yaml("providers.yaml")
+        scraper = P2PNewsScraper(
+            config=ScraperConfig(output_dir=base), classifier=classifier
+        )
+        scraper.run(providers=list(providers_map.values()))
+        files_cnt, items_cnt = process_all_scraped_news(data_dir=base)
+        logger.info(
+            "=== [SCHEDULER] Täglicher Ingestion-Lauf erfolgreich abgeschlossen: "
+            "%d Dateien verarbeitet, %d Items im Store ===",
+            files_cnt,
+            items_cnt,
+        )
+        return True
+    except Exception as exc:
+        logger.exception(
+            "=== [SCHEDULER] Unerwarteter Fehler im täglichen Ingestion-Lauf: %s ===",
+            exc,
+        )
+        return False
 
 
 def job_weekly_newsletter(
@@ -124,6 +168,7 @@ def job_monthly_scoring(data_dir: Path | str = "data", force: bool = False) -> b
 
 
 def setup_schedule(
+    daily_time: str = "06:00",
     weekly_time: str = "06:30",
     monthly_time: str = "07:00",
     data_dir: Path | str = "data",
@@ -131,6 +176,7 @@ def setup_schedule(
 ) -> None:
     """Registriert alle periodischen Jobs in 'schedule'."""
     schedule.clear()
+    schedule.every().day.at(daily_time).do(job_daily_ingestion, data_dir=data_dir)
     schedule.every().monday.at(weekly_time).do(
         job_weekly_newsletter, data_dir=data_dir, force=force_weekly
     )
@@ -138,7 +184,8 @@ def setup_schedule(
         job_monthly_scoring, data_dir=data_dir, force=False
     )
     logger.info(
-        "Zeitplan initialisiert: Wöchentlich montags um %s%s | Monatlich am 1. um %s (Europe/Berlin)",
+        "Zeitplan initialisiert: Täglich um %s (Ingestion) | Wöchentlich montags um %s%s | Monatlich am 1. um %s (Europe/Berlin)",
+        daily_time,
         weekly_time,
         " (force_weekly aktiv)" if force_weekly else "",
         monthly_time,
@@ -180,32 +227,11 @@ def initial_startup_check_and_sync(data_dir: Path | str = "data") -> None:
     else:
         logger.info("✓ [STARTUP] Bestehendes Plattform-Ranking vorhanden.")
 
-    # 3. Quellen direkt aktualisieren (Web-Scraping & Item-Extraktion)
-    logger.info("[STARTUP] Aktualisiere Quellen (Multi-Provider Scraper)...")
-    try:
-        from item_extractor import process_all_scraped_news
-        from p2p_news_scraper import (
-            P2PNewsScraper,
-            ScraperConfig,
-            load_classifier_from_yaml,
-            load_providers_from_yaml,
-        )
-
-        providers_map = load_providers_from_yaml("providers.yaml")
-        classifier = load_classifier_from_yaml("providers.yaml")
-        scraper = P2PNewsScraper(
-            config=ScraperConfig(output_dir=base), classifier=classifier
-        )
-        scraper.run(providers=list(providers_map.values()))
-
-        files_cnt, items_cnt = process_all_scraped_news(data_dir=base)
-        logger.info(
-            "✓ [STARTUP] Quellen aktualisiert (%d Dateien verarbeitet, %d Items im Store).",
-            files_cnt,
-            items_cnt,
-        )
-    except Exception as exc:
-        logger.warning("[STARTUP] Fehler bei initialer Quellen-Aktualisierung: %s", exc)
+    # 3. Quellen direkt aktualisieren (Web-Scraping & Item-Extraktion via Ingestion-Job)
+    logger.info(
+        "[STARTUP] Aktualisiere Quellen (Multi-Provider Scraper & RSS-Ingestion)..."
+    )
+    job_daily_ingestion(data_dir=base)
 
     # 4. Report-Verfügbarkeit prüfen: Existiert bereits ein finaler Newsletter für die Zielwoche?
     target_week = get_target_newsletter_week()
@@ -269,6 +295,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Pfad zum Datenverzeichnis (Standard: data)",
     )
     parser.add_argument(
+        "--daily-time",
+        default=os.environ.get("DAILY_TIME", "06:00"),
+        help="Uhrzeit für den täglichen Ingestion-Lauf (HH:MM, Standard: 06:00)",
+    )
+    parser.add_argument(
         "--weekly-time",
         default=os.environ.get("WEEKLY_TIME", "06:30"),
         help="Uhrzeit für den wöchentlichen Montags-Lauf (HH:MM, Standard: 06:30)",
@@ -277,6 +308,11 @@ def main(argv: list[str] | None = None) -> int:
         "--monthly-time",
         default=os.environ.get("MONTHLY_TIME", "07:00"),
         help="Uhrzeit für den monatlichen Lauf am 1. (HH:MM, Standard: 07:00)",
+    )
+    parser.add_argument(
+        "--run-daily-now",
+        action="store_true",
+        help="Führt den täglichen Ingestion-Job sofort einmal aus und beendet",
     )
     parser.add_argument(
         "--run-weekly-now",
@@ -311,6 +347,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
 
+    if args.run_daily_now:
+        success = job_daily_ingestion(data_dir=args.data_dir)
+        return 0 if success else 1
+
     if args.run_weekly_now:
         success = job_weekly_newsletter(
             data_dir=args.data_dir, force=args.force or args.force_weekly
@@ -322,6 +362,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if success else 1
 
     setup_schedule(
+        daily_time=args.daily_time,
         weekly_time=args.weekly_time,
         monthly_time=args.monthly_time,
         data_dir=args.data_dir,
