@@ -665,7 +665,7 @@ class TestManifestAndLifecycle(unittest.TestCase):
 
     def test_newsletter_generator_default_model(self) -> None:
         gen = NewsletterGenerator(api_key="mock")
-        self.assertEqual(gen.model_name, "gemini-2.5-flash")
+        self.assertEqual(gen.model_name, "gemini-3.8-flash")
 
 
 if __name__ == "__main__":

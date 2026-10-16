@@ -46,7 +46,7 @@ class NewsletterGenerator:
     def __init__(
         self,
         api_key: str | None = None,
-        model_name: str = "gemini-2.5-flash",
+        model_name: str = "gemini-3.8-flash",
         data_dir: Path | str = "data",
         prompt_path: Path | str = "prompts/stage2_editorial_v1.md",
     ) -> None:
@@ -213,7 +213,7 @@ class NewsletterGenerator:
 
             fallback_models = [self.model_name]
             for fb in [
-                "gemini-2.5-flash",
+                "gemini-3.8-flash",
                 "gemini-3.5-flash",
                 "gemini-3.1-flash-lite",
                 "gemini-flash-latest",
@@ -223,7 +223,7 @@ class NewsletterGenerator:
 
             # Retry bei transienten Überlastungen
             max_attempts = 5
-            backoff_delays = [5, 12, 25, 40, 60]
+            backoff_delays = [15, 30, 60, 90, 120]
             response = None
             for attempt in range(1, max_attempts + 1):
                 current_model = fallback_models[
@@ -242,8 +242,12 @@ class NewsletterGenerator:
                     break
                 except Exception as exc:
                     exc_str = str(exc)
+                    is_not_found = "404" in exc_str or "NOT_FOUND" in exc_str
                     is_transient = (
-                        "503" in exc_str or "429" in exc_str or "UNAVAILABLE" in exc_str
+                        "503" in exc_str
+                        or "429" in exc_str
+                        or "UNAVAILABLE" in exc_str
+                        or is_not_found
                     )
                     if is_transient and attempt < max_attempts:
                         import re
@@ -253,6 +257,8 @@ class NewsletterGenerator:
                         )
                         if retry_match:
                             sleep_time = int(float(retry_match.group(1))) + 2
+                        elif is_not_found:
+                            sleep_time = 0
                         elif "429" in exc_str:
                             sleep_time = 35 * attempt
                         else:
@@ -262,7 +268,7 @@ class NewsletterGenerator:
                             min(attempt, len(fallback_models) - 1)
                         ]
                         logger.warning(
-                            "[%s] Transiente Gemini-Überlastung auf Modell %s (%s). Retry %d/%d mit Modell %s in %ds...",
+                            "[%s] Gemini-Fehler auf Modell %s (%s). Retry %d/%d mit Modell %s in %ds...",
                             active_run_id,
                             current_model,
                             exc,
@@ -271,7 +277,8 @@ class NewsletterGenerator:
                             next_model,
                             sleep_time,
                         )
-                        time.sleep(sleep_time)
+                        if sleep_time > 0:
+                            time.sleep(sleep_time)
                     else:
                         raise
 
@@ -517,8 +524,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--model",
-        default="gemini-2.5-flash",
-        help="Zu verwendendes Gemini-Modell (Standard: gemini-2.5-flash)",
+        default="gemini-3.8-flash",
+        help="Zu verwendendes Gemini-Modell (Standard: gemini-3.8-flash)",
     )
     args = parser.parse_args()
 

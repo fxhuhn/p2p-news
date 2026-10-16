@@ -35,7 +35,7 @@ class DigestExtractor:
     def __init__(
         self,
         api_key: str | None = None,
-        model_name: str = "gemini-2.5-flash",
+        model_name: str = "gemini-3.8-flash",
         runs_dir: Path | str = "data/runs",
         digests_dir: Path | str = "data/digests",
         prompt_path: Path | str = "prompts/stage1_cluster_v1.md",
@@ -117,7 +117,7 @@ class DigestExtractor:
 
         fallback_models = [self.model_name]
         for fb in [
-            "gemini-2.5-flash",
+            "gemini-3.8-flash",
             "gemini-3.5-flash",
             "gemini-3.1-flash-lite",
             "gemini-flash-latest",
@@ -142,8 +142,12 @@ class DigestExtractor:
                 break
             except Exception as exc:
                 exc_str = str(exc)
+                is_not_found = "404" in exc_str or "NOT_FOUND" in exc_str
                 is_transient = (
-                    "503" in exc_str or "429" in exc_str or "UNAVAILABLE" in exc_str
+                    "503" in exc_str
+                    or "429" in exc_str
+                    or "UNAVAILABLE" in exc_str
+                    or is_not_found
                 )
                 if is_transient and attempt < max_attempts:
                     import re
@@ -154,14 +158,17 @@ class DigestExtractor:
                     )
                     if retry_match:
                         sleep_time = int(float(retry_match.group(1))) + 2
+                    elif is_not_found:
+                        sleep_time = 0
                     elif "429" in exc_str:
                         sleep_time = 35 * attempt
                     else:
-                        sleep_time = max(5 * attempt, 5)
+                        delays = [15, 30, 60, 90]
+                        sleep_time = delays[min(attempt - 1, len(delays) - 1)]
 
                     next_model = fallback_models[min(attempt, len(fallback_models) - 1)]
                     logger.warning(
-                        "[%s] Transiente Gemini-Überlastung auf Modell %s (%s). Wiederholung %d/%d mit Modell %s in %ds...",
+                        "[%s] Gemini-Fehler auf Modell %s (%s). Wiederholung %d/%d mit Modell %s in %ds...",
                         active_run_id,
                         current_model,
                         exc,
@@ -170,7 +177,8 @@ class DigestExtractor:
                         next_model,
                         sleep_time,
                     )
-                    time.sleep(sleep_time)
+                    if sleep_time > 0:
+                        time.sleep(sleep_time)
                 else:
                     raise
 
