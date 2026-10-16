@@ -84,14 +84,7 @@ class NewsletterGenerator:
                 "- Verifizierte Fakten:",
             ]
             for fact in cluster.facts:
-                ev_quotes = [
-                    f"'{ev.evidence_quote}' (Item: {ev.item_id})"
-                    for ev in fact.evidence
-                ]
-                cluster_lines.append(
-                    f"  * [{fact.fact_id}] {fact.statement}\n"
-                    f"    Belege: {'; '.join(ev_quotes)}"
-                )
+                cluster_lines.append(f"  * [{fact.fact_id}] {fact.statement}")
             if cluster.conflicts:
                 cluster_lines.append(
                     f"- Widersprüche / Differenzen: {'; '.join(cluster.conflicts)}"
@@ -192,6 +185,29 @@ class NewsletterGenerator:
                         verified_sentences = int(line.split(":")[-1].strip())
                     except ValueError:
                         pass
+        elif (
+            not is_publish
+            and not force_revision
+            and draft_file.exists()
+            and not custom_client
+            and (self.data_dir / "digests" / f"digest-{digest.iso_week}.json").exists()
+            and draft_file.stat().st_mtime
+            >= (self.data_dir / "digests" / f"digest-{digest.iso_week}.json")
+            .stat()
+            .st_mtime
+        ):
+            logger.info(
+                "[%s] Entwurf %s ist bereits aktuell zum Fakten-Dossier (0 LLM-Tokens verbraucht).",
+                active_run_id,
+                draft_file,
+            )
+            markdown_content = draft_file.read_text(encoding="utf-8")
+            for line in markdown_content.splitlines():
+                if line.startswith("verified_sentences_count:"):
+                    try:
+                        verified_sentences = int(line.split(":")[-1].strip())
+                    except ValueError:
+                        pass
         else:
             # Gemini Client initialisieren und aufrufen
             if custom_client is not None:
@@ -214,71 +230,123 @@ class NewsletterGenerator:
             fallback_models = [self.model_name]
             for fb in [
                 "gemini-3.8-flash",
+                "gemini-flash-latest",
                 "gemini-3.5-flash",
                 "gemini-3.1-flash-lite",
-                "gemini-flash-latest",
+                "gemini-flash-lite-latest",
             ]:
                 if fb not in fallback_models:
                     fallback_models.append(fb)
 
-            # Retry bei transienten Überlastungen
-            max_attempts = 5
-            backoff_delays = [15, 30, 60, 90, 120]
+            import random
+            import re
+
+            from google.genai import errors
+
+            candidate_models = list(fallback_models)
+            max_transient_retries = 5
+            transient_attempt = 0
             response = None
-            for attempt in range(1, max_attempts + 1):
-                current_model = fallback_models[
-                    min(attempt - 1, len(fallback_models) - 1)
-                ]
+            transient_delays = [15, 30, 60, 90, 120]
+
+            while candidate_models and transient_attempt <= max_transient_retries:
+                current_model = candidate_models[0]
+                gen_config: dict[str, Any] = {
+                    "response_mime_type": "application/json",
+                    "response_schema": EditorialNewsletterSchema,
+                    "temperature": 0.2,
+                    "thinking_config": {"thinking_budget": 1024},
+                }
                 try:
                     response = client.models.generate_content(
                         model=current_model,
                         contents=prompt,
-                        config={
-                            "response_mime_type": "application/json",
-                            "response_schema": EditorialNewsletterSchema,
-                            "temperature": 0.2,
-                        },
+                        config=gen_config,
                     )
                     break
                 except Exception as exc:
                     exc_str = str(exc)
-                    is_not_found = "404" in exc_str or "NOT_FOUND" in exc_str
-                    is_transient = (
-                        "503" in exc_str
-                        or "429" in exc_str
-                        or "UNAVAILABLE" in exc_str
-                        or is_not_found
-                    )
-                    if is_transient and attempt < max_attempts:
-                        import re
+                    if (
+                        "thinking" in exc_str.lower()
+                        and "thinking_config" in gen_config
+                    ):
+                        logger.warning(
+                            "[%s] Modell %s unterstützt thinking_config nicht. Wiederhole ohne Thinking...",
+                            active_run_id,
+                            current_model,
+                        )
+                        gen_config.pop("thinking_config", None)
+                        try:
+                            response = client.models.generate_content(
+                                model=current_model,
+                                contents=prompt,
+                                config=gen_config,
+                            )
+                            break
+                        except Exception as inner_exc:
+                            exc = inner_exc
+                            exc_str = str(inner_exc)
 
+                    is_not_found = (
+                        isinstance(exc, errors.APIError) and exc.code == 404
+                    ) or ("404" in exc_str or "NOT_FOUND" in exc_str)
+
+                    if is_not_found:
+                        logger.warning(
+                            "[%s] Modell %s nicht verfügbar (404 NOT_FOUND). Schalte sofort auf nächstes Modell um...",
+                            active_run_id,
+                            current_model,
+                        )
+                        candidate_models.pop(0)
+                        if not candidate_models:
+                            raise
+                        continue
+
+                    is_transient = (
+                        isinstance(exc, errors.APIError)
+                        and exc.code in (408, 429, 500, 502, 503, 504)
+                    ) or any(
+                        code in exc_str
+                        for code in (
+                            "503",
+                            "429",
+                            "UNAVAILABLE",
+                            "ResourceExhausted",
+                            "timeout",
+                            "Timeout",
+                        )
+                    )
+
+                    if is_transient and transient_attempt < max_transient_retries:
+                        transient_attempt += 1
                         retry_match = re.search(
                             r"retry.*?(\d+(?:\.\d+)?)\s*s", exc_str, re.IGNORECASE
                         )
                         if retry_match:
                             sleep_time = int(float(retry_match.group(1))) + 2
-                        elif is_not_found:
-                            sleep_time = 0
                         elif "429" in exc_str:
-                            sleep_time = 35 * attempt
+                            sleep_time = 35 * transient_attempt
                         else:
-                            sleep_time = backoff_delays[attempt - 1]
+                            base_delay = transient_delays[
+                                min(transient_attempt - 1, len(transient_delays) - 1)
+                            ]
+                            sleep_time = int(base_delay + random.uniform(1.0, 4.0))
 
-                        next_model = fallback_models[
-                            min(attempt, len(fallback_models) - 1)
-                        ]
+                        if len(candidate_models) > 1:
+                            candidate_models.pop(0)
+                        next_model = candidate_models[0]
+
                         logger.warning(
-                            "[%s] Gemini-Fehler auf Modell %s (%s). Retry %d/%d mit Modell %s in %ds...",
+                            "[%s] Transiente Gemini-Überlastung auf Modell %s (%s). Retry %d/%d mit Modell %s in %ds...",
                             active_run_id,
                             current_model,
                             exc,
-                            attempt,
-                            max_attempts,
+                            transient_attempt,
+                            max_transient_retries,
                             next_model,
                             sleep_time,
                         )
-                        if sleep_time > 0:
-                            time.sleep(sleep_time)
+                        time.sleep(sleep_time)
                     else:
                         raise
 

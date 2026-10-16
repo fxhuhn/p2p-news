@@ -524,6 +524,92 @@ class TestDigestExtractorOffline(unittest.TestCase):
         extractor = DigestExtractor(api_key="mock")
         self.assertEqual(extractor.model_name, "gemini-3.8-flash")
 
+    def test_digest_extractor_prompt_diet(self) -> None:
+        item = NewsItem(
+            item_id="item-diet",
+            provider="nectaro",
+            source_tier="primary",
+            url="https://nectaro.eu/blog/long-url-with-slug",
+            title="Title",
+            published_date="2026-10-12",
+            first_seen_at="2026-10-12T10:00:00+00:00",
+            last_seen_at="2026-10-12T10:00:00+00:00",
+            item_content_hash="h1",
+            page_snapshot_hash="s1",
+            content_plain="A" * 5000,
+        )
+        extractor = DigestExtractor(api_key="mock")
+        prompt = extractor.build_prompt([item], iso_week="2026-W42")
+        self.assertNotIn("- URL:", prompt)
+        self.assertIn("[... gekürzt für Prompt-Effizienz ...]", prompt)
+
+    def test_digest_extractor_404_fallthrough(self) -> None:
+        item = NewsItem(
+            item_id="item-404-test",
+            provider="nectaro",
+            source_tier="primary",
+            url="https://nectaro.eu/stats",
+            title="Nectaro Stats",
+            published_date="2026-10-02",
+            first_seen_at="2026-10-02T10:00:00+00:00",
+            last_seen_at="2026-10-02T10:00:00+00:00",
+            item_content_hash="h-404",
+            page_snapshot_hash="s-404",
+            content_plain="Nectaro vergab 1.000.000 Euro Kredite.",
+        )
+        mock_response_json = {
+            "schema_version": "2.2",
+            "iso_week": "2026-W40",
+            "clusters": [
+                {
+                    "cluster_id": "c-nectaro",
+                    "topic": "zahlen_statistik",
+                    "platforms": ["nectaro"],
+                    "title": "Nectaro Zahlen",
+                    "facts": [
+                        {
+                            "fact_id": "f-01",
+                            "statement": "Nectaro vergab 1.000.000 Euro an Krediten.",
+                            "evidence": [
+                                {
+                                    "item_id": "item-404-test",
+                                    "evidence_quote": "Nectaro vergab 1.000.000 Euro Kredite.",
+                                }
+                            ],
+                            "verified": True,
+                        }
+                    ],
+                    "conflicts": [],
+                }
+            ],
+        }
+
+        mock_client = MagicMock()
+        mock_resp = MagicMock()
+        mock_resp.text = json.dumps(mock_response_json)
+        mock_resp.model_version = "gemini-flash-latest"
+        mock_resp.usage_metadata = None
+
+        mock_client.models.generate_content.side_effect = [
+            Exception("404 NOT_FOUND: model not available"),
+            mock_resp,
+        ]
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            extractor = DigestExtractor(
+                api_key="mock",
+                runs_dir=Path(tmp_dir) / "runs",
+                digests_dir=Path(tmp_dir) / "digests",
+            )
+            digest, path, metrics = extractor.extract_digest(
+                items=[item],
+                iso_week="2026-W40",
+                run_id="test_404_run",
+                custom_client=mock_client,
+            )
+            self.assertEqual(metrics["facts_verified"], 1)
+            self.assertEqual(mock_client.models.generate_content.call_count, 2)
+
 
 if __name__ == "__main__":
     unittest.main()

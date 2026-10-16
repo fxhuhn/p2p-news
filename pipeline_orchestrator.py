@@ -146,12 +146,47 @@ def run_pipeline(
         )
         return 0
 
-    # Stufe 1: Fakten-Dossier (falls noch nicht vorhanden oder neu erzeugt werden soll)
+    # Stufe 1: Fakten-Dossier (falls noch nicht vorhanden oder falls neue Meldungen hinzugekommen sind)
     digest_path = base / "digests" / f"digest-{target_week}.json"
-    if not digest_path.exists():
-        logger.info(
-            "--- Stufe 1: Erzeuge Fakten-Dossier mit Gemini 3.8 Flash & Verifier 1 ---"
-        )
+    needs_digest = not digest_path.exists()
+    if not needs_digest:
+        # Prüfe, ob neue Items für die Zielwoche im Store vorliegen, die im bestehenden Digest noch fehlen
+        try:
+            from item_store import ItemStore
+            from watermark_manager import WatermarkManager
+
+            store = ItemStore(items_dir=base / "items")
+            wm_mgr = WatermarkManager(watermark_path=base / "watermark.json")
+            selected_items = wm_mgr.select_items_for_run(
+                store=store, iso_week=target_week, include_baseline=include_baseline
+            )
+            existing_digest = WeeklyDigestSchema.model_validate_json(
+                digest_path.read_text(encoding="utf-8")
+            )
+            referenced_ids = {
+                ev.item_id
+                for c in existing_digest.clusters
+                for f in c.facts
+                for ev in f.evidence
+            }
+            current_ids = {itm.item_id for itm in selected_items}
+            if not current_ids.issubset(referenced_ids) and len(current_ids) > len(
+                referenced_ids
+            ):
+                logger.info(
+                    "Neue Meldungen für %s gefunden (%d aktuell vs. %d im Dossier). Aktualisiere Fakten-Dossier...",
+                    target_week,
+                    len(current_ids),
+                    len(referenced_ids),
+                )
+                needs_digest = True
+        except Exception as exc:
+            logger.debug(
+                "Konnte Item-Differenz für %s nicht ermitteln: %s", target_week, exc
+            )
+
+    if needs_digest:
+        logger.info("--- Stufe 1: Erzeuge Fakten-Dossier mit Gemini & Verifier 1 ---")
         _, digest_path, metrics = run_stage1_pipeline(
             iso_week=target_week,
             data_dir=base,
@@ -163,7 +198,8 @@ def run_pipeline(
         )
     else:
         logger.info(
-            "--- Stufe 1: Verwende vorliegendes Fakten-Dossier %s ---", digest_path
+            "--- Stufe 1: Verwende vorliegendes Fakten-Dossier %s (0 Tokens) ---",
+            digest_path,
         )
 
     # Lade Fakten-Dossier

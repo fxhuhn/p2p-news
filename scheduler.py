@@ -236,29 +236,37 @@ def initial_startup_check_and_sync(data_dir: Path | str = "data") -> None:
     # 4. Report-Verfügbarkeit prüfen: Bei Neustart maximal Entwurf (Draft) erzeugen
     target_week = get_target_newsletter_week()
     published_file = base / "newsletters" / f"newsletter-{target_week}.md"
+    draft_file = base / "newsletters" / "drafts" / f"newsletter-{target_week}.draft.md"
 
     if not published_file.exists():
-        logger.info(
-            "[STARTUP] Kein veröffentlichter Newsletter für Zielwoche %s vorhanden. Erzeuge Entwurf (Draft)...",
-            target_week,
-        )
-        try:
-            run_pipeline(
-                week=target_week,
-                data_dir=base,
-                do_scrape=False,
-                is_publish=False,
-                is_approved=False,
-            )
+        if draft_file.exists():
             logger.info(
-                "✓ [STARTUP] Newsletter-Entwurf für %s erfolgreich erzeugt.",
+                "✓ [STARTUP] Newsletter-Entwurf für %s ist bereits vorhanden (%s).",
+                target_week,
+                draft_file,
+            )
+        else:
+            logger.info(
+                "[STARTUP] Kein veröffentlichter Newsletter und kein Entwurf für Zielwoche %s vorhanden. Erzeuge Entwurf (Draft)...",
                 target_week,
             )
-        except Exception as exc:
-            logger.warning(
-                "[STARTUP] Newsletter-Entwurf konnte nicht erzeugt werden: %s",
-                exc,
-            )
+            try:
+                run_pipeline(
+                    week=target_week,
+                    data_dir=base,
+                    do_scrape=False,
+                    is_publish=False,
+                    is_approved=False,
+                )
+                logger.info(
+                    "✓ [STARTUP] Newsletter-Entwurf für %s erfolgreich erzeugt.",
+                    target_week,
+                )
+            except Exception as exc:
+                logger.warning(
+                    "[STARTUP] Newsletter-Entwurf konnte nicht erzeugt werden: %s",
+                    exc,
+                )
     else:
         logger.info(
             "✓ [STARTUP] Finaler Newsletter für Woche %s ist bereits vorhanden.",

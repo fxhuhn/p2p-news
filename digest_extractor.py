@@ -49,23 +49,28 @@ class DigestExtractor:
         self.verifier = Stage1Verifier()
 
     def build_prompt(self, items: list[NewsItem], iso_week: str) -> str:
-        """Erstellt den Prompt für Gemini inklusive aller Quell-Items."""
+        """Erstellt den Prompt für Gemini inklusive aller Quell-Items (ohne URL-Ballast & mit Content-Clipping)."""
         prompt_instruction = ""
         if self.prompt_path.exists():
             prompt_instruction = self.prompt_path.read_text(encoding="utf-8")
 
         items_text = []
         for idx, item in enumerate(items, start=1):
+            # Text-Clipping auf 4.000 Zeichen im Prompt (Volltext verbleibt in item für Verifier 1)
+            content_snippet = (
+                item.content_plain[:4000] + "\n[... gekürzt für Prompt-Effizienz ...]"
+                if len(item.content_plain) > 4000
+                else item.content_plain
+            )
             items_text.append(
                 f"### [ITEM {idx}] ID: {item.item_id}\n"
                 f"- Quelle: {item.provider} (Tier: {item.source_tier})\n"
                 f"- Titel: {item.title}\n"
                 f"- Datum: {item.published_date or 'Unbekannt'}\n"
-                f"- URL: {item.url}\n"
                 f"- Plattformen: {', '.join(item.platforms) if item.platforms else 'allgemein'}\n"
                 f"- Themen-Tags: {', '.join(item.topics) if item.topics else 'keine'}\n"
                 f"- Dringlichkeit: {item.severity} (Sentiment: {item.sentiment})\n"
-                f"- Inhalt:\n{item.content_plain}\n"
+                f"- Inhalt:\n{content_snippet}\n"
             )
 
         full_prompt = (
@@ -118,67 +123,121 @@ class DigestExtractor:
         fallback_models = [self.model_name]
         for fb in [
             "gemini-3.8-flash",
+            "gemini-flash-latest",
             "gemini-3.5-flash",
             "gemini-3.1-flash-lite",
-            "gemini-flash-latest",
+            "gemini-flash-lite-latest",
         ]:
             if fb not in fallback_models:
                 fallback_models.append(fb)
 
-        max_attempts = 4
+        import random
+        import re
+        import time
+
+        from google.genai import errors
+
+        candidate_models = list(fallback_models)
+        max_transient_retries = 4
+        transient_attempt = 0
         response = None
-        for attempt in range(1, max_attempts + 1):
-            current_model = fallback_models[min(attempt - 1, len(fallback_models) - 1)]
+        transient_delays = [10, 25, 45, 60]
+
+        while candidate_models and transient_attempt <= max_transient_retries:
+            current_model = candidate_models[0]
+            gen_config: dict[str, Any] = {
+                "response_mime_type": "application/json",
+                "response_schema": WeeklyDigestSchema,
+                "temperature": 0.0,
+                "thinking_config": {"thinking_budget": 1024},
+            }
             try:
                 response = client.models.generate_content(
                     model=current_model,
                     contents=prompt,
-                    config={
-                        "response_mime_type": "application/json",
-                        "response_schema": WeeklyDigestSchema,
-                        "temperature": 0.0,
-                    },
+                    config=gen_config,
                 )
                 break
             except Exception as exc:
                 exc_str = str(exc)
-                is_not_found = "404" in exc_str or "NOT_FOUND" in exc_str
-                is_transient = (
-                    "503" in exc_str
-                    or "429" in exc_str
-                    or "UNAVAILABLE" in exc_str
-                    or is_not_found
-                )
-                if is_transient and attempt < max_attempts:
-                    import re
-                    import time
+                if "thinking" in exc_str.lower() and "thinking_config" in gen_config:
+                    logger.warning(
+                        "[%s] Modell %s unterstützt thinking_config nicht. Wiederhole ohne Thinking...",
+                        active_run_id,
+                        current_model,
+                    )
+                    gen_config.pop("thinking_config", None)
+                    try:
+                        response = client.models.generate_content(
+                            model=current_model,
+                            contents=prompt,
+                            config=gen_config,
+                        )
+                        break
+                    except Exception as inner_exc:
+                        exc = inner_exc
+                        exc_str = str(inner_exc)
 
+                is_not_found = (
+                    isinstance(exc, errors.APIError) and exc.code == 404
+                ) or ("404" in exc_str or "NOT_FOUND" in exc_str)
+
+                if is_not_found:
+                    logger.warning(
+                        "[%s] Modell %s nicht verfügbar (404 NOT_FOUND). Schalte sofort auf nächstes Modell um...",
+                        active_run_id,
+                        current_model,
+                    )
+                    candidate_models.pop(0)
+                    if not candidate_models:
+                        raise
+                    continue
+
+                is_transient = (
+                    isinstance(exc, errors.APIError)
+                    and exc.code in (408, 429, 500, 502, 503, 504)
+                ) or any(
+                    code in exc_str
+                    for code in (
+                        "503",
+                        "429",
+                        "UNAVAILABLE",
+                        "ResourceExhausted",
+                        "timeout",
+                        "Timeout",
+                    )
+                )
+
+                if is_transient and transient_attempt < max_transient_retries:
+                    transient_attempt += 1
                     retry_match = re.search(
                         r"retry.*?(\d+(?:\.\d+)?)\s*s", exc_str, re.IGNORECASE
                     )
                     if retry_match:
                         sleep_time = int(float(retry_match.group(1))) + 2
-                    elif is_not_found:
-                        sleep_time = 0
                     elif "429" in exc_str:
-                        sleep_time = 35 * attempt
+                        sleep_time = 35 * transient_attempt
                     else:
-                        delays = [15, 30, 60, 90]
-                        sleep_time = delays[min(attempt - 1, len(delays) - 1)]
+                        base_delay = transient_delays[
+                            min(transient_attempt - 1, len(transient_delays) - 1)
+                        ]
+                        sleep_time = int(base_delay + random.uniform(1.0, 4.0))
 
-                    next_model = fallback_models[min(attempt, len(fallback_models) - 1)]
+                    if len(candidate_models) > 1:
+                        candidate_models.pop(0)
+                    next_model = candidate_models[0]
+
                     logger.warning(
-                        "[%s] Gemini-Fehler auf Modell %s (%s). Wiederholung %d/%d mit Modell %s in %ds...",
+                        "[%s] Transiente Gemini-Überlastung auf Modell %s (%s). Retry %d/%d mit Modell %s in %ds...",
                         active_run_id,
                         current_model,
                         exc,
-                        attempt,
-                        max_attempts,
+                        transient_attempt,
+                        max_transient_retries,
                         next_model,
                         sleep_time,
                     )
-                    if sleep_time > 0:
-                        time.sleep(sleep_time)
+                    time.sleep(sleep_time)
                 else:
                     raise
 
@@ -302,7 +361,7 @@ class DigestExtractor:
 def run_stage1_pipeline(
     iso_week: str,
     data_dir: Path | str = "data",
-    include_baseline: bool = True,
+    include_baseline: bool = False,
     limit: int | None = None,
 ) -> tuple[WeeklyDigestSchema, Path, dict[str, Any]]:
     """Convenience-Funktion zur Ausführung von Stufe 1."""

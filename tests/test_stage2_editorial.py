@@ -667,6 +667,69 @@ class TestManifestAndLifecycle(unittest.TestCase):
         gen = NewsletterGenerator(api_key="mock")
         self.assertEqual(gen.model_name, "gemini-3.8-flash")
 
+    def test_newsletter_generator_prompt_diet(self) -> None:
+        fact = ExtractedFact(
+            fact_id="f-01",
+            statement="Statement 1",
+            evidence=[FactEvidence(item_id="i1", evidence_quote="Quote 1")],
+            verified=True,
+        )
+        digest = WeeklyDigestSchema(
+            iso_week="2026-W40",
+            clusters=[
+                TopicCluster(
+                    cluster_id="c-01",
+                    topic="allgemein",
+                    platforms=["test"],
+                    title="Titel",
+                    facts=[fact],
+                )
+            ],
+        )
+        gen = NewsletterGenerator(api_key="mock")
+        prompt = gen.build_prompt(digest)
+        self.assertIn("* [f-01] Statement 1", prompt)
+        self.assertNotIn("Belege: 'Quote 1'", prompt)
+
+    def test_newsletter_generator_draft_idempotency(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp = Path(tmp_dir)
+            gen = NewsletterGenerator(data_dir=tmp, api_key="mock")
+
+            digests_dir = tmp / "digests"
+            digests_dir.mkdir(parents=True, exist_ok=True)
+            digest_file = digests_dir / "digest-2026-W40.json"
+            digest_file.write_text(
+                '{"schema_version": "2.2", "iso_week": "2026-W40", "clusters": []}',
+                encoding="utf-8",
+            )
+
+            drafts_dir = tmp / "newsletters" / "drafts"
+            drafts_dir.mkdir(parents=True, exist_ok=True)
+            draft_file = drafts_dir / "newsletter-2026-W40.draft.md"
+            draft_file.write_text(
+                "---\nverified_sentences_count: 5\n---\n# Vorhandener Entwurf",
+                encoding="utf-8",
+            )
+
+            digest = WeeklyDigestSchema(iso_week="2026-W40", clusters=[])
+
+            # Timestamp von draft_file künstlich über digest_file setzen
+            import os
+
+            os.utime(
+                draft_file,
+                (digest_file.stat().st_atime + 10, digest_file.stat().st_mtime + 10),
+            )
+
+            target, metrics = gen.generate(
+                digest=digest,
+                is_publish=False,
+                is_approved=False,
+            )
+            self.assertEqual(metrics["sentences_verified"], 5)
+            self.assertEqual(target, draft_file)
+
 
 if __name__ == "__main__":
     unittest.main()
