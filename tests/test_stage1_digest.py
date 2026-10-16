@@ -520,6 +520,10 @@ class TestDigestExtractorOffline(unittest.TestCase):
             ["item-high", "item-med", "item-low"],
         )
 
+    def test_digest_extractor_default_model(self) -> None:
+        extractor = DigestExtractor(api_key="mock")
+        self.assertEqual(extractor.model_name, "gemini-2.5-flash")
+
 
 if __name__ == "__main__":
     unittest.main()

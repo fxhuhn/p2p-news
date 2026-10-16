@@ -35,7 +35,7 @@ class DigestExtractor:
     def __init__(
         self,
         api_key: str | None = None,
-        model_name: str = "gemini-3.8-flash",
+        model_name: str = "gemini-2.5-flash",
         runs_dir: Path | str = "data/runs",
         digests_dir: Path | str = "data/digests",
         prompt_path: Path | str = "prompts/stage1_cluster_v1.md",
@@ -117,9 +117,9 @@ class DigestExtractor:
 
         fallback_models = [self.model_name]
         for fb in [
-            "gemini-3.8-flash",
+            "gemini-2.5-flash",
+            "gemini-3.5-flash",
             "gemini-3.1-flash-lite",
-            "gemini-flash-lite-latest",
             "gemini-flash-latest",
         ]:
             if fb not in fallback_models:
@@ -157,7 +157,7 @@ class DigestExtractor:
                     elif "429" in exc_str:
                         sleep_time = 35 * attempt
                     else:
-                        sleep_time = 3 * attempt
+                        sleep_time = max(5 * attempt, 5)
 
                     next_model = fallback_models[min(attempt, len(fallback_models) - 1)]
                     logger.warning(

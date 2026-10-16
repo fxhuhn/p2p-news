@@ -46,7 +46,7 @@ class NewsletterGenerator:
     def __init__(
         self,
         api_key: str | None = None,
-        model_name: str = "gemini-3.8-flash",
+        model_name: str = "gemini-2.5-flash",
         data_dir: Path | str = "data",
         prompt_path: Path | str = "prompts/stage2_editorial_v1.md",
     ) -> None:
@@ -213,9 +213,9 @@ class NewsletterGenerator:
 
             fallback_models = [self.model_name]
             for fb in [
-                "gemini-3.8-flash",
+                "gemini-2.5-flash",
+                "gemini-3.5-flash",
                 "gemini-3.1-flash-lite",
-                "gemini-flash-lite-latest",
                 "gemini-flash-latest",
             ]:
                 if fb not in fallback_models:
@@ -223,7 +223,7 @@ class NewsletterGenerator:
 
             # Retry bei transienten Überlastungen
             max_attempts = 5
-            backoff_delays = [3, 6, 12, 20, 30]
+            backoff_delays = [5, 12, 25, 40, 60]
             response = None
             for attempt in range(1, max_attempts + 1):
                 current_model = fallback_models[
@@ -517,8 +517,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--model",
-        default="gemini-3.8-flash",
-        help="Zu verwendendes Gemini-Modell (Standard: gemini-3.8-flash)",
+        default="gemini-2.5-flash",
+        help="Zu verwendendes Gemini-Modell (Standard: gemini-2.5-flash)",
     )
     args = parser.parse_args()
 
