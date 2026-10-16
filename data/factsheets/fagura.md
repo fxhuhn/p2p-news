@@ -1,7 +1,7 @@
 ---
 platform: fagura
 platform_name: Fagura
-audit_date: '2026-10-09'
+audit_date: '2026-10-16'
 audit_version: '1.0'
 audit_score:
   net_score: 71
@@ -70,7 +70,7 @@ sources:
 
 # Platform Audit Factsheet: Fagura
 
-**Audit-Datum:** 2026-10-09 | **Klasse:** `TOP TIER` | **Depot-Limit:** `8 - 15 %`
+**Audit-Datum:** 2026-10-16 | **Klasse:** `TOP TIER` | **Depot-Limit:** `8 - 15 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -113,4 +113,4 @@ Keine Malus-Abschläge wirksam. Das Portfolio weist weder unzulässige Monokultu
 - [https://p2pmarketdata.com/platforms/fagura](https://p2pmarketdata.com/platforms/fagura)
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-09.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-16.*
