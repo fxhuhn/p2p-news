@@ -38,7 +38,7 @@ def _sanitize_penalty(raw_penalty: Any, default_penalty: int) -> int:
     try:
         val = int(raw_penalty)
         return min(-1, max(-20, val))
-    except (TypeError, ValueError):
+    except TypeError, ValueError:
         return default_penalty
 
 

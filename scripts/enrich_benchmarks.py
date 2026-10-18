@@ -125,7 +125,7 @@ def enrich_all_benchmarks(
                     break
                 try:
                     score = int(row[1].strip())
-                except (ValueError, IndexError):
+                except ValueError, IndexError:
                     continue
                 w_rank += 1
                 key = p_raw.lower().replace(" ", "").replace("-", "")
