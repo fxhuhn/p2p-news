@@ -16,16 +16,26 @@ concurrency:
 
 jobs:
   quality-gate:
-    name: Lint, Type Check & Test
+    name: Lint, Type Check & Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.14", "3.15"]
+        include:
+          - python-version: "3.14"
+            experimental: false
+          - python-version: "3.15"
+            experimental: true
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.14
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: "3.14"
+          python-version: ${{ matrix.python-version }}
           cache: "pip"
 
       - name: Install Dependencies
