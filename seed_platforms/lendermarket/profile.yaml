@@ -34,7 +34,8 @@ liquidity_and_marketplace:
   secondary_market_waiting_days: 180
   primary_loan_duration_days_avg: 360
   withdrawal_queue_days: 0
-  notes: Sekundärmarkt vorhanden mit 180 Tagen Haltedauer; Auszahlungsstau bei fälligen Krediten (Pending Payments).
+  notes: Sekundärmarkt vorhanden mit 180 Tagen Haltedauer; Auszahlungsstau bei fälligen
+    Krediten (Pending Payments).
 malus_triggers:
   monoculture_pct: 65.0
   monoculture_originator: Creditstar Group AS
@@ -54,3 +55,6 @@ benchmarks:
   rethink_p2p_red_flags: '-12'
   p2p_game_score: 61
   p2p_game_rank: Platz 11 von 40
+  p2pdash_community_score: 57
+  p2pdash_median_xirr: 17.2
+  p2pdash_investors_count: 432

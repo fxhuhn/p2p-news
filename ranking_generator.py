@@ -181,9 +181,10 @@ class RankingGenerator:
                 "- **P2P Game:** Rating-Score (0 - 100) aus 40 getesteten Plattformen (Thomas P2P)",
                 "- **P2P Empire:** Safety Score (0.0 - 10.0) von Jakub Krejci",
                 "- **Passives Einkommen:** P2P-Rating (0 - 40 Punkte) von Lars Wrobbel",
+                "- **P2P Dash:** Community Trust Score (0 - 100) & Median-XIRR p.a. (> 2.000 Investoren, Tim Rottmann)",
                 "",
-                "| Plattform | Unser Netto-Score | Risikoklasse | re:think P2P (0-10) | P2P Game (0-100) | P2P Empire (0-10) | Lars Wrobbel (0-40) |",
-                "| :--- | :---: | :---: | :---: | :---: | :---: | :---: |",
+                "| Plattform | Unser Netto-Score | Risikoklasse | re:think P2P (0-10) | P2P Game (0-100) | P2P Empire (0-10) | Lars Wrobbel (0-40) | P2P Dash (0-100) |",
+                "| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |",
             ]
         )
 
@@ -229,9 +230,19 @@ class RankingGenerator:
             w_val = bench.get("lars_wrobbel_score")
             w_str = f"**{w_val}**" if w_val is not None else "-"
 
+            # p2pdash
+            d_score = bench.get("p2pdash_community_score")
+            d_xirr = bench.get("p2pdash_median_xirr")
+            if d_score is not None:
+                d_str = f"**{d_score}**"
+                if d_xirr is not None:
+                    d_str += f" ({d_xirr} %)"
+            else:
+                d_str = "-"
+
             fs_link = f"[{plat.capitalize()}](../factsheets/{plat}.md)"
             lines.append(
-                f"| {fs_link} | **{s['net_score']}** | `{s['risk_class']}` | {r_str} | {g_str} | {e_str} | {w_str} |"
+                f"| {fs_link} | **{s['net_score']}** | `{s['risk_class']}` | {r_str} | {g_str} | {e_str} | {w_str} | {d_str} |"
             )
 
         lines.append("")

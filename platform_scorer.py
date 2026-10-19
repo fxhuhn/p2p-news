@@ -852,5 +852,8 @@ class PlatformScorer:
             rethink_p2p_red_flags=b_data.get("rethink_p2p_red_flags"),
             lars_wrobbel_score=b_data.get("lars_wrobbel_score"),
             lars_wrobbel_rank=b_data.get("lars_wrobbel_rank"),
+            p2pdash_community_score=b_data.get("p2pdash_community_score"),
+            p2pdash_median_xirr=b_data.get("p2pdash_median_xirr"),
+            p2pdash_investors_count=b_data.get("p2pdash_investors_count"),
             external_review_urls=b_data.get("external_review_urls", []),
         )

@@ -93,6 +93,15 @@ class BenchmarkMetrics(BaseModel):
     lars_wrobbel_rank: Optional[str] = Field(
         None, description="Rangliste bei Passives Einkommen"
     )
+    p2pdash_community_score: Optional[int] = Field(
+        None, description="P2P Dash Community Trust Score (0 - 100)"
+    )
+    p2pdash_median_xirr: Optional[float] = Field(
+        None, description="P2P Dash Median-Rendite p.a. in % (inkl. Boni)"
+    )
+    p2pdash_investors_count: Optional[int] = Field(
+        None, description="Anzahl erfasster Investoren auf P2P Dash"
+    )
     external_review_urls: List[str] = Field(
         default_factory=list, description="Links zu externen Analysen"
     )

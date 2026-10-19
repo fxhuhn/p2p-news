@@ -55,3 +55,6 @@ benchmarks:
   rethink_p2p_red_flags: '-19'
   p2p_game_score: 61
   p2p_game_rank: Platz 12 von 40
+  p2pdash_community_score: 65
+  p2pdash_median_xirr: 15.3
+  p2pdash_investors_count: 928

@@ -52,3 +52,6 @@ benchmarks:
   rethink_p2p_red_flags: '0'
   p2p_game_score: null
   p2p_game_rank: Nicht gelistet
+  p2pdash_community_score: null
+  p2pdash_median_xirr: null
+  p2pdash_investors_count: null

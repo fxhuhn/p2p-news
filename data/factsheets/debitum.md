@@ -32,6 +32,9 @@ benchmarks:
   p2p_empire_portfolio_perf: 85.0
   lars_wrobbel_score: 31
   lars_wrobbel_rank: Rang 7
+  p2pdash_community_score: 65
+  p2pdash_median_xirr: 15.3
+  p2pdash_investors_count: 928
 pillars:
   pillar_1_regulation:
     score: 25
@@ -125,6 +128,7 @@ sources:
 | **P2P Empire Safety Score** | **3.9 / 10** (Niedrig) | Unabhängiger Testbericht Jakub Krejci |
 | **P2P Empire Portfolio Performance** | **85.0 %** | Reale Rückzahlungsquote im Portfolio |
 | **Lars Wrobbel / Passives Einkommen** | **Rang 7** (31/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |
+| **P2P Dash Community Score** | **65 / 100** (15.3 % XIRR) | 928 Investoren (Empirischer Schwarm-Score) |
 
 ---
 *Automatisch generiert durch das P2P Audit Scoring System am 2026-10-19.*

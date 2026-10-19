@@ -582,6 +582,44 @@ class TestAuditScoring(unittest.TestCase):
             any("NPL-Diskrepanz" in note for note in res["flags"].conflict_notes)
         )
 
+    def test_p2pdash_benchmark_integration(self):
+        """Prüft, dass P2P Dash Metriken im Scorer und Factsheet sauber extrahiert und gerendert werden."""
+        from factsheet_generator import FactsheetGenerator
+
+        profile = {
+            "platform": "test_p2pdash",
+            "platform_name": "TestP2PDash",
+            "regulation": {"type": "licensed_ecsp"},
+            "governance_and_solvency": {"audit_opinion": "Unqualified"},
+            "collateral_and_workout": {"security_type": "Erststellige Grundschuld"},
+            "liquidity_and_marketplace": {"secondary_market": True},
+            "malus_triggers": {},
+            "benchmarks": {
+                "p2pdash_community_score": 78,
+                "p2pdash_median_xirr": 8.9,
+                "p2pdash_investors_count": 150,
+            },
+        }
+
+        res = self.scorer.score_platform(profile)
+        b = res["benchmarks"]
+        self.assertEqual(b.p2pdash_community_score, 78)
+        self.assertEqual(b.p2pdash_median_xirr, 8.9)
+        self.assertEqual(b.p2pdash_investors_count, 150)
+
+        fs_dir = Path(self.temp_dir) / "factsheets"
+        fg = FactsheetGenerator(output_dir=str(fs_dir))
+        fs_file = fg.generate_factsheet(res)
+        self.assertTrue(fs_file.exists())
+        content = fs_file.read_text(encoding="utf-8")
+
+        self.assertIn("p2pdash_community_score: 78", content)
+        self.assertIn("p2pdash_median_xirr: 8.9", content)
+        self.assertIn("p2pdash_investors_count: 150", content)
+        self.assertIn("P2P Dash Community Score", content)
+        self.assertIn("**78 / 100** (8.9 % XIRR)", content)
+        self.assertIn("150 Investoren", content)
+
 
 if __name__ == "__main__":
     unittest.main()

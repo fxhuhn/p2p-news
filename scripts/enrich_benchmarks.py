@@ -139,7 +139,60 @@ def enrich_all_benchmarks(
     except Exception as e:
         print(f"Fehler bei Lars Wrobbel: {e}")
 
-    # 4. Aktualisiere profile.yaml aller Plattformen
+    # 4. Scrape P2P Dash
+    print("Scrape P2P Dash...")
+    dash_map = {}
+    try:
+        r_dash = httpx.get(
+            "https://p2pdash.com/de/beste-p2p-plattformen/",
+            headers=headers,
+            follow_redirects=True,
+            timeout=20.0,
+        )
+        soup_dash = BeautifulSoup(r_dash.text, "html.parser")
+        sec = soup_dash.find("h2", string=lambda s: s and "Community-Vertrauen" in s)
+        container = (
+            (sec.find_parent("section") or sec.parent)
+            if isinstance(sec, Tag)
+            else soup_dash
+        )
+        scope = container if isinstance(container, Tag) else soup_dash
+        for a in scope.find_all("a", href=lambda x: x and "/de/plattformen/" in x):
+            slug = a["href"].strip("/").split("/")[-1]
+            if slug in dash_map:
+                continue
+            parent = a
+            while parent and parent.name != "body":
+                if (
+                    "Community-Score" in parent.text
+                    and parent.text.count("Community-Score") == 1
+                ):
+                    break
+                parent = parent.parent
+            if parent:
+                text = parent.get_text(" ", strip=True)
+                name = a.get_text(strip=True) or slug.capitalize()
+                m_score = re.search(r"(\d+)\s+Community-Score", text)
+                m_xirr = re.search(r"([\d,]+)\s*%\s*Median-Rendite", text)
+                m_inv = re.search(r"([\d\.]+)\s+Investoren", text)
+                m_votes = re.search(r"(\d+)\s+Stimmen", text)
+                if m_score:
+                    dash_map[slug] = {
+                        "name": name,
+                        "score": int(m_score.group(1)),
+                        "xirr": (
+                            float(m_xirr.group(1).replace(",", ".")) if m_xirr else None
+                        ),
+                        "investors": (
+                            int(m_inv.group(1).replace(".", "")) if m_inv else None
+                        ),
+                        "votes": int(m_votes.group(1)) if m_votes else None,
+                    }
+        print(f"✓ P2P Dash: {len(dash_map)} Plattformen geladen.")
+    except Exception as e:
+        print(f"Fehler bei P2P Dash: {e}")
+
+    # 5. Aktualisiere profile.yaml aller Plattformen
     profiles: list[str] = []
     for d in data_dirs:
         profiles.extend(sorted(glob.glob(f"{d}/*/profile.yaml")))
@@ -225,6 +278,34 @@ def enrich_all_benchmarks(
                 bench["lars_wrobbel_score"] = None
                 bench["lars_wrobbel_rank"] = "Nicht gelistet"
 
+        # Match P2P Dash
+        if dash_map:
+            d_match = None
+            for k, v in dash_map.items():
+                clean_k = k.lower().replace(" ", "").replace("-", "")
+                if (
+                    clean_p == clean_k
+                    or clean_p in clean_k
+                    or clean_k in clean_p
+                    or (plat == "bondora" and "bondora" in k)
+                    or (plat == "income" and "income" in k)
+                    or (plat == "monefit" and "monefit" in k)
+                    or (plat == "nectaro" and "nectaro" in k)
+                    or (plat == "asterra" and "asterra" in k)
+                    or (plat == "ventus" and "ventus" in k)
+                ):
+                    d_match = v
+                    break
+
+            if d_match:
+                bench["p2pdash_community_score"] = d_match["score"]
+                bench["p2pdash_median_xirr"] = d_match["xirr"]
+                bench["p2pdash_investors_count"] = d_match["investors"]
+            else:
+                bench["p2pdash_community_score"] = None
+                bench["p2pdash_median_xirr"] = None
+                bench["p2pdash_investors_count"] = None
+
         prof["benchmarks"] = bench
 
         with open(p_path, "w", encoding="utf-8") as f:
@@ -244,8 +325,13 @@ def enrich_all_benchmarks(
             if bench.get("lars_wrobbel_score")
             else "-"
         )
+        d_info = (
+            f"{bench.get('p2pdash_community_score')}/100"
+            if bench.get("p2pdash_community_score")
+            else "-"
+        )
         print(
-            f"✓ {Path(p_path).parent.name:<15} ({Path(p_path).parent.parent.name}) -> re:think: {r_info:<6} | P2P-Game: {g_info:<8} | Wrobbel: {w_info}"
+            f"✓ {Path(p_path).parent.name:<15} ({Path(p_path).parent.parent.name}) -> re:think: {r_info:<6} | P2P-Game: {g_info:<8} | Wrobbel: {w_info:<6} | P2P-Dash: {d_info}"
         )
 
     print(f"\nErfolgreich {updated_count} Profile mit Benchmark-Daten angereichert!")

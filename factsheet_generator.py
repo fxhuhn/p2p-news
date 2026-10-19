@@ -69,6 +69,13 @@ class FactsheetGenerator:
                 ].p2p_empire_portfolio_perf,
                 "lars_wrobbel_score": score_res["benchmarks"].lars_wrobbel_score,
                 "lars_wrobbel_rank": score_res["benchmarks"].lars_wrobbel_rank,
+                "p2pdash_community_score": score_res[
+                    "benchmarks"
+                ].p2pdash_community_score,
+                "p2pdash_median_xirr": score_res["benchmarks"].p2pdash_median_xirr,
+                "p2pdash_investors_count": score_res[
+                    "benchmarks"
+                ].p2pdash_investors_count,
             },
             "pillars": {
                 "pillar_1_regulation": {
@@ -222,6 +229,7 @@ class FactsheetGenerator:
                 f"| **P2P Empire Safety Score** | **{b.p2p_empire_safety_score if b.p2p_empire_safety_score is not None else 'N/A'} / 10** ({b.p2p_empire_safety_band or 'Kein Test'}) | Unabhängiger Testbericht Jakub Krejci |",
                 f"| **P2P Empire Portfolio Performance** | **{b.p2p_empire_portfolio_perf if b.p2p_empire_portfolio_perf is not None else 'N/A'} %** | Reale Rückzahlungsquote im Portfolio |",
                 f"| **Lars Wrobbel / Passives Einkommen** | **{b.lars_wrobbel_rank or 'Kein Rating'}** ({b.lars_wrobbel_score if b.lars_wrobbel_score is not None else 'N/A'}/40 Pkt) | Langzeit-Rating aus Community- & Blog-Erfahrung |",
+                f"| **P2P Dash Community Score** | **{b.p2pdash_community_score if b.p2pdash_community_score is not None else 'N/A'} / 100**{f' ({b.p2pdash_median_xirr} % XIRR)' if b.p2pdash_median_xirr is not None else ''} | {f'{b.p2pdash_investors_count} Investoren (Empirischer Schwarm-Score)' if b.p2pdash_investors_count else 'Empirischer Community Trust Score (p2pdash.com)'} |",
             ]
         )
 
