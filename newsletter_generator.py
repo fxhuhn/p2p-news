@@ -106,6 +106,7 @@ class NewsletterGenerator:
         is_publish: bool = False,
         is_approved: bool = False,
         force_revision: bool = False,
+        ignore_draft: bool = False,
         custom_client: Any | None = None,
         raw_path: Path | str | None = None,
     ) -> tuple[Path, dict[str, Any]]:
@@ -124,6 +125,49 @@ class NewsletterGenerator:
 
         draft_file = self.drafts_dir / f"newsletter-{digest.iso_week}.draft.md"
         target_file = self.newsletters_dir / f"newsletter-{digest.iso_week}.md"
+        digest_file = self.data_dir / "digests" / f"digest-{digest.iso_week}.json"
+        digest_mtime = digest_file.stat().st_mtime if digest_file.exists() else 0.0
+
+        # Prüfe, ob ein vorliegender Entwurf noch aktuell zum Fakten-Dossier ist
+        draft_is_up_to_date = False
+        if draft_file.exists() and not ignore_draft and not force_revision:
+            try:
+                # 1. Zeitstempel-Prüfung: Entwurf darf nicht älter sein als das Fakten-Dossier
+                if draft_file.stat().st_mtime >= digest_mtime:
+                    # 2. Faktenanzahl-Prüfung: Entwurf muss zum aktuellen Dossier passen
+                    draft_content_preview = draft_file.read_text(encoding="utf-8")
+                    draft_facts = None
+                    for line in draft_content_preview.splitlines():
+                        if line.startswith("verified_facts_count:"):
+                            try:
+                                draft_facts = int(line.split(":")[-1].strip())
+                            except ValueError:
+                                pass
+                    if draft_facts is not None:
+                        if draft_facts == total_facts:
+                            draft_is_up_to_date = True
+                        else:
+                            logger.info(
+                                "[%s] Entwurf %s hat abweichende Faktenanzahl (%d im Entwurf vs. %d im Dossier).",
+                                active_run_id,
+                                draft_file,
+                                draft_facts,
+                                total_facts,
+                            )
+                    else:
+                        # Fallback für Dossiers ohne Fakten
+                        if total_facts == 0:
+                            draft_is_up_to_date = True
+                else:
+                    logger.info(
+                        "[%s] Entwurf %s ist älter als das Fakten-Dossier (veraltet).",
+                        active_run_id,
+                        draft_file,
+                    )
+            except Exception as exc:
+                logger.debug("Konnte Aktualität des Entwurfs nicht prüfen: %s", exc)
+                draft_is_up_to_date = False
+
         if is_publish:
             if not is_approved:
                 raise ValueError(
@@ -171,7 +215,7 @@ class NewsletterGenerator:
                 verified_facts_count=total_facts,
                 verified_sentences_count=verified_sentences,
             )
-        elif is_publish and is_approved and draft_file.exists() and not custom_client:
+        elif is_publish and is_approved and draft_is_up_to_date:
             logger.info(
                 "[%s] Verwende vorliegenden, geprüften Entwurf zur Versiegelung: %s",
                 active_run_id,
@@ -185,17 +229,7 @@ class NewsletterGenerator:
                         verified_sentences = int(line.split(":")[-1].strip())
                     except ValueError:
                         pass
-        elif (
-            not is_publish
-            and not force_revision
-            and draft_file.exists()
-            and not custom_client
-            and (self.data_dir / "digests" / f"digest-{digest.iso_week}.json").exists()
-            and draft_file.stat().st_mtime
-            >= (self.data_dir / "digests" / f"digest-{digest.iso_week}.json")
-            .stat()
-            .st_mtime
-        ):
+        elif not is_publish and not force_revision and draft_is_up_to_date:
             logger.info(
                 "[%s] Entwurf %s ist bereits aktuell zum Fakten-Dossier (0 LLM-Tokens verbraucht).",
                 active_run_id,
@@ -209,6 +243,12 @@ class NewsletterGenerator:
                     except ValueError:
                         pass
         else:
+            if draft_file.exists() and not draft_is_up_to_date:
+                logger.info(
+                    "[%s] Vorliegender Entwurf %s wird durch frische Generierung überarbeitet/aktualisiert.",
+                    active_run_id,
+                    draft_file,
+                )
             # Gemini Client initialisieren und aufrufen
             if custom_client is not None:
                 client = custom_client
@@ -595,6 +635,11 @@ def main() -> int:
         default="gemini-3.8-flash",
         help="Zu verwendendes Gemini-Modell (Standard: gemini-3.8-flash)",
     )
+    parser.add_argument(
+        "--ignore-draft",
+        action="store_true",
+        help="Ignoriert bestehende Entwürfe und erzwingt Neu-Generierung",
+    )
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -639,6 +684,7 @@ def main() -> int:
             is_publish=args.publish,
             is_approved=args.approve,
             force_revision=args.force_revision,
+            ignore_draft=args.ignore_draft,
             raw_path=args.raw_path,
         )
         print(

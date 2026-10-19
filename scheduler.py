@@ -110,6 +110,7 @@ def job_weekly_newsletter(
                 is_publish=True,
                 is_approved=True,
                 force_revision=True,
+                ignore_draft=True,
             )
         else:
             ret = run_pipeline(
@@ -117,6 +118,7 @@ def job_weekly_newsletter(
                 do_scrape=True,
                 is_publish=True,
                 is_approved=True,
+                ignore_draft=True,
             )
         if ret == 0:
             logger.info(

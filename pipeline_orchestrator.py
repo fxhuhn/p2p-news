@@ -70,6 +70,7 @@ def run_pipeline(
     force_revision: bool = False,
     verify_only: bool = False,
     limit: int | None = None,
+    ignore_draft: bool = False,
 ) -> int:
     base = Path(data_dir)
     target_week = week or get_target_newsletter_week()
@@ -196,6 +197,22 @@ def run_pipeline(
         logger.info(
             "Stufe 1 abgeschlossen: %d Fakten verifiziert.", metrics["facts_verified"]
         )
+        # Sobald ein neues Fakten-Dossier erzeugt wurde, ist jeder vorherige Entwurf obsolet!
+        draft_file = (
+            base / "newsletters" / "drafts" / f"newsletter-{target_week}.draft.md"
+        )
+        if draft_file.exists():
+            try:
+                draft_file.unlink()
+                logger.info(
+                    "Veralteten Entwurf nach neuem Fakten-Dossier entfernt: %s",
+                    draft_file,
+                )
+            except Exception as exc:
+                logger.warning(
+                    "Konnte veralteten Entwurf %s nicht entfernen: %s", draft_file, exc
+                )
+        ignore_draft = True
     else:
         logger.info(
             "--- Stufe 1: Verwende vorliegendes Fakten-Dossier %s (0 Tokens) ---",
@@ -215,6 +232,7 @@ def run_pipeline(
         is_publish=is_publish,
         is_approved=is_approved,
         force_revision=force_revision,
+        ignore_draft=ignore_draft,
     )
 
     logger.info("==================================================================")
@@ -292,6 +310,11 @@ def main() -> int:
         action="store_true",
         help="Prüft die Revisions-Integrität des Manifests",
     )
+    parser.add_argument(
+        "--ignore-draft",
+        action="store_true",
+        help="Ignoriert bestehende Entwürfe und erzwingt Neu-Generierung",
+    )
     args = parser.parse_args()
 
     # Standard-Modus ist --draft falls weder publish noch verify gewählt wurde
@@ -309,6 +332,7 @@ def main() -> int:
             force_revision=args.force_revision,
             verify_only=args.verify,
             limit=args.limit,
+            ignore_draft=args.ignore_draft,
         )
     except Exception as exc:
         logger.error("Pipeline fehlgeschlagen: %s", exc)

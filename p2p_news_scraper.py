@@ -2851,31 +2851,64 @@ class P2PNewsScraper:
             provider.base_url,
         )
 
-        # 1. Übersichtsseite laden
+        # 1. Übersichtsseite laden (optional, falls RSS oder Subpages vorhanden sind)
         overview_html = self.fetch_url(client, provider.base_url)
+        has_rss = bool(getattr(provider, "rss_url", None))
+        has_subpages = bool(getattr(provider, "subpages", None))
+
         if not overview_html:
-            logger.error("Konnte Übersichtsseite für %s nicht laden.", provider.name)
-            return results
-
-        # 2. Übersichtsseite erfassen
-        if self.config.include_overview_page:
-            overview_item = self.process_page(
-                provider.base_url, overview_html, provider=provider
+            if not has_rss and not has_subpages:
+                logger.error(
+                    "Konnte Übersichtsseite für %s nicht laden.", provider.name
+                )
+                return results
+            logger.warning(
+                "[%s] Konnte Übersichtsseite nicht laden, fahre mit alternativen Quellen (RSS/Subpages) fort...",
+                provider.name,
             )
-            res = self.storage.record_scan(overview_item, provider)
-            results.append(res)
-            self._log_item_result(res, is_overview=True)
 
-        # 3. Links extrahieren
+        # 2. Links & RSS-Metadaten extrahieren (RSS-First: befüllt _rss_cache vor Erstellung der Übersichtsseite)
         try:
-            article_urls = provider.extract_links(overview_html, client=client)
+            article_urls = provider.extract_links(overview_html or "", client=client)
         except TypeError:
-            article_urls = provider.extract_links(overview_html)
+            article_urls = provider.extract_links(overview_html or "")
         logger.info(
             "[%s] %d relevante Links auf Übersichtsseite gefunden",
             provider.name,
             len(article_urls),
         )
+
+        # Falls weder HTML geladen werden konnte noch Links oder RSS-Cache vorhanden sind: Abbruch
+        if (
+            not overview_html
+            and not article_urls
+            and not getattr(provider, "_rss_cache", None)
+        ):
+            logger.error(
+                "Konnte weder Übersichtsseite noch alternative Quellen (RSS) für %s laden.",
+                provider.name,
+            )
+            return results
+
+        # 3. Übersichtsseite erfassen (falls konfiguriert und HTML oder RSS-Cache-Inhalt vorhanden ist)
+        if self.config.include_overview_page:
+            overview_item = None
+            if overview_html:
+                overview_item = self.process_page(
+                    provider.base_url, overview_html, provider=provider
+                )
+            elif getattr(provider, "_rss_cache", None) and hasattr(
+                provider, "extract_content"
+            ):
+                # Falls HTML nicht erreichbar war, aber der RSS-Cache Inhalte für die Übersicht bereitstellt
+                overview_item = self.process_page(
+                    provider.base_url, "", provider=provider
+                )
+
+            if overview_item and overview_item.content:
+                res = self.storage.record_scan(overview_item, provider)
+                results.append(res)
+                self._log_item_result(res, is_overview=True)
 
         if limit is not None and limit > 0:
             article_urls = article_urls[:limit]

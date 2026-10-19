@@ -1261,6 +1261,183 @@ classification:
         result = scraper.fetch_url(mock_client, "https://example.com/protected")
         self.assertIsNone(result)
 
+    def test_run_provider_rss_first_survives_html_timeout(self) -> None:
+        """Prüft, dass bei Ausfall der HTML-Übersichtsseite die RSS-Ingestion als Fallback greift."""
+        from typing import Any
+        from unittest.mock import MagicMock
+
+        import httpx
+
+        from p2p_news_scraper import P2PEmpireProvider, P2PNewsScraper, ScraperConfig
+
+        sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <item>
+                    <title>Ventus Energy Restrukturierung</title>
+                    <link>https://p2pempire.com/de/nachrichten/ventus-restrukturierung</link>
+                    <pubDate>Mon, 19 Oct 2026 06:00:00 +0200</pubDate>
+                    <category>Ventus</category>
+                    <description>Restrukturierungsplan angekündigt.</description>
+                </item>
+            </channel>
+        </rss>
+        """
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            config = ScraperConfig(output_dir=Path(tmp_dir), include_overview_page=True)
+            scraper = P2PNewsScraper(config=config)
+            provider = P2PEmpireProvider()
+
+            mock_client = MagicMock()
+            resp_rss = MagicMock()
+            resp_rss.status_code = 200
+            resp_rss.headers = {"content-type": "application/xml"}
+            resp_rss.text = sample_rss
+            resp_rss.content = sample_rss.encode("utf-8")
+
+            resp_detail = MagicMock()
+            resp_detail.status_code = 200
+            resp_detail.headers = {"content-type": "text/html"}
+            resp_detail.text = (
+                "<html><body><article><p>Ventus Details.</p></article></body></html>"
+            )
+            resp_detail.content = resp_detail.text.encode("utf-8")
+
+            def mock_get(url: str, **kwargs: Any) -> Any:
+                if url == provider.base_url:
+                    resp_fail = MagicMock()
+                    resp_fail.status_code = 504
+                    error = httpx.HTTPStatusError(
+                        "504 Gateway Timeout",
+                        request=MagicMock(),
+                        response=resp_fail,
+                    )
+                    resp_fail.raise_for_status.side_effect = error
+                    return resp_fail
+                if url == provider.rss_url:
+                    return resp_rss
+                return resp_detail
+
+            mock_client.get.side_effect = mock_get
+
+            results = scraper.run_provider(mock_client, provider)
+
+            self.assertTrue(len(results) >= 1)
+            overview_res = [
+                r for r in results if "nachrichten-uebersicht.md" in str(r.file_path)
+            ]
+            self.assertEqual(len(overview_res), 1)
+            self.assertIn(
+                "Ventus Energy Restrukturierung", overview_res[0].item.content
+            )
+            self.assertEqual(overview_res[0].item.published_date, "2026-10-19")
+
+    def test_run_provider_populates_rss_cache_before_overview_processing(
+        self,
+    ) -> None:
+        """Prüft, dass der RSS-Cache vor der Generierung der Übersichtsseite befüllt ist."""
+        from typing import Any
+        from unittest.mock import MagicMock
+
+        from p2p_news_scraper import P2PEmpireProvider, P2PNewsScraper, ScraperConfig
+
+        sample_rss = """<?xml version="1.0" encoding="UTF-8"?>
+        <rss version="2.0">
+            <channel>
+                <item>
+                    <title>Robocash Update Oktober</title>
+                    <link>https://p2pempire.com/de/nachrichten/robocash-update</link>
+                    <pubDate>Mon, 19 Oct 2026 05:00:00 +0200</pubDate>
+                    <category>Robocash</category>
+                    <description>Robocash Rekordmonat.</description>
+                </item>
+            </channel>
+        </rss>
+        """
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            config = ScraperConfig(output_dir=Path(tmp_dir), include_overview_page=True)
+            scraper = P2PNewsScraper(config=config)
+            provider = P2PEmpireProvider()
+
+            mock_client = MagicMock()
+            resp_html = MagicMock()
+            resp_html.status_code = 200
+            resp_html.headers = {"content-type": "text/html"}
+            resp_html.text = "<html><body><h1>Startseite</h1></body></html>"
+            resp_html.content = resp_html.text.encode("utf-8")
+
+            resp_rss = MagicMock()
+            resp_rss.status_code = 200
+            resp_rss.headers = {"content-type": "application/xml"}
+            resp_rss.text = sample_rss
+            resp_rss.content = sample_rss.encode("utf-8")
+
+            def mock_get(url: str, **kwargs: Any) -> Any:
+                if url == provider.rss_url:
+                    return resp_rss
+                return resp_html
+
+            mock_client.get.side_effect = mock_get
+
+            results = scraper.run_provider(mock_client, provider)
+            overview_res = [
+                r for r in results if "nachrichten-uebersicht.md" in str(r.file_path)
+            ]
+            self.assertEqual(len(overview_res), 1)
+            self.assertIn("Robocash Update Oktober", overview_res[0].item.content)
+
+    def test_run_provider_non_rss_aborts_cleanly_on_html_failure(self) -> None:
+        """Prüft, dass ein Provider ohne RSS bei HTML-Ausfall kontrolliert abbricht."""
+        from unittest.mock import MagicMock
+
+        import httpx
+
+        from p2p_news_scraper import (
+            BaseProvider,
+            P2PNewsScraper,
+            ScraperConfig,
+        )
+
+        class DummyHtmlProvider(BaseProvider):
+            name = "dummy-html"
+            base_url = "https://dummy.example.com"
+            rss_url = None
+            subpages: list[str] = []
+
+            def extract_links(
+                self, html_content: str, client: httpx.Client | None = None
+            ) -> list[str]:
+                return []
+
+            def classify_content_type(self, url: str) -> ContentType:
+                return ContentType.NEWS
+
+            def extract_platform_name(self, url: str) -> str | None:
+                return None
+
+            def generate_filename(self, item: ArticleItem) -> str:
+                return "dummy.md"
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            config = ScraperConfig(output_dir=Path(tmp_dir))
+            scraper = P2PNewsScraper(config=config)
+            provider = DummyHtmlProvider()
+
+            mock_client = MagicMock()
+            resp_fail = MagicMock()
+            resp_fail.status_code = 403
+            resp_fail.headers = {"content-type": "text/html"}
+            error = httpx.HTTPStatusError(
+                "403 Forbidden", request=MagicMock(), response=resp_fail
+            )
+            resp_fail.raise_for_status.side_effect = error
+            mock_client.get.return_value = resp_fail
+
+            results = scraper.run_provider(mock_client, provider)
+            self.assertEqual(results, [])
+
 
 if __name__ == "__main__":
     unittest.main()

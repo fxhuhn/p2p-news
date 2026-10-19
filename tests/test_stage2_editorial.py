@@ -730,6 +730,325 @@ class TestManifestAndLifecycle(unittest.TestCase):
             self.assertEqual(metrics["sentences_verified"], 5)
             self.assertEqual(target, draft_file)
 
+    def test_newsletter_generator_stale_draft_mtime_triggers_fresh_generation(
+        self,
+    ) -> None:
+        """Prüft, dass ein veralteter Entwurf (mtime < digest) ignoriert und frisch generiert wird."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp = Path(tmp_dir)
+            gen = NewsletterGenerator(data_dir=tmp, api_key="mock")
+
+            digests_dir = tmp / "digests"
+            digests_dir.mkdir(parents=True, exist_ok=True)
+            digest_file = digests_dir / "digest-2026-W40.json"
+            digest_file.write_text(
+                '{"schema_version": "2.2", "iso_week": "2026-W40", "clusters": []}',
+                encoding="utf-8",
+            )
+
+            drafts_dir = tmp / "newsletters" / "drafts"
+            drafts_dir.mkdir(parents=True, exist_ok=True)
+            draft_file = drafts_dir / "newsletter-2026-W40.draft.md"
+            draft_file.write_text(
+                "---\nverified_facts_count: 0\nverified_sentences_count: 1\n---\n# Veralteter Entwurf",
+                encoding="utf-8",
+            )
+
+            import os
+
+            # Setze Timestamp von draft_file künstlich VOR digest_file
+            os.utime(
+                draft_file,
+                (digest_file.stat().st_atime - 20, digest_file.stat().st_mtime - 20),
+            )
+
+            fact = ExtractedFact(
+                fact_id="f-01",
+                statement="Fakt 1",
+                evidence=[FactEvidence(item_id="i-01", evidence_quote="Quote 1")],
+                verified=True,
+            )
+            digest = WeeklyDigestSchema(
+                iso_week="2026-W40",
+                clusters=[
+                    TopicCluster(
+                        cluster_id="c-01",
+                        topic="allgemein",
+                        platforms=["test"],
+                        title="Titel",
+                        facts=[fact],
+                    )
+                ],
+            )
+
+            from unittest.mock import MagicMock
+
+            mock_client = MagicMock()
+            mock_resp = MagicMock()
+            mock_resp.text = json.dumps(
+                {
+                    "title": "Neuer Newsletter",
+                    "summary_lead": "Lead",
+                    "sections": [
+                        {
+                            "headline": "Head",
+                            "category": "cat",
+                            "platform_tags": ["test"],
+                            "sentences": [
+                                {
+                                    "text": "Frischer Satz.",
+                                    "fact_ids": ["f-01"],
+                                }
+                            ],
+                        }
+                    ],
+                }
+            )
+            mock_resp.model_version = "mock-model"
+            mock_resp.usage_metadata = None
+            mock_client.models.generate_content.return_value = mock_resp
+
+            target, metrics = gen.generate(
+                digest=digest,
+                is_publish=True,
+                is_approved=True,
+                custom_client=mock_client,
+            )
+            self.assertTrue(mock_client.models.generate_content.called)
+            self.assertTrue(target.exists())
+            self.assertFalse(draft_file.exists())
+
+    def test_newsletter_generator_stale_draft_facts_mismatch_triggers_fresh_generation(
+        self,
+    ) -> None:
+        """Prüft, dass ein Entwurf mit abweichender Faktenanzahl frisch generiert wird."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp = Path(tmp_dir)
+            gen = NewsletterGenerator(data_dir=tmp, api_key="mock")
+
+            digests_dir = tmp / "digests"
+            digests_dir.mkdir(parents=True, exist_ok=True)
+            digest_file = digests_dir / "digest-2026-W40.json"
+            digest_file.write_text(
+                '{"schema_version": "2.2", "iso_week": "2026-W40", "clusters": []}',
+                encoding="utf-8",
+            )
+
+            fact = ExtractedFact(
+                fact_id="f-01",
+                statement="Fakt 1",
+                evidence=[FactEvidence(item_id="i-01", evidence_quote="Quote 1")],
+                verified=True,
+            )
+            digest = WeeklyDigestSchema(
+                iso_week="2026-W40",
+                clusters=[
+                    TopicCluster(
+                        cluster_id="c-01",
+                        topic="allgemein",
+                        platforms=["test"],
+                        title="Titel",
+                        facts=[fact],
+                    )
+                ],
+            )
+
+            drafts_dir = tmp / "newsletters" / "drafts"
+            drafts_dir.mkdir(parents=True, exist_ok=True)
+            draft_file = drafts_dir / "newsletter-2026-W40.draft.md"
+            # Entwurf hat verified_facts_count: 5, Dossier hat aber nur 1 Fakt!
+            draft_file.write_text(
+                "---\nverified_facts_count: 5\nverified_sentences_count: 2\n---\n# Mismatch Entwurf",
+                encoding="utf-8",
+            )
+
+            import os
+
+            os.utime(
+                draft_file,
+                (
+                    digest_file.stat().st_atime + 10,
+                    digest_file.stat().st_mtime + 10,
+                ),
+            )
+
+            from unittest.mock import MagicMock
+
+            mock_client = MagicMock()
+            mock_resp = MagicMock()
+            mock_resp.text = json.dumps(
+                {
+                    "title": "Neuer Newsletter",
+                    "summary_lead": "Lead",
+                    "sections": [
+                        {
+                            "headline": "Head",
+                            "category": "cat",
+                            "platform_tags": ["test"],
+                            "sentences": [
+                                {
+                                    "text": "Frischer Satz.",
+                                    "fact_ids": ["f-01"],
+                                }
+                            ],
+                        }
+                    ],
+                }
+            )
+            mock_resp.model_version = "mock-model"
+            mock_resp.usage_metadata = None
+            mock_client.models.generate_content.return_value = mock_resp
+
+            target, metrics = gen.generate(
+                digest=digest,
+                is_publish=True,
+                is_approved=True,
+                custom_client=mock_client,
+            )
+            self.assertTrue(mock_client.models.generate_content.called)
+            self.assertTrue(target.exists())
+            self.assertFalse(draft_file.exists())
+
+    def test_newsletter_generator_ignore_draft_forces_fresh_generation(
+        self,
+    ) -> None:
+        """Prüft, dass ignore_draft=True immer eine frische Generierung erzwingt."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp = Path(tmp_dir)
+            gen = NewsletterGenerator(data_dir=tmp, api_key="mock")
+
+            digests_dir = tmp / "digests"
+            digests_dir.mkdir(parents=True, exist_ok=True)
+            digest_file = digests_dir / "digest-2026-W40.json"
+            digest_file.write_text(
+                '{"schema_version": "2.2", "iso_week": "2026-W40", "clusters": []}',
+                encoding="utf-8",
+            )
+
+            fact = ExtractedFact(
+                fact_id="f-01",
+                statement="Fakt 1",
+                evidence=[FactEvidence(item_id="i-01", evidence_quote="Quote 1")],
+                verified=True,
+            )
+            digest = WeeklyDigestSchema(
+                iso_week="2026-W40",
+                clusters=[
+                    TopicCluster(
+                        cluster_id="c-01",
+                        topic="allgemein",
+                        platforms=["test"],
+                        title="Titel",
+                        facts=[fact],
+                    )
+                ],
+            )
+
+            drafts_dir = tmp / "newsletters" / "drafts"
+            drafts_dir.mkdir(parents=True, exist_ok=True)
+            draft_file = drafts_dir / "newsletter-2026-W40.draft.md"
+            draft_file.write_text(
+                "---\nverified_facts_count: 1\nverified_sentences_count: 1\n---\n# Aktueller Entwurf",
+                encoding="utf-8",
+            )
+
+            import os
+
+            os.utime(
+                draft_file,
+                (
+                    digest_file.stat().st_atime + 10,
+                    digest_file.stat().st_mtime + 10,
+                ),
+            )
+
+            from unittest.mock import MagicMock
+
+            mock_client = MagicMock()
+            mock_resp = MagicMock()
+            mock_resp.text = json.dumps(
+                {
+                    "title": "Neuer Newsletter",
+                    "summary_lead": "Lead",
+                    "sections": [
+                        {
+                            "headline": "Head",
+                            "category": "cat",
+                            "platform_tags": ["test"],
+                            "sentences": [
+                                {
+                                    "text": "Frischer Satz.",
+                                    "fact_ids": ["f-01"],
+                                }
+                            ],
+                        }
+                    ],
+                }
+            )
+            mock_resp.model_version = "mock-model"
+            mock_resp.usage_metadata = None
+            mock_client.models.generate_content.return_value = mock_resp
+
+            target, metrics = gen.generate(
+                digest=digest,
+                is_publish=False,
+                is_approved=False,
+                ignore_draft=True,
+                custom_client=mock_client,
+            )
+            self.assertTrue(mock_client.models.generate_content.called)
+
+    def test_pipeline_orchestrator_removes_stale_draft_when_needs_digest(
+        self,
+    ) -> None:
+        """Prüft, dass pipeline_orchestrator einen bestehenden Entwurf löscht, wenn ein neues Fakten-Dossier erzeugt wird."""
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp = Path(tmp_dir)
+            from unittest.mock import MagicMock, patch
+
+            from pipeline_orchestrator import run_pipeline
+
+            drafts_dir = tmp / "newsletters" / "drafts"
+            drafts_dir.mkdir(parents=True, exist_ok=True)
+            draft_file = drafts_dir / "newsletter-2026-W40.draft.md"
+            draft_file.write_text("# Altes Draft", encoding="utf-8")
+            self.assertTrue(draft_file.exists())
+
+            digests_dir = tmp / "digests"
+            digests_dir.mkdir(parents=True, exist_ok=True)
+            dummy_digest = digests_dir / "digest-2026-W40.json"
+
+            with (
+                patch("pipeline_orchestrator.run_stage1_pipeline") as mock_stage1,
+                patch("pipeline_orchestrator.NewsletterGenerator") as mock_gen_cls,
+            ):
+
+                def fake_stage1(*args, **kwargs):
+                    dummy_digest.write_text(
+                        '{"schema_version": "2.2", "iso_week": "2026-W40", "clusters": []}',
+                        encoding="utf-8",
+                    )
+                    return None, dummy_digest, {"facts_verified": 0}
+
+                mock_stage1.side_effect = fake_stage1
+
+                mock_gen = MagicMock()
+                mock_gen.generate.return_value = (
+                    draft_file,
+                    {"sentences_verified": 0},
+                )
+                mock_gen_cls.return_value = mock_gen
+
+                ret = run_pipeline(
+                    week="2026-W40",
+                    data_dir=tmp,
+                    is_publish=False,
+                )
+                self.assertEqual(ret, 0)
+                self.assertFalse(draft_file.exists())
+                mock_gen.generate.assert_called_once()
+                self.assertTrue(mock_gen.generate.call_args[1].get("ignore_draft"))
+
 
 if __name__ == "__main__":
     unittest.main()

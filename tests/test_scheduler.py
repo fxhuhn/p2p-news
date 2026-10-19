@@ -87,7 +87,11 @@ def test_job_weekly_newsletter_success(mock_run_pipeline: MagicMock) -> None:
     result = scheduler.job_weekly_newsletter()
     assert result is True
     mock_run_pipeline.assert_called_once_with(
-        data_dir="data", do_scrape=True, is_publish=True, is_approved=True
+        data_dir="data",
+        do_scrape=True,
+        is_publish=True,
+        is_approved=True,
+        ignore_draft=True,
     )
 
 
@@ -129,6 +133,7 @@ def test_job_weekly_newsletter_forced(mock_run_pipeline: MagicMock) -> None:
         is_publish=True,
         is_approved=True,
         force_revision=True,
+        ignore_draft=True,
     )
 
 
