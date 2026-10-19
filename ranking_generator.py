@@ -183,8 +183,8 @@ class RankingGenerator:
                 "- **Passives Einkommen:** P2P-Rating (0 - 40 Punkte) von Lars Wrobbel",
                 "- **P2P Dash:** Community Trust Score (0 - 100) & Median-XIRR p.a. (> 2.000 Investoren, Tim Rottmann)",
                 "",
-                "| Plattform | Unser Netto-Score | Risikoklasse | re:think P2P (0-10) | P2P Game (0-100) | P2P Empire (0-10) | Lars Wrobbel (0-40) | P2P Dash (0-100) |",
-                "| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |",
+                "| Plattform | Unser Netto-Score | Risikoklasse | re:think P2P (0-10) | P2P Game (0-100) | P2P Empire (0-10) | Lars Wrobbel (0-40) | P2P Dash Score (0-100) | P2P Dash XIRR |",
+                "| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |",
             ]
         )
 
@@ -233,16 +233,12 @@ class RankingGenerator:
             # p2pdash
             d_score = bench.get("p2pdash_community_score")
             d_xirr = bench.get("p2pdash_median_xirr")
-            if d_score is not None:
-                d_str = f"**{d_score}**"
-                if d_xirr is not None:
-                    d_str += f" ({d_xirr} %)"
-            else:
-                d_str = "-"
+            d_score_str = f"**{d_score}**" if d_score is not None else "-"
+            d_xirr_str = f"{d_xirr} %" if d_xirr is not None else "-"
 
             fs_link = f"[{plat.capitalize()}](../factsheets/{plat}.md)"
             lines.append(
-                f"| {fs_link} | **{s['net_score']}** | `{s['risk_class']}` | {r_str} | {g_str} | {e_str} | {w_str} | {d_str} |"
+                f"| {fs_link} | **{s['net_score']}** | `{s['risk_class']}` | {r_str} | {g_str} | {e_str} | {w_str} | {d_score_str} | {d_xirr_str} |"
             )
 
         lines.append("")
