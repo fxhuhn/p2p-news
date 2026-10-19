@@ -4,12 +4,12 @@ platform_name: Robocash
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 60
-  raw_score: 68
-  risk_class: MID RISK
-  portfolio_limit: 5 - 8 %
-  recommendation: 'Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite
-    oder Monokulturen.'
+  net_score: 56
+  raw_score: 66
+  risk_class: WATCHLIST
+  portfolio_limit: 0 - 3 %
+  recommendation: 'Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende
+    Testate oder Governance-Risse.'
 flags:
   has_conflict: false
   conflict_notes: []
@@ -45,7 +45,7 @@ pillars:
     evidence: Mutterkonzern UnaFinancial profitabel, jedoch Klumpen in volatilen Schwellenländern
       und historische Russland-Wurzeln.
   pillar_3_collateral:
-    score: 16
+    score: 14
     max_score: 25
     band: Band_8_14
     rating: Unbesichert mit Buyback
@@ -58,10 +58,11 @@ pillars:
     evidence: Sehr hohe Liquidität durch 30-Tage-Kurzläufer und gebührenfreien Sekundärmarkt.
 malus_deductions:
 - type: monoculture
-  name: Monokultur-Malus
-  penalty: -8
-  trigger: UnaFinancial Holding stellt 100.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern.'
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -10
+  trigger: UnaFinancial Holding stellt 100.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 sources:
 - source_type: curated_profile
   path: data/platforms/robocash/profile.yaml
@@ -71,13 +72,13 @@ sources:
 
 # Platform Audit Factsheet: Robocash
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
+**Audit-Datum:** 2026-10-19 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **60 / 100 Punkte** (Rohscore: 68 Pkt | Malus-Abschläge: -8 Pkt)
-> **Allokationsempfehlung:** Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite oder Monokulturen.
+> **Finaler Netto-Score:** **56 / 100 Punkte** (Rohscore: 66 Pkt | Malus-Abschläge: -10 Pkt)
+> **Allokationsempfehlung:** Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende Testate oder Governance-Risse.
 
 ## 2. Aufschlüsselung der 4 Säulen
 
@@ -85,15 +86,15 @@ sources:
 | :--- | :--- | :---: | :--- | :--- |
 | **Säule 1** | Regulierung & Verwahrung | **8 / 25** | Unreguliert (Abtretungsverträge) | Unreguliert über Kroatien operierend. |
 | **Säule 2** | Solvenz & Governance | **20 / 25** | Sehr gut / Testiert | Mutterkonzern UnaFinancial profitabel, jedoch Klumpen in volatilen Schwellenländern und historische Russland-Wurzeln. |
-| **Säule 3** | Besicherung & Workout | **16 / 25** | Unbesichert mit Buyback | 0 % historischer Kapitalverlust für Anleger; 30-Tage Rückkauffrist. |
+| **Säule 3** | Besicherung & Workout | **14 / 25** | Unbesichert mit Buyback | 0 % historischer Kapitalverlust für Anleger; 30-Tage Rückkauffrist. |
 | **Säule 4** | Liquidität & Zweitmarkt | **24 / 25** | Sehr liquide / Kurzläufer & Zweitmarkt | Sehr hohe Liquidität durch 30-Tage-Kurzläufer und gebührenfreien Sekundärmarkt. |
-| **SUMME** | **Rohscore (vor Mali)** | **68 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **SUMME** | **Rohscore (vor Mali)** | **66 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-8 Pkt` | UnaFinancial Holding stellt 100.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern. |
+| **Klumpen- & Konzentrations-Malus** | `-10 Pkt` | UnaFinancial Holding stellt 100.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

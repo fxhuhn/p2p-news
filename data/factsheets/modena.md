@@ -4,7 +4,7 @@ platform_name: Modena
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 53
+  net_score: 51
   raw_score: 61
   risk_class: WATCHLIST
   portfolio_limit: 0 - 3 %
@@ -57,10 +57,11 @@ pillars:
     evidence: Kein Sekundärmarkt, planbare monatliche Leasing- und Tilgungsraten.
 malus_deductions:
 - type: monoculture
-  name: Monokultur-Malus
-  penalty: -8
-  trigger: Modena Mobility OÜ stellt 100.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern.'
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -10
+  trigger: Modena Mobility OÜ stellt 100.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 sources:
 - source_type: curated_profile
   path: data/platforms/modena/profile.yaml
@@ -75,7 +76,7 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **53 / 100 Punkte** (Rohscore: 61 Pkt | Malus-Abschläge: -8 Pkt)
+> **Finaler Netto-Score:** **51 / 100 Punkte** (Rohscore: 61 Pkt | Malus-Abschläge: -10 Pkt)
 > **Allokationsempfehlung:** Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende Testate oder Governance-Risse.
 
 ## 2. Aufschlüsselung der 4 Säulen
@@ -92,7 +93,7 @@ sources:
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-8 Pkt` | Modena Mobility OÜ stellt 100.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern. |
+| **Klumpen- & Konzentrations-Malus** | `-10 Pkt` | Modena Mobility OÜ stellt 100.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

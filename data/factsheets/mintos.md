@@ -4,7 +4,7 @@ platform_name: Mintos
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 78
+  net_score: 75
   raw_score: 78
   risk_class: TOP TIER
   portfolio_limit: 8 - 15 %
@@ -58,7 +58,12 @@ pillars:
     rating: Sehr liquide / Kurzläufer & Zweitmarkt
     evidence: Höchste Marktplatz-Liquidität in Europa mit hochaktivem Sekundärmarkt
       (0,85 % Gebühr).
-malus_deductions: []
+malus_deductions:
+- type: cashflow_drag
+  name: Cashflow- & Verzugs-Malus
+  penalty: -3
+  trigger: Laufende Verzugs-/NPL-Quote von 8.0 % (>=5 %)
+  evidence: Cash Drag durch 8.0 % überfällige Kredite im Portfolio.
 sources:
 - source_type: curated_profile
   path: data/platforms/mintos/profile.yaml
@@ -73,7 +78,7 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **78 / 100 Punkte** (Rohscore: 78 Pkt | Malus-Abschläge: 0 Pkt)
+> **Finaler Netto-Score:** **75 / 100 Punkte** (Rohscore: 78 Pkt | Malus-Abschläge: -3 Pkt)
 > **Allokationsempfehlung:** Kerninvestment: 1st-Rank Hypotheken, segregierte Treuhandkonten, 0 % Verlusthistorie.
 
 ## 2. Aufschlüsselung der 4 Säulen
@@ -88,7 +93,9 @@ sources:
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
-Keine Malus-Abschläge wirksam. Das Portfolio weist weder unzulässige Monokulturen (>50 %), noch Fristen-Mismatches oder Governance-Opazität auf.
+| Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
+| :--- | :---: | :--- | :--- |
+| **Cashflow- & Verzugs-Malus** | `-3 Pkt` | Laufende Verzugs-/NPL-Quote von 8.0 % (>=5 %) | Cash Drag durch 8.0 % überfällige Kredite im Portfolio. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

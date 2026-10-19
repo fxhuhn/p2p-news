@@ -4,7 +4,7 @@ platform_name: Asterra Estate
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 13
+  net_score: 5
   raw_score: 19
   risk_class: DISTRESSED
   portfolio_limit: 0 % (Kapitalabzug & Recovery)
@@ -14,10 +14,11 @@ flags:
   has_conflict: true
   conflict_notes:
   - Unklare Regulierung und fehlende Nachweise für Treuhandsegregierung
+  - 'NPL-Diskrepanz: Profil weist 12.0 % NPL aus, Benchmark-Performance indiziert
+    30.0 % Rückstand.'
   data_gaps:
   - Keine unabhängig testierten Finanzberichte auffindbar (Säule 2 auf Minimalwert
     gesetzt).
-  - Fehlende Publizität von Betreiberfinanzen und Verwertungsnachweisen
 evidence_metadata:
   sourcing_strategy: curated_profile_and_secondary_audits
   primary_crawled_pages: 4
@@ -64,10 +65,16 @@ pillars:
     evidence: Kein Sekundärmarkt; Kapital ist vollständig bis Projektende gebunden.
 malus_deductions:
 - type: monoculture
-  name: Monokultur-Malus
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -8
+  trigger: Lokale Bauträger-Partner stellt 85.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 85.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
+- type: cashflow_drag
+  name: Cashflow- & Verzugs-Malus
   penalty: -6
-  trigger: Lokale Bauträger-Partner stellt 85.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 85.0 % Abhängigkeit von einem Garantiekonzern.'
+  trigger: Laufende Verzugs-/NPL-Quote von 12.0 % (>=5 %)
+  evidence: Cash Drag durch 12.0 % überfällige Kredite im Portfolio.
 sources:
 - source_type: curated_profile
   path: data/platforms/asterra/profile.yaml
@@ -82,17 +89,17 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **13 / 100 Punkte** (Rohscore: 19 Pkt | Malus-Abschläge: -6 Pkt)
+> **Finaler Netto-Score:** **5 / 100 Punkte** (Rohscore: 19 Pkt | Malus-Abschläge: -14 Pkt)
 > **Allokationsempfehlung:** Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte Zweitmärkte, Moratorien.
 
 > [!WARNING]
 > **Achtung - Widersprüchliche Angaben identifiziert:**
 > • Unklare Regulierung und fehlende Nachweise für Treuhandsegregierung
+> • NPL-Diskrepanz: Profil weist 12.0 % NPL aus, Benchmark-Performance indiziert 30.0 % Rückstand.
 
 > [!NOTE]
 > **Vorsichtsprinzip bei Datenlücken aktiv:**
 > • Keine unabhängig testierten Finanzberichte auffindbar (Säule 2 auf Minimalwert gesetzt).
-> • Fehlende Publizität von Betreiberfinanzen und Verwertungsnachweisen
 
 ## 2. Aufschlüsselung der 4 Säulen
 
@@ -108,7 +115,8 @@ sources:
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-6 Pkt` | Lokale Bauträger-Partner stellt 85.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 85.0 % Abhängigkeit von einem Garantiekonzern. |
+| **Klumpen- & Konzentrations-Malus** | `-8 Pkt` | Lokale Bauträger-Partner stellt 85.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 85.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
+| **Cashflow- & Verzugs-Malus** | `-6 Pkt` | Laufende Verzugs-/NPL-Quote von 12.0 % (>=5 %) | Cash Drag durch 12.0 % überfällige Kredite im Portfolio. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

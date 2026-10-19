@@ -4,19 +4,20 @@ platform_name: Stockestate
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 54
+  net_score: 48
   raw_score: 54
-  risk_class: WATCHLIST
-  portfolio_limit: 0 - 3 %
-  recommendation: 'Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende
-    Testate oder Governance-Risse.'
+  risk_class: SPECULATIVE
+  portfolio_limit: 0 % (Neuanlage-Stopp)
+  recommendation: 'Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen
+    oder Pending Payments.'
 flags:
-  has_conflict: false
-  conflict_notes: []
+  has_conflict: true
+  conflict_notes:
+  - 'NPL-Diskrepanz: Profil weist 6.0 % NPL aus, Benchmark-Performance indiziert 20.0
+    % Rückstand.'
   data_gaps:
   - Keine unabhängig testierten Finanzberichte auffindbar (Säule 2 auf Minimalwert
     gesetzt).
-  - Unabhängige Bilanzen der Betreibergesellschaft nicht öffentlich einsehbar
 evidence_metadata:
   sourcing_strategy: curated_profile_and_secondary_audits
   primary_crawled_pages: 4
@@ -62,7 +63,18 @@ pillars:
     rating: Illiquide / Langläufer ohne Zweitmarkt
     evidence: Kein Sekundärmarkt vorhanden; Kapitalbindung über 12 bis 24 Monate bis
       Projektabschluss.
-malus_deductions: []
+malus_deductions:
+- type: monoculture
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -3
+  trigger: Lokale Bauträger stellt 45.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 45.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
+- type: cashflow_drag
+  name: Cashflow- & Verzugs-Malus
+  penalty: -3
+  trigger: Laufende Verzugs-/NPL-Quote von 6.0 % (>=5 %)
+  evidence: Cash Drag durch 6.0 % überfällige Kredite im Portfolio.
 sources:
 - source_type: curated_profile
   path: data/platforms/stockestate/profile.yaml
@@ -72,18 +84,21 @@ sources:
 
 # Platform Audit Factsheet: Stockestate
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
+**Audit-Datum:** 2026-10-19 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **54 / 100 Punkte** (Rohscore: 54 Pkt | Malus-Abschläge: 0 Pkt)
-> **Allokationsempfehlung:** Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende Testate oder Governance-Risse.
+> **Finaler Netto-Score:** **48 / 100 Punkte** (Rohscore: 54 Pkt | Malus-Abschläge: -6 Pkt)
+> **Allokationsempfehlung:** Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen oder Pending Payments.
+
+> [!WARNING]
+> **Achtung - Widersprüchliche Angaben identifiziert:**
+> • NPL-Diskrepanz: Profil weist 6.0 % NPL aus, Benchmark-Performance indiziert 20.0 % Rückstand.
 
 > [!NOTE]
 > **Vorsichtsprinzip bei Datenlücken aktiv:**
 > • Keine unabhängig testierten Finanzberichte auffindbar (Säule 2 auf Minimalwert gesetzt).
-> • Unabhängige Bilanzen der Betreibergesellschaft nicht öffentlich einsehbar
 
 ## 2. Aufschlüsselung der 4 Säulen
 
@@ -97,7 +112,10 @@ sources:
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
-Keine Malus-Abschläge wirksam. Das Portfolio weist weder unzulässige Monokulturen (>50 %), noch Fristen-Mismatches oder Governance-Opazität auf.
+| Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
+| :--- | :---: | :--- | :--- |
+| **Klumpen- & Konzentrations-Malus** | `-3 Pkt` | Lokale Bauträger stellt 45.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 45.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
+| **Cashflow- & Verzugs-Malus** | `-3 Pkt` | Laufende Verzugs-/NPL-Quote von 6.0 % (>=5 %) | Cash Drag durch 6.0 % überfällige Kredite im Portfolio. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

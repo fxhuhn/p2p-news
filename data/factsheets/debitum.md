@@ -4,15 +4,17 @@ platform_name: Debitum Investments
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 61
+  net_score: 55
   raw_score: 66
-  risk_class: MID RISK
-  portfolio_limit: 5 - 8 %
-  recommendation: 'Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite
-    oder Monokulturen.'
+  risk_class: WATCHLIST
+  portfolio_limit: 0 - 3 %
+  recommendation: 'Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende
+    Testate oder Governance-Risse.'
 flags:
-  has_conflict: false
-  conflict_notes: []
+  has_conflict: true
+  conflict_notes:
+  - 'NPL-Diskrepanz: Profil weist 8.5 % NPL aus, Benchmark-Performance indiziert 15.0
+    % Rückstand.'
   data_gaps: []
 evidence_metadata:
   sourcing_strategy: curated_profile_and_secondary_audits
@@ -57,6 +59,12 @@ pillars:
     rating: Planbare Tilgung
     evidence: Kein Sekundärmarkt vorhanden. Kapital über 6 bis 60 Monate gebunden.
 malus_deductions:
+- type: monoculture
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -3
+  trigger: Hauptkreditgeber stellt 45.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 45.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 - type: related_party
   name: Related-Party- & Opazitäts-Malus
   penalty: -5
@@ -64,6 +72,11 @@ malus_deductions:
     Transaktionen; aufsichtsrechtlich durch Latvijas Banka überwacht.'
   evidence: 'LFDF-Konstrukt: Verflechtungen im Gesellschafterkreis und konzerninterne
     Transaktionen; aufsichtsrechtlich durch Latvijas Banka überwacht.'
+- type: cashflow_drag
+  name: Cashflow- & Verzugs-Malus
+  penalty: -3
+  trigger: Laufende Verzugs-/NPL-Quote von 8.5 % (>=5 %)
+  evidence: Cash Drag durch 8.5 % überfällige Kredite im Portfolio.
 sources:
 - source_type: curated_profile
   path: data/platforms/debitum/profile.yaml
@@ -73,13 +86,17 @@ sources:
 
 # Platform Audit Factsheet: Debitum Investments
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
+**Audit-Datum:** 2026-10-19 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **61 / 100 Punkte** (Rohscore: 66 Pkt | Malus-Abschläge: -5 Pkt)
-> **Allokationsempfehlung:** Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite oder Monokulturen.
+> **Finaler Netto-Score:** **55 / 100 Punkte** (Rohscore: 66 Pkt | Malus-Abschläge: -11 Pkt)
+> **Allokationsempfehlung:** Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende Testate oder Governance-Risse.
+
+> [!WARNING]
+> **Achtung - Widersprüchliche Angaben identifiziert:**
+> • NPL-Diskrepanz: Profil weist 8.5 % NPL aus, Benchmark-Performance indiziert 15.0 % Rückstand.
 
 ## 2. Aufschlüsselung der 4 Säulen
 
@@ -95,7 +112,9 @@ sources:
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
+| **Klumpen- & Konzentrations-Malus** | `-3 Pkt` | Hauptkreditgeber stellt 45.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 45.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 | **Related-Party- & Opazitäts-Malus** | `-5 Pkt` | LFDF-Konstrukt: Verflechtungen im Gesellschafterkreis und konzerninterne Transaktionen; aufsichtsrechtlich durch Latvijas Banka überwacht. | LFDF-Konstrukt: Verflechtungen im Gesellschafterkreis und konzerninterne Transaktionen; aufsichtsrechtlich durch Latvijas Banka überwacht. |
+| **Cashflow- & Verzugs-Malus** | `-3 Pkt` | Laufende Verzugs-/NPL-Quote von 8.5 % (>=5 %) | Cash Drag durch 8.5 % überfällige Kredite im Portfolio. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

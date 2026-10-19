@@ -193,6 +193,7 @@ MalusType = Literal[
     "related_party",
     "distressed",
     "marketplace_originator_risk",
+    "cashflow_drag",
 ]
 
 

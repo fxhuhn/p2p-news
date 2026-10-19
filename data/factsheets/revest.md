@@ -4,12 +4,12 @@ platform_name: Revest
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 51
+  net_score: 49
   raw_score: 57
-  risk_class: WATCHLIST
-  portfolio_limit: 0 - 3 %
-  recommendation: 'Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende
-    Testate oder Governance-Risse.'
+  risk_class: SPECULATIVE
+  portfolio_limit: 0 % (Neuanlage-Stopp)
+  recommendation: 'Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen
+    oder Pending Payments.'
 flags:
   has_conflict: false
   conflict_notes: []
@@ -57,10 +57,11 @@ pillars:
     evidence: Kein Sekundärmarkt, Kapital bis zur Projektfertigstellung gebunden.
 malus_deductions:
 - type: monoculture
-  name: Monokultur-Malus
-  penalty: -6
-  trigger: Revest Group stellt 80.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 80.0 % Abhängigkeit von einem Garantiekonzern.'
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -8
+  trigger: Revest Group stellt 80.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 80.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 sources:
 - source_type: curated_profile
   path: data/platforms/revest/profile.yaml
@@ -70,13 +71,13 @@ sources:
 
 # Platform Audit Factsheet: Revest
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
+**Audit-Datum:** 2026-10-19 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **51 / 100 Punkte** (Rohscore: 57 Pkt | Malus-Abschläge: -6 Pkt)
-> **Allokationsempfehlung:** Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende Testate oder Governance-Risse.
+> **Finaler Netto-Score:** **49 / 100 Punkte** (Rohscore: 57 Pkt | Malus-Abschläge: -8 Pkt)
+> **Allokationsempfehlung:** Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen oder Pending Payments.
 
 ## 2. Aufschlüsselung der 4 Säulen
 
@@ -92,7 +93,7 @@ sources:
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-6 Pkt` | Revest Group stellt 80.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 80.0 % Abhängigkeit von einem Garantiekonzern. |
+| **Klumpen- & Konzentrations-Malus** | `-8 Pkt` | Revest Group stellt 80.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 80.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

@@ -4,15 +4,17 @@ platform_name: Monefit SmartSaver
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 54
+  net_score: 38
   raw_score: 59
-  risk_class: WATCHLIST
-  portfolio_limit: 0 - 3 %
-  recommendation: 'Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende
-    Testate oder Governance-Risse.'
+  risk_class: DISTRESSED
+  portfolio_limit: 0 % (Kapitalabzug & Recovery)
+  recommendation: 'Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte
+    Zweitmärkte, Moratorien.'
 flags:
-  has_conflict: false
-  conflict_notes: []
+  has_conflict: true
+  conflict_notes:
+  - 'NPL-Diskrepanz: Profil weist 12.0 % NPL aus, Benchmark-Performance indiziert
+    30.0 % Rückstand.'
   data_gaps: []
 evidence_metadata:
   sourcing_strategy: curated_profile_and_secondary_audits
@@ -61,6 +63,12 @@ pillars:
     evidence: SmartSaver Flex bietet im regulären Betrieb tägliche Liquidität (1-3
       Werktage Auszahlungsdauer); bisher unterbrechungsfreie Bedienung von Abhebungen.
 malus_deductions:
+- type: monoculture
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -10
+  trigger: Direktbilanz-Darlehen ohne Realsicherheit oder Verlustpuffer (100 % Klumpen)
+  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 - type: term_mismatch
   name: Fristen-Mismatch-Malus
   penalty: -5
@@ -68,6 +76,11 @@ malus_deductions:
     Kreditlinien und Konsumentendarlehen (asymmetrische Fristentransformation).
   evidence: Tägliche Verfügbarkeit im SmartSaver Flex trifft auf mehrmonatige bis
     mehrjährige Kreditlinien und Konsumentendarlehen (asymmetrische Fristentransformation).
+- type: cashflow_drag
+  name: Cashflow- & Verzugs-Malus
+  penalty: -6
+  trigger: Laufende Verzugs-/NPL-Quote von 12.0 % (>=5 %)
+  evidence: Cash Drag durch 12.0 % überfällige Kredite im Portfolio.
 sources:
 - source_type: curated_profile
   path: data/platforms/monefit/profile.yaml
@@ -77,13 +90,17 @@ sources:
 
 # Platform Audit Factsheet: Monefit SmartSaver
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
+**Audit-Datum:** 2026-10-19 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **54 / 100 Punkte** (Rohscore: 59 Pkt | Malus-Abschläge: -5 Pkt)
-> **Allokationsempfehlung:** Taktische Position unter Vorbehalt: Schwächen bei LTV, fehlende Testate oder Governance-Risse.
+> **Finaler Netto-Score:** **38 / 100 Punkte** (Rohscore: 59 Pkt | Malus-Abschläge: -21 Pkt)
+> **Allokationsempfehlung:** Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte Zweitmärkte, Moratorien.
+
+> [!WARNING]
+> **Achtung - Widersprüchliche Angaben identifiziert:**
+> • NPL-Diskrepanz: Profil weist 12.0 % NPL aus, Benchmark-Performance indiziert 30.0 % Rückstand.
 
 ## 2. Aufschlüsselung der 4 Säulen
 
@@ -99,7 +116,9 @@ sources:
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
+| **Klumpen- & Konzentrations-Malus** | `-10 Pkt` | Direktbilanz-Darlehen ohne Realsicherheit oder Verlustpuffer (100 % Klumpen) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 | **Fristen-Mismatch-Malus** | `-5 Pkt` | Tägliche Verfügbarkeit im SmartSaver Flex trifft auf mehrmonatige bis mehrjährige Kreditlinien und Konsumentendarlehen (asymmetrische Fristentransformation). | Tägliche Verfügbarkeit im SmartSaver Flex trifft auf mehrmonatige bis mehrjährige Kreditlinien und Konsumentendarlehen (asymmetrische Fristentransformation). |
+| **Cashflow- & Verzugs-Malus** | `-6 Pkt` | Laufende Verzugs-/NPL-Quote von 12.0 % (>=5 %) | Cash Drag durch 12.0 % überfällige Kredite im Portfolio. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

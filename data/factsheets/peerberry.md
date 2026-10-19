@@ -4,8 +4,8 @@ platform_name: PeerBerry
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 65
-  raw_score: 71
+  net_score: 61
+  raw_score: 69
   risk_class: MID RISK
   portfolio_limit: 5 - 8 %
   recommendation: 'Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite
@@ -48,7 +48,7 @@ pillars:
       übersteigt 155 Mio. € bei 120.000 Investoren (91 % Loyalty-Konzentration). 100
       % Rückzahlung aller Kriegs-Kredite centgenau aus Konzerngewinnen.
   pillar_3_collateral:
-    score: 17
+    score: 15
     max_score: 25
     band: Band_8_14
     rating: Unbesichert mit Buyback
@@ -65,10 +65,11 @@ pillars:
       Mindesthaltedauer.
 malus_deductions:
 - type: monoculture
-  name: Monokultur-Malus
-  penalty: -6
-  trigger: Aventus Group stellt 88.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 88.0 % Abhängigkeit von einem Garantiekonzern.'
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -8
+  trigger: Aventus Group stellt 88.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 88.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 sources:
 - source_type: curated_profile
   path: data/platforms/peerberry/profile.yaml
@@ -83,7 +84,7 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **65 / 100 Punkte** (Rohscore: 71 Pkt | Malus-Abschläge: -6 Pkt)
+> **Finaler Netto-Score:** **61 / 100 Punkte** (Rohscore: 69 Pkt | Malus-Abschläge: -8 Pkt)
 > **Allokationsempfehlung:** Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite oder Monokulturen.
 
 ## 2. Aufschlüsselung der 4 Säulen
@@ -92,15 +93,15 @@ sources:
 | :--- | :--- | :---: | :--- | :--- |
 | **Säule 1** | Regulierung & Verwahrung | **8 / 25** | Unreguliert (Abtretungsverträge) | Unreguliert über Kroatien/Litauen, aber getrennt geführte Bankkonten. Keine gesetzliche Anlegerentschädigung. |
 | **Säule 2** | Solvenz & Governance | **22 / 25** | Sehr gut / Testiert | Wirtschaftlich getragen durch hochprofitable Aventus Group (H1 2026 Nettogewinn 49,1 Mio. €, Eigenkapital 264,2 Mio. €). Ausstehendes Portfolio übersteigt 155 Mio. € bei 120.000 Investoren (91 % Loyalty-Konzentration). 100 % Rückzahlung aller Kriegs-Kredite centgenau aus Konzerngewinnen. |
-| **Säule 3** | Besicherung & Workout | **17 / 25** | Unbesichert mit Buyback | 0 % realisierter Kapitalverlust seit Launch 2017. 100 % Rückzahlung aller kriegsbetroffenen Kredite (über 50 Mio. €) aus operativen Konzerngewinnen der Aventus Group. |
+| **Säule 3** | Besicherung & Workout | **15 / 25** | Unbesichert mit Buyback | 0 % realisierter Kapitalverlust seit Launch 2017. 100 % Rückzahlung aller kriegsbetroffenen Kredite (über 50 Mio. €) aus operativen Konzerngewinnen der Aventus Group. |
 | **Säule 4** | Liquidität & Zweitmarkt | **24 / 25** | Sehr liquide / Kurzläufer & Zweitmarkt | Sehr kurze originäre Kreditlaufzeiten (>70 % unter 60 Tagen, Ø 30 Tage) kombiniert mit seit 15. Januar 2026 aktivem, gebührenfreiem Sekundärmarkt ohne Mindesthaltedauer. |
-| **SUMME** | **Rohscore (vor Mali)** | **71 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **SUMME** | **Rohscore (vor Mali)** | **69 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-6 Pkt` | Aventus Group stellt 88.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 88.0 % Abhängigkeit von einem Garantiekonzern. |
+| **Klumpen- & Konzentrations-Malus** | `-8 Pkt` | Aventus Group stellt 88.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 88.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

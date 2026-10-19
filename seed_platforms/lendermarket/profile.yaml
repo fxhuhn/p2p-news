@@ -29,12 +29,12 @@ collateral_and_workout:
   notes: Rückkaufgarantie wurde in der Vergangenheit wiederholt ausgesetzt oder verzögert
     bedient.
 liquidity_and_marketplace:
-  secondary_market: false
-  secondary_market_fee_pct: null
-  secondary_market_waiting_days: null
+  secondary_market: true
+  secondary_market_fee_pct: 0.0
+  secondary_market_waiting_days: 180
   primary_loan_duration_days_avg: 360
-  withdrawal_queue_days: 14
-  notes: Kein Sekundärmarkt; erhebliche Auszahlungsverzögerungen bei fälligen Geldern.
+  withdrawal_queue_days: 0
+  notes: Sekundärmarkt vorhanden mit 180 Tagen Haltedauer; Auszahlungsstau bei fälligen Krediten (Pending Payments).
 malus_triggers:
   monoculture_pct: 65.0
   monoculture_originator: Creditstar Group AS

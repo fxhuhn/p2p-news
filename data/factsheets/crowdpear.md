@@ -11,8 +11,10 @@ audit_score:
   recommendation: 'Kerninvestment: 1st-Rank Hypotheken, segregierte Treuhandkonten,
     0 % Verlusthistorie.'
 flags:
-  has_conflict: false
-  conflict_notes: []
+  has_conflict: true
+  conflict_notes:
+  - 'NPL-Diskrepanz: Profil weist 2.5 % NPL aus, Benchmark-Performance indiziert 9.9
+    % Rückstand.'
   data_gaps: []
 evidence_metadata:
   sourcing_strategy: curated_profile_and_secondary_audits
@@ -73,6 +75,10 @@ sources:
 > [!IMPORTANT]
 > **Finaler Netto-Score:** **86 / 100 Punkte** (Rohscore: 86 Pkt | Malus-Abschläge: 0 Pkt)
 > **Allokationsempfehlung:** Kerninvestment: 1st-Rank Hypotheken, segregierte Treuhandkonten, 0 % Verlusthistorie.
+
+> [!WARNING]
+> **Achtung - Widersprüchliche Angaben identifiziert:**
+> • NPL-Diskrepanz: Profil weist 2.5 % NPL aus, Benchmark-Performance indiziert 9.9 % Rückstand.
 
 ## 2. Aufschlüsselung der 4 Säulen
 

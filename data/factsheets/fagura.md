@@ -4,17 +4,18 @@ platform_name: Fagura
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 71
+  net_score: 68
   raw_score: 71
-  risk_class: TOP TIER
-  portfolio_limit: 8 - 15 %
-  recommendation: 'Kerninvestment: 1st-Rank Hypotheken, segregierte Treuhandkonten,
-    0 % Verlusthistorie.'
+  risk_class: MID RISK
+  portfolio_limit: 5 - 8 %
+  recommendation: 'Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite
+    oder Monokulturen.'
 flags:
-  has_conflict: false
-  conflict_notes: []
-  data_gaps:
-  - Langfristige Ausfallraten nach Ausweitung auf Rumänien noch in Konsolidierung
+  has_conflict: true
+  conflict_notes:
+  - 'NPL-Diskrepanz: Profil weist 8.0 % NPL aus, Benchmark-Performance indiziert 15.0
+    % Rückstand.'
+  data_gaps: []
 evidence_metadata:
   sourcing_strategy: curated_profile_and_secondary_audits
   primary_crawled_pages: 4
@@ -60,7 +61,12 @@ pillars:
     rating: Gute Liquidität
     evidence: Funktionierender Sekundärmarkt vorhanden; Laufzeiten der Kredite betragen
       12 bis 36 Monate.
-malus_deductions: []
+malus_deductions:
+- type: cashflow_drag
+  name: Cashflow- & Verzugs-Malus
+  penalty: -3
+  trigger: Laufende Verzugs-/NPL-Quote von 8.0 % (>=5 %)
+  evidence: Cash Drag durch 8.0 % überfällige Kredite im Portfolio.
 sources:
 - source_type: curated_profile
   path: data/platforms/fagura/profile.yaml
@@ -70,17 +76,17 @@ sources:
 
 # Platform Audit Factsheet: Fagura
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `TOP TIER` | **Depot-Limit:** `8 - 15 %`
+**Audit-Datum:** 2026-10-19 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **71 / 100 Punkte** (Rohscore: 71 Pkt | Malus-Abschläge: 0 Pkt)
-> **Allokationsempfehlung:** Kerninvestment: 1st-Rank Hypotheken, segregierte Treuhandkonten, 0 % Verlusthistorie.
+> **Finaler Netto-Score:** **68 / 100 Punkte** (Rohscore: 71 Pkt | Malus-Abschläge: -3 Pkt)
+> **Allokationsempfehlung:** Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite oder Monokulturen.
 
-> [!NOTE]
-> **Vorsichtsprinzip bei Datenlücken aktiv:**
-> • Langfristige Ausfallraten nach Ausweitung auf Rumänien noch in Konsolidierung
+> [!WARNING]
+> **Achtung - Widersprüchliche Angaben identifiziert:**
+> • NPL-Diskrepanz: Profil weist 8.0 % NPL aus, Benchmark-Performance indiziert 15.0 % Rückstand.
 
 ## 2. Aufschlüsselung der 4 Säulen
 
@@ -94,7 +100,9 @@ sources:
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
-Keine Malus-Abschläge wirksam. Das Portfolio weist weder unzulässige Monokulturen (>50 %), noch Fristen-Mismatches oder Governance-Opazität auf.
+| Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
+| :--- | :---: | :--- | :--- |
+| **Cashflow- & Verzugs-Malus** | `-3 Pkt` | Laufende Verzugs-/NPL-Quote von 8.0 % (>=5 %) | Cash Drag durch 8.0 % überfällige Kredite im Portfolio. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

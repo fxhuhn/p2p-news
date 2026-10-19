@@ -11,8 +11,10 @@ audit_score:
   recommendation: 'Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen
     oder Pending Payments.'
 flags:
-  has_conflict: false
-  conflict_notes: []
+  has_conflict: true
+  conflict_notes:
+  - 'NPL-Diskrepanz: Profil weist 15.0 % NPL aus, Benchmark-Performance indiziert
+    35.0 % Rückstand.'
   data_gaps: []
 evidence_metadata:
   sourcing_strategy: curated_profile_and_secondary_audits
@@ -79,6 +81,10 @@ sources:
 > [!IMPORTANT]
 > **Finaler Netto-Score:** **44 / 100 Punkte** (Rohscore: 54 Pkt | Malus-Abschläge: -10 Pkt)
 > **Allokationsempfehlung:** Neuanlage-Stopp: Intransparenz, Holding-Konstrukte, Restrukturierungen oder Pending Payments.
+
+> [!WARNING]
+> **Achtung - Widersprüchliche Angaben identifiziert:**
+> • NPL-Diskrepanz: Profil weist 15.0 % NPL aus, Benchmark-Performance indiziert 35.0 % Rückstand.
 
 ## 2. Aufschlüsselung der 4 Säulen
 

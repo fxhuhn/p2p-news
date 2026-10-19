@@ -4,15 +4,17 @@ platform_name: Swaper
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 28
+  net_score: 23
   raw_score: 46
   risk_class: DISTRESSED
   portfolio_limit: 0 % (Kapitalabzug & Recovery)
   recommendation: 'Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte
     Zweitmärkte, Moratorien.'
 flags:
-  has_conflict: false
-  conflict_notes: []
+  has_conflict: true
+  conflict_notes:
+  - 'NPL-Diskrepanz: Profil weist 6.0 % NPL aus, Benchmark-Performance indiziert 20.0
+    % Rückstand.'
   data_gaps:
   - Keine unabhängig testierten Finanzberichte auffindbar (Säule 2 auf Minimalwert
     gesetzt).
@@ -59,15 +61,21 @@ pillars:
     evidence: Hohe Fungibilität durch 30-Tage-Kredite und Sekundärmarkt.
 malus_deductions:
 - type: monoculture
-  name: Monokultur-Malus
-  penalty: -8
-  trigger: Wandoo Finance Group stellt 100.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern.'
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -10
+  trigger: Wandoo Finance Group stellt 100.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 - type: related_party
   name: Related-Party- & Opazitäts-Malus
   penalty: -10
   trigger: Fehlende testierte Jahresabschlüsse und Intransparenz der Holding-Eigentümer.
   evidence: Fehlende testierte Jahresabschlüsse und Intransparenz der Holding-Eigentümer.
+- type: cashflow_drag
+  name: Cashflow- & Verzugs-Malus
+  penalty: -3
+  trigger: Laufende Verzugs-/NPL-Quote von 6.0 % (>=5 %)
+  evidence: Cash Drag durch 6.0 % überfällige Kredite im Portfolio.
 sources:
 - source_type: curated_profile
   path: data/platforms/swaper/profile.yaml
@@ -82,8 +90,12 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **28 / 100 Punkte** (Rohscore: 46 Pkt | Malus-Abschläge: -18 Pkt)
+> **Finaler Netto-Score:** **23 / 100 Punkte** (Rohscore: 46 Pkt | Malus-Abschläge: -23 Pkt)
 > **Allokationsempfehlung:** Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte Zweitmärkte, Moratorien.
+
+> [!WARNING]
+> **Achtung - Widersprüchliche Angaben identifiziert:**
+> • NPL-Diskrepanz: Profil weist 6.0 % NPL aus, Benchmark-Performance indiziert 20.0 % Rückstand.
 
 > [!NOTE]
 > **Vorsichtsprinzip bei Datenlücken aktiv:**
@@ -103,8 +115,9 @@ sources:
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-8 Pkt` | Wandoo Finance Group stellt 100.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern. |
+| **Klumpen- & Konzentrations-Malus** | `-10 Pkt` | Wandoo Finance Group stellt 100.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 | **Related-Party- & Opazitäts-Malus** | `-10 Pkt` | Fehlende testierte Jahresabschlüsse und Intransparenz der Holding-Eigentümer. | Fehlende testierte Jahresabschlüsse und Intransparenz der Holding-Eigentümer. |
+| **Cashflow- & Verzugs-Malus** | `-3 Pkt` | Laufende Verzugs-/NPL-Quote von 6.0 % (>=5 %) | Cash Drag durch 6.0 % überfällige Kredite im Portfolio. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

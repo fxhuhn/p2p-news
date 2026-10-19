@@ -11,8 +11,10 @@ audit_score:
   recommendation: 'Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte
     Zweitmärkte, Moratorien.'
 flags:
-  has_conflict: false
-  conflict_notes: []
+  has_conflict: true
+  conflict_notes:
+  - 'NPL-Diskrepanz: Profil weist 65.0 % NPL aus, Benchmark-Performance indiziert
+    50.0 % Rückstand.'
   data_gaps:
   - Keine unabhängig testierten Finanzberichte auffindbar (Säule 2 auf Minimalwert
     gesetzt).
@@ -59,10 +61,11 @@ pillars:
     evidence: Auszahlungen de facto gestoppt oder blockiert.
 malus_deductions:
 - type: monoculture
-  name: Monokultur-Malus
-  penalty: -8
-  trigger: Ventus Energy stellt 100.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern.'
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -10
+  trigger: Ventus Energy stellt 100.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 - type: related_party
   name: Related-Party- & Opazitäts-Malus
   penalty: -10
@@ -87,8 +90,12 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **0 / 100 Punkte** (Rohscore: 16 Pkt | Malus-Abschläge: -38 Pkt)
+> **Finaler Netto-Score:** **0 / 100 Punkte** (Rohscore: 16 Pkt | Malus-Abschläge: -40 Pkt)
 > **Allokationsempfehlung:** Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte Zweitmärkte, Moratorien.
+
+> [!WARNING]
+> **Achtung - Widersprüchliche Angaben identifiziert:**
+> • NPL-Diskrepanz: Profil weist 65.0 % NPL aus, Benchmark-Performance indiziert 50.0 % Rückstand.
 
 > [!NOTE]
 > **Vorsichtsprinzip bei Datenlücken aktiv:**
@@ -108,7 +115,7 @@ sources:
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-8 Pkt` | Ventus Energy stellt 100.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern. |
+| **Klumpen- & Konzentrations-Malus** | `-10 Pkt` | Ventus Energy stellt 100.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 | **Related-Party- & Opazitäts-Malus** | `-10 Pkt` | Intransparente Mittelverwendung und verweigerte Gutachten. | Intransparente Mittelverwendung und verweigerte Gutachten. |
 | **Distressed- & Ausfall-Malus** | `-20 Pkt` | Akutes Sanierungsverfahren, Auszahlungsstopps, 65 % NPL. | Akutes Sanierungsverfahren, Auszahlungsstopps, 65 % NPL. |
 

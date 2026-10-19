@@ -4,8 +4,8 @@ platform_name: Twino
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 67
-  raw_score: 73
+  net_score: 63
+  raw_score: 71
   risk_class: MID RISK
   portfolio_limit: 5 - 8 %
   recommendation: 'Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite
@@ -45,7 +45,7 @@ pillars:
     rating: Sehr gut / Testiert
     evidence: Unabhängig testierte Jahresabschlüsse durch BDO.
   pillar_3_collateral:
-    score: 13
+    score: 11
     max_score: 25
     band: Band_8_14
     rating: Unbesichert mit Buyback
@@ -59,10 +59,11 @@ pillars:
       Monate).
 malus_deductions:
 - type: monoculture
-  name: Monokultur-Malus
-  penalty: -6
-  trigger: TWINO Gruppe stellt 85.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 85.0 % Abhängigkeit von einem Garantiekonzern.'
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -8
+  trigger: TWINO Gruppe stellt 85.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 85.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 sources:
 - source_type: curated_profile
   path: data/platforms/twino/profile.yaml
@@ -77,7 +78,7 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **67 / 100 Punkte** (Rohscore: 73 Pkt | Malus-Abschläge: -6 Pkt)
+> **Finaler Netto-Score:** **63 / 100 Punkte** (Rohscore: 71 Pkt | Malus-Abschläge: -8 Pkt)
 > **Allokationsempfehlung:** Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite oder Monokulturen.
 
 ## 2. Aufschlüsselung der 4 Säulen
@@ -86,15 +87,15 @@ sources:
 | :--- | :--- | :---: | :--- | :--- |
 | **Säule 1** | Regulierung & Verwahrung | **25 / 25** | MiFID II / IBF lizenziert | Lizenzierte Wertpapierfirma (IBF) unter Aufsicht der Latvijas Banka mit gesetzlichem Entschädigungsschutz. |
 | **Säule 2** | Solvenz & Governance | **19 / 25** | Sehr gut / Testiert | Unabhängig testierte Jahresabschlüsse durch BDO. |
-| **Säule 3** | Besicherung & Workout | **13 / 25** | Unbesichert mit Buyback | Verlässliche Rückkaufgarantie für reguläre Notes. |
+| **Säule 3** | Besicherung & Workout | **11 / 25** | Unbesichert mit Buyback | Verlässliche Rückkaufgarantie für reguläre Notes. |
 | **Säule 4** | Liquidität & Zweitmarkt | **16 / 25** | Gute Liquidität | Kein Sekundärmarkt, jedoch kurze originäre Kreditlaufzeiten (1 bis 3 Monate). |
-| **SUMME** | **Rohscore (vor Mali)** | **73 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **SUMME** | **Rohscore (vor Mali)** | **71 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-6 Pkt` | TWINO Gruppe stellt 85.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 85.0 % Abhängigkeit von einem Garantiekonzern. |
+| **Klumpen- & Konzentrations-Malus** | `-8 Pkt` | TWINO Gruppe stellt 85.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 85.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

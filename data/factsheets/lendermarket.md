@@ -4,8 +4,8 @@ platform_name: Lendermarket
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 24
-  raw_score: 38
+  net_score: 22
+  raw_score: 47
   risk_class: DISTRESSED
   portfolio_limit: 0 % (Kapitalabzug & Recovery)
   recommendation: 'Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte
@@ -38,10 +38,10 @@ pillars:
     rating: Unreguliert (Abtretungsverträge)
     evidence: Unregulierter Marktplatz; keine Segregation durch lizenziertes Institut.
   pillar_2_solvency:
-    score: 17
+    score: 12
     max_score: 25
-    band: Band_14_20
-    rating: Solide / Lokaler Abschluss
+    band: Band_7_13
+    rating: Befriedigend / Governance-Schwächen
     evidence: Chronische Pending Payments bei Creditstar-Krediten über viele Monate.
   pillar_3_collateral:
     score: 11
@@ -51,23 +51,29 @@ pillars:
     evidence: Rückkaufgarantie wurde in der Vergangenheit wiederholt ausgesetzt oder
       verzögert bedient.
   pillar_4_liquidity:
-    score: 2
+    score: 16
     max_score: 25
-    band: Band_0_5
-    rating: Liquiditätsstau / Warteschlange
-    evidence: Kein Sekundärmarkt; erhebliche Auszahlungsverzögerungen bei fälligen
-      Geldern.
+    band: Band_13_19
+    rating: Gute Liquidität
+    evidence: Sekundärmarkt vorhanden mit 180 Tagen Haltedauer; Auszahlungsstau bei
+      fälligen Krediten (Pending Payments).
 malus_deductions:
 - type: monoculture
-  name: Monokultur-Malus
-  penalty: -4
-  trigger: Creditstar Group AS stellt 65.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 65.0 % Abhängigkeit von einem Garantiekonzern.'
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -5
+  trigger: Creditstar Group AS stellt 65.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 65.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 - type: related_party
   name: Related-Party- & Opazitäts-Malus
   penalty: -10
   trigger: Verflechtung zwischen Lendermarket-Betreibern und Creditstar Management.
   evidence: Verflechtung zwischen Lendermarket-Betreibern und Creditstar Management.
+- type: cashflow_drag
+  name: Cashflow- & Verzugs-Malus
+  penalty: -10
+  trigger: Laufende Verzugs-/NPL-Quote von 22.0 % (>=5 %)
+  evidence: Cash Drag durch 22.0 % überfällige Kredite im Portfolio.
 sources:
 - source_type: curated_profile
   path: data/platforms/lendermarket/profile.yaml
@@ -82,7 +88,7 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **24 / 100 Punkte** (Rohscore: 38 Pkt | Malus-Abschläge: -14 Pkt)
+> **Finaler Netto-Score:** **22 / 100 Punkte** (Rohscore: 47 Pkt | Malus-Abschläge: -25 Pkt)
 > **Allokationsempfehlung:** Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte Zweitmärkte, Moratorien.
 
 ## 2. Aufschlüsselung der 4 Säulen
@@ -90,17 +96,18 @@ sources:
 | Säule | Kategorie | Punkte | Einstufung | Kern-Evidenz |
 | :--- | :--- | :---: | :--- | :--- |
 | **Säule 1** | Regulierung & Verwahrung | **8 / 25** | Unreguliert (Abtretungsverträge) | Unregulierter Marktplatz; keine Segregation durch lizenziertes Institut. |
-| **Säule 2** | Solvenz & Governance | **17 / 25** | Solide / Lokaler Abschluss | Chronische Pending Payments bei Creditstar-Krediten über viele Monate. |
+| **Säule 2** | Solvenz & Governance | **12 / 25** | Befriedigend / Governance-Schwächen | Chronische Pending Payments bei Creditstar-Krediten über viele Monate. |
 | **Säule 3** | Besicherung & Workout | **11 / 25** | Unbesichert mit Buyback | Rückkaufgarantie wurde in der Vergangenheit wiederholt ausgesetzt oder verzögert bedient. |
-| **Säule 4** | Liquidität & Zweitmarkt | **2 / 25** | Liquiditätsstau / Warteschlange | Kein Sekundärmarkt; erhebliche Auszahlungsverzögerungen bei fälligen Geldern. |
-| **SUMME** | **Rohscore (vor Mali)** | **38 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **Säule 4** | Liquidität & Zweitmarkt | **16 / 25** | Gute Liquidität | Sekundärmarkt vorhanden mit 180 Tagen Haltedauer; Auszahlungsstau bei fälligen Krediten (Pending Payments). |
+| **SUMME** | **Rohscore (vor Mali)** | **47 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-4 Pkt` | Creditstar Group AS stellt 65.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 65.0 % Abhängigkeit von einem Garantiekonzern. |
+| **Klumpen- & Konzentrations-Malus** | `-5 Pkt` | Creditstar Group AS stellt 65.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 65.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 | **Related-Party- & Opazitäts-Malus** | `-10 Pkt` | Verflechtung zwischen Lendermarket-Betreibern und Creditstar Management. | Verflechtung zwischen Lendermarket-Betreibern und Creditstar Management. |
+| **Cashflow- & Verzugs-Malus** | `-10 Pkt` | Laufende Verzugs-/NPL-Quote von 22.0 % (>=5 %) | Cash Drag durch 22.0 % überfällige Kredite im Portfolio. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

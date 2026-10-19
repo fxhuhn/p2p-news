@@ -4,8 +4,8 @@ platform_name: Income Marketplace
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 66
-  raw_score: 66
+  net_score: 64
+  raw_score: 64
   risk_class: MID RISK
   portfolio_limit: 5 - 8 %
   recommendation: 'Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite
@@ -45,7 +45,7 @@ pillars:
     rating: Sehr gut / Testiert
     evidence: Testierte Finanzberichte und hohe Transparenz bei Anbahner-Bilanzen.
   pillar_3_collateral:
-    score: 16
+    score: 14
     max_score: 25
     band: Band_8_14
     rating: Unbesichert mit Buyback
@@ -72,7 +72,7 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **66 / 100 Punkte** (Rohscore: 66 Pkt | Malus-Abschläge: 0 Pkt)
+> **Finaler Netto-Score:** **64 / 100 Punkte** (Rohscore: 64 Pkt | Malus-Abschläge: 0 Pkt)
 > **Allokationsempfehlung:** Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite oder Monokulturen.
 
 ## 2. Aufschlüsselung der 4 Säulen
@@ -81,9 +81,9 @@ sources:
 | :--- | :--- | :---: | :--- | :--- |
 | **Säule 1** | Regulierung & Verwahrung | **13 / 25** | Unreguliert / Lizenzübergang | Operiert derzeit unreguliert über Abtretungsverträge, bietet aber institutionelle Schutzmechanismen (Junior Share, Cashflow Buffer). |
 | **Säule 2** | Solvenz & Governance | **21 / 25** | Sehr gut / Testiert | Testierte Finanzberichte und hohe Transparenz bei Anbahner-Bilanzen. |
-| **Säule 3** | Besicherung & Workout | **16 / 25** | Unbesichert mit Buyback | Innovativer Junior Share Mechanismus: Kreditanbahner trägt erste Verluste vor Anlegern. |
+| **Säule 3** | Besicherung & Workout | **14 / 25** | Unbesichert mit Buyback | Innovativer Junior Share Mechanismus: Kreditanbahner trägt erste Verluste vor Anlegern. |
 | **Säule 4** | Liquidität & Zweitmarkt | **16 / 25** | Gute Liquidität | Kein Sekundärmarkt, Liquidität über kurze originäre Kreditlaufzeiten. |
-| **SUMME** | **Rohscore (vor Mali)** | **66 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **SUMME** | **Rohscore (vor Mali)** | **64 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 

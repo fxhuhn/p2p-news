@@ -4,7 +4,7 @@ platform_name: Fintown
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 29
+  net_score: 27
   raw_score: 44
   risk_class: DISTRESSED
   portfolio_limit: 0 % (Kapitalabzug & Recovery)
@@ -59,10 +59,11 @@ pillars:
       Abschlag.
 malus_deductions:
 - type: monoculture
-  name: Monokultur-Malus
-  penalty: -8
-  trigger: Vihorev Group stellt 100.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern.'
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -10
+  trigger: Vihorev Group stellt 100.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 - type: term_mismatch
   name: Fristen-Mismatch-Malus
   penalty: -7
@@ -84,7 +85,7 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **29 / 100 Punkte** (Rohscore: 44 Pkt | Malus-Abschläge: -15 Pkt)
+> **Finaler Netto-Score:** **27 / 100 Punkte** (Rohscore: 44 Pkt | Malus-Abschläge: -17 Pkt)
 > **Allokationsempfehlung:** Kapitalabzug & Workout: Notleidende Portfolios (NPL >40%), blockierte Zweitmärkte, Moratorien.
 
 ## 2. Aufschlüsselung der 4 Säulen
@@ -101,7 +102,7 @@ sources:
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-8 Pkt` | Vihorev Group stellt 100.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern. |
+| **Klumpen- & Konzentrations-Malus** | `-10 Pkt` | Vihorev Group stellt 100.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 100.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 | **Fristen-Mismatch-Malus** | `-7 Pkt` | Tägliche Zinsauszahlung versprochen, aber durch langfristige Hotelimmobilien hinterlegt. | Tägliche Zinsauszahlung versprochen, aber durch langfristige Hotelimmobilien hinterlegt. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)

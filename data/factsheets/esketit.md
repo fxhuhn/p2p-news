@@ -4,8 +4,8 @@ platform_name: Esketit
 audit_date: '2026-10-19'
 audit_version: '1.0'
 audit_score:
-  net_score: 64
-  raw_score: 70
+  net_score: 60
+  raw_score: 68
   risk_class: MID RISK
   portfolio_limit: 5 - 8 %
   recommendation: 'Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite
@@ -47,7 +47,7 @@ pillars:
     evidence: Wirtschaftlich gestützt durch die hochprofitable Creamfinance-Gruppe
       mit testierten Zahlen.
   pillar_3_collateral:
-    score: 16
+    score: 14
     max_score: 25
     band: Band_8_14
     rating: Unbesichert mit Buyback
@@ -62,10 +62,11 @@ pillars:
       Sekundärmarkt.
 malus_deductions:
 - type: monoculture
-  name: Monokultur-Malus
-  penalty: -6
-  trigger: Creamfinance Gruppe stellt 82.0 % des Portfolios (>50 %)
-  evidence: 'Hohe Klumpenbildung: Über 82.0 % Abhängigkeit von einem Garantiekonzern.'
+  name: Klumpen- & Konzentrations-Malus
+  penalty: -8
+  trigger: Creamfinance Gruppe stellt 82.0 % des Portfolios (>=30 %)
+  evidence: 'Hohe Klumpenbildung: Über 82.0 % Abhängigkeit von einem Garantiekonzern
+    oder Einzelschuldner.'
 sources:
 - source_type: curated_profile
   path: data/platforms/esketit/profile.yaml
@@ -80,7 +81,7 @@ sources:
 ## 1. Executive Summary & Audit-Verdict
 
 > [!IMPORTANT]
-> **Finaler Netto-Score:** **64 / 100 Punkte** (Rohscore: 70 Pkt | Malus-Abschläge: -6 Pkt)
+> **Finaler Netto-Score:** **60 / 100 Punkte** (Rohscore: 68 Pkt | Malus-Abschläge: -8 Pkt)
 > **Allokationsempfehlung:** Solide Beimischung: Hohe Bonität/Historie, aber unbesicherte Konsumkredite oder Monokulturen.
 
 ## 2. Aufschlüsselung der 4 Säulen
@@ -89,15 +90,15 @@ sources:
 | :--- | :--- | :---: | :--- | :--- |
 | **Säule 1** | Regulierung & Verwahrung | **13 / 25** | Unreguliert / Lizenzübergang | Operiert unreguliert über kroatische Abtretungsverträge. Die neu erteilte IBF-Lizenz der Schwestergesellschaft SIA IBC Invest schafft einen klaren Migrationspfad (+2 Pkt.), schützt Bestandsanlagen aber rechtlich noch nicht. |
 | **Säule 2** | Solvenz & Governance | **21 / 25** | Sehr gut / Testiert | Wirtschaftlich gestützt durch die hochprofitable Creamfinance-Gruppe mit testierten Zahlen. |
-| **Säule 3** | Besicherung & Workout | **16 / 25** | Unbesichert mit Buyback | Kurzfristige Konsumentenkredite mit funktionierendem 60-Tage-Rückkauf; keine dingliche Immobiliensicherung. |
+| **Säule 3** | Besicherung & Workout | **14 / 25** | Unbesichert mit Buyback | Kurzfristige Konsumentenkredite mit funktionierendem 60-Tage-Rückkauf; keine dingliche Immobiliensicherung. |
 | **Säule 4** | Liquidität & Zweitmarkt | **20 / 25** | Sehr liquide / Kurzläufer & Zweitmarkt | Hohe Fungibilität durch Payday-Kurzläufer und gebührenfreien, funktionierenden Sekundärmarkt. |
-| **SUMME** | **Rohscore (vor Mali)** | **70 / 100** | - | Theoretisches Maximum: 100 Pkt |
+| **SUMME** | **Rohscore (vor Mali)** | **68 / 100** | - | Theoretisches Maximum: 100 Pkt |
 
 ## 3. Malus-System (Strikte Risiko-Abschläge)
 
 | Malus-Typ | Abzug | Auslöser / Kriterium | Beleg / Nachweis |
 | :--- | :---: | :--- | :--- |
-| **Monokultur-Malus** | `-6 Pkt` | Creamfinance Gruppe stellt 82.0 % des Portfolios (>50 %) | Hohe Klumpenbildung: Über 82.0 % Abhängigkeit von einem Garantiekonzern. |
+| **Klumpen- & Konzentrations-Malus** | `-8 Pkt` | Creamfinance Gruppe stellt 82.0 % des Portfolios (>=30 %) | Hohe Klumpenbildung: Über 82.0 % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner. |
 
 ## 4. Benchmark-Spiegel (Marktkonsens & Triangulierung)
 

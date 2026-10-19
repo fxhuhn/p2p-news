@@ -58,7 +58,9 @@ class PlatformScorer:
         raw_score = p1.final_score + p2.final_score + p3.final_score + p4.final_score
 
         # 2. Malus-Abzüge berechnen
-        mali = self._evaluate_malus(profile.get("malus_triggers", {}))
+        mali = self._evaluate_malus(
+            profile.get("malus_triggers", {}), profile.get("collateral_and_workout", {})
+        )
         malus_total = sum(m.penalty for m in mali)
 
         # 3. Netto-Score & Risikoklasse
@@ -238,6 +240,14 @@ class PlatformScorer:
             for a in ["bdo", "grant thornton", "kpmg", "pwc", "ey", "deloitte"]
         )
 
+        is_qualified_opinion = any(
+            w in auditor or w in opinion
+            for w in [
+                "mit einschränkung",
+                "mit einschränkungen",
+            ]
+        )
+
         if is_top_auditor and "unqualified" in opinion:
             band_id = "Band_21_25"
             base_score = 20
@@ -294,8 +304,9 @@ class PlatformScorer:
                 )
             rating_label = "Keine testierten Finanzberichte"
 
-        elif "lokal" in auditor or (
-            auditor and equity_ratio is not None and equity_ratio > 15.0
+        elif not is_qualified_opinion and (
+            "lokal" in auditor
+            or (auditor and equity_ratio is not None and equity_ratio > 15.0)
         ):
             band_id = "Band_14_20"
             base_score = 17
@@ -304,6 +315,15 @@ class PlatformScorer:
         else:
             band_id = "Band_7_13"
             base_score = 10
+            if equity_ratio is not None and equity_ratio > 15.0:
+                modifiers.append(
+                    ModifierEvaluation(
+                        name="Solide Eigenkapitalquote (>15 %)",
+                        points=2,
+                        condition_met=True,
+                        rationale=f"Eigenkapitalquote liegt bei {equity_ratio} %.",
+                    )
+                )
             rating_label = "Befriedigend / Governance-Schwächen"
 
         final_score = base_score + sum(m.points for m in modifiers if m.condition_met)
@@ -386,16 +406,6 @@ class PlatformScorer:
                         points=3,
                         condition_met=True,
                         rationale="0 % Kapitalverlust für Anleger in der Historie.",
-                    )
-                )
-            # Puffer für etablierte Anbieter
-            if npl is not None and npl < 5.0:
-                modifiers.append(
-                    ModifierEvaluation(
-                        name="Niedrige Ausfallrate (<5 %)",
-                        points=2,
-                        condition_met=True,
-                        rationale=f"Aktuelle Problemquote nur {npl} %.",
                     )
                 )
             if (
@@ -583,28 +593,63 @@ class PlatformScorer:
     # =========================================================================
     # Das Malus-System (Punktabzüge)
     # =========================================================================
-    def _evaluate_malus(self, triggers: Dict[str, Any]) -> List[MalusItem]:
+    def _evaluate_malus(
+        self, triggers: Dict[str, Any], collateral: Dict[str, Any] | None = None
+    ) -> List[MalusItem]:
         mali: List[MalusItem] = []
 
-        # 1. Monokultur-Malus (Einzelner Anbahner > 50 %) - Gilt nur für Marktplätze, nicht für Direktkreditgeber
-        is_direct_lender = triggers.get("is_direct_lender", False)
-        mono_pct = triggers.get("monoculture_pct", 0.0)
-        originator = triggers.get("monoculture_originator", "Hauptkreditgeber")
-        if not is_direct_lender and mono_pct > 50.0:
-            if mono_pct > 90.0:
+        # 1. Klumpen- & Konzentrations-Malus
+        is_direct_lender = bool(triggers.get("is_direct_lender", False))
+        col = collateral or {}
+        has_loss_buffer = bool(col.get("has_loss_buffer", False))
+        sec_type = (col.get("security_type") or "").lower()
+        has_real_collateral = any(
+            k in sec_type
+            for k in (
+                "1st-rank",
+                "hypothek",
+                "grundschuld",
+                "pfand",
+                "sicherungsübereignung",
+            )
+        )
+        raw_mono_pct = float(triggers.get("monoculture_pct") or 0.0)
+        originator = triggers.get("monoculture_originator") or "Hauptkreditgeber"
+
+        if (
+            is_direct_lender
+            and not has_loss_buffer
+            and not has_real_collateral
+            and raw_mono_pct == 0.0
+        ):
+            effective_mono_pct = 100.0
+            trigger_detail = "Direktbilanz-Darlehen ohne Realsicherheit oder Verlustpuffer (100 % Klumpen)"
+        elif is_direct_lender and has_loss_buffer:
+            effective_mono_pct = 0.0
+            trigger_detail = ""
+        else:
+            effective_mono_pct = raw_mono_pct
+            trigger_detail = (
+                f"{originator} stellt {effective_mono_pct} % des Portfolios (>=30 %)"
+            )
+
+        if effective_mono_pct >= 30.0:
+            if effective_mono_pct >= 90.0:
+                penalty = -10
+            elif effective_mono_pct >= 70.0:
                 penalty = -8
-            elif mono_pct >= 70.0:
-                penalty = -6
+            elif effective_mono_pct >= 50.0:
+                penalty = -5
             else:
-                penalty = -4
+                penalty = -3
             mali.append(
                 MalusItem(
                     type="monoculture",
-                    name="Monokultur-Malus",
+                    name="Klumpen- & Konzentrations-Malus",
                     penalty=penalty,
                     trigger_detected=True,
-                    trigger_detail=f"{originator} stellt {mono_pct} % des Portfolios (>50 %)",
-                    evidence_quote=f"Hohe Klumpenbildung: Über {mono_pct} % Abhängigkeit von einem Garantiekonzern.",
+                    trigger_detail=trigger_detail,
+                    evidence_quote=f"Hohe Klumpenbildung: Über {effective_mono_pct} % Abhängigkeit von einem Garantiekonzern oder Einzelschuldner.",
                 )
             )
 
@@ -691,6 +736,34 @@ class PlatformScorer:
                 )
             )
 
+        # 6. Cashflow- & Verzugs-Malus
+        npl_pct = float(col.get("current_npl_pct") or 0.0)
+        is_distressed = bool(triggers.get("distressed_workout", False))
+        has_orig_default = bool(triggers.get("marketplace_originator_risk", False))
+
+        if (
+            not has_loss_buffer
+            and not is_distressed
+            and not has_orig_default
+            and npl_pct >= 5.0
+        ):
+            if npl_pct >= 20.0:
+                cf_penalty = -10
+            elif npl_pct >= 10.0:
+                cf_penalty = -6
+            else:
+                cf_penalty = -3
+            mali.append(
+                MalusItem(
+                    type="cashflow_drag",
+                    name="Cashflow- & Verzugs-Malus",
+                    penalty=cf_penalty,
+                    trigger_detected=True,
+                    trigger_detail=f"Laufende Verzugs-/NPL-Quote von {npl_pct} % (>=5 %)",
+                    evidence_quote=f"Cash Drag durch {npl_pct} % überfällige Kredite im Portfolio.",
+                )
+            )
+
         return mali
 
     # =========================================================================
@@ -736,9 +809,21 @@ class PlatformScorer:
             data_gaps.append(
                 "Unzureichende Dokumentation der Liquidität oder Laufzeiten (Säule 4 auf Minimalwert gesetzt)."
             )
-        gaps = profile.get("data_gaps")
-        if isinstance(gaps, list):
-            data_gaps.extend([str(x) for x in gaps])
+        # Prüfe auf NPL-Diskrepanz gegen Benchmark Portfolio Performance
+        col = profile.get("collateral_and_workout", {})
+        bench = profile.get("benchmarks", {})
+        perf = bench.get("p2p_empire_portfolio_perf")
+        npl = col.get("current_npl_pct")
+        if (
+            perf is not None
+            and npl is not None
+            and not col.get("has_loss_buffer", False)
+            and abs((100.0 - float(perf)) - float(npl)) > 5.0
+        ):
+            implied_delay = round(100.0 - float(perf), 1)
+            conflict_notes.append(
+                f"NPL-Diskrepanz: Profil weist {npl} % NPL aus, Benchmark-Performance indiziert {implied_delay} % Rückstand."
+            )
 
         has_conflict = len(conflict_notes) > 0
 

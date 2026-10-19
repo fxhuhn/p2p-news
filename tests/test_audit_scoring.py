@@ -71,10 +71,10 @@ class TestAuditScoring(unittest.TestCase):
         }
         res = self.scorer.score_platform(profile)
         self.assertEqual(res["pillar_1"].final_score, 13)  # 9 + 2 + 2
-        self.assertEqual(res["pillar_3"].final_score, 16)  # 11 + 3 + 2
+        self.assertEqual(res["pillar_3"].final_score, 14)  # 11 + 3
         self.assertEqual(res["pillar_4"].final_score, 20)  # 22 - 2
-        self.assertEqual(res["malus_total"], -6)  # 70-85% = -6
-        self.assertIn(res["net_score"], [64, 65, 66])  # Im Zielbereich Mid Risk
+        self.assertEqual(res["malus_total"], -8)  # 70-89.9% = -8
+        self.assertEqual(res["net_score"], 60)  # Im Zielbereich Mid Risk
         self.assertEqual(res["risk_class"], "MID RISK")
 
     def test_peerberry_audit_benchmark(self):
@@ -114,11 +114,11 @@ class TestAuditScoring(unittest.TestCase):
         res = self.scorer.score_platform(profile)
         self.assertEqual(res["pillar_1"].final_score, 8)  # Base 8
         self.assertEqual(res["pillar_2"].final_score, 22)  # Base 20 + EK>30% 2
-        self.assertEqual(res["pillar_3"].final_score, 17)  # Base 11 + 3 + 2 + 1
+        self.assertEqual(res["pillar_3"].final_score, 15)  # Base 11 + 3 + 1
         self.assertEqual(res["pillar_4"].final_score, 24)  # Base 22 + Fee=0/<=30d 2
-        self.assertEqual(res["malus_total"], -6)  # 70-90% Monokultur = -6
-        self.assertEqual(res["raw_score"], 71)
-        self.assertEqual(res["net_score"], 65)
+        self.assertEqual(res["malus_total"], -8)  # 70-89.9% Monokultur = -8
+        self.assertEqual(res["raw_score"], 69)
+        self.assertEqual(res["net_score"], 61)
         self.assertEqual(res["risk_class"], "MID RISK")
 
     def test_inrento_top_tier(self):
@@ -207,9 +207,9 @@ class TestAuditScoring(unittest.TestCase):
         self.assertEqual(res["pillar_3"].final_score, 14)
         self.assertEqual(res["pillar_4"].final_score, 18)
         self.assertEqual(res["raw_score"], 59)
-        self.assertEqual(res["malus_total"], -5)
-        self.assertEqual(res["net_score"], 54)
-        self.assertEqual(res["risk_class"], "WATCHLIST")
+        self.assertEqual(res["malus_total"], -21)
+        self.assertEqual(res["net_score"], 38)
+        self.assertEqual(res["risk_class"], "DISTRESSED")
 
     def test_debitum_calibrated_scoring(self):
         import yaml
@@ -222,9 +222,9 @@ class TestAuditScoring(unittest.TestCase):
         self.assertEqual(res["pillar_3"].final_score, 11)
         self.assertEqual(res["pillar_4"].final_score, 11)
         self.assertEqual(res["raw_score"], 66)
-        self.assertEqual(res["malus_total"], -5)
-        self.assertEqual(res["net_score"], 61)
-        self.assertEqual(res["risk_class"], "MID RISK")
+        self.assertEqual(res["malus_total"], -11)
+        self.assertEqual(res["net_score"], 55)
+        self.assertEqual(res["risk_class"], "WATCHLIST")
 
     def test_bondster_marketplace_originator_malus(self):
         import yaml
@@ -469,6 +469,118 @@ class TestAuditScoring(unittest.TestCase):
         }
         res_invalid = self.scorer.score_platform(profile_invalid)
         self.assertEqual(res_invalid["malus_deductions"][0].penalty, -7)
+
+    def test_cashflow_drag_malus_boundaries(self):
+        """Prüft die Schwellenwerte für den Cashflow- & Verzugs-Malus (4.9% -> 0, 5.0% -> -3, 10.0% -> -6, 20.0% -> -10)."""
+        base_profile = {
+            "platform": "test_cf",
+            "collateral_and_workout": {
+                "security_type": "Buyback-Garantie",
+                "current_npl_pct": 4.9,
+            },
+            "malus_triggers": {},
+        }
+        # 4.9% -> kein Malus
+        res = self.scorer.score_platform(base_profile)
+        cf_mali = [m for m in res["malus_deductions"] if m.type == "cashflow_drag"]
+        self.assertEqual(len(cf_mali), 0)
+
+        # 5.0% -> -3
+        base_profile["collateral_and_workout"]["current_npl_pct"] = 5.0
+        res = self.scorer.score_platform(base_profile)
+        cf_mali = [m for m in res["malus_deductions"] if m.type == "cashflow_drag"]
+        self.assertEqual(len(cf_mali), 1)
+        self.assertEqual(cf_mali[0].penalty, -3)
+
+        # 10.0% -> -6
+        base_profile["collateral_and_workout"]["current_npl_pct"] = 10.0
+        res = self.scorer.score_platform(base_profile)
+        cf_mali = [m for m in res["malus_deductions"] if m.type == "cashflow_drag"]
+        self.assertEqual(len(cf_mali), 1)
+        self.assertEqual(cf_mali[0].penalty, -6)
+
+        # 20.0% -> -10
+        base_profile["collateral_and_workout"]["current_npl_pct"] = 20.0
+        res = self.scorer.score_platform(base_profile)
+        cf_mali = [m for m in res["malus_deductions"] if m.type == "cashflow_drag"]
+        self.assertEqual(len(cf_mali), 1)
+        self.assertEqual(cf_mali[0].penalty, -10)
+
+        # Plattform mit Verlustpuffer ist ausgenommen
+        base_profile["collateral_and_workout"]["has_loss_buffer"] = True
+        res = self.scorer.score_platform(base_profile)
+        cf_mali = [m for m in res["malus_deductions"] if m.type == "cashflow_drag"]
+        self.assertEqual(len(cf_mali), 0)
+
+    def test_universal_concentration_malus_tiers(self):
+        """Prüft die 4 Stufen des universellen Klumpen-Malus (29.9% -> 0, 30% -> -3, 50% -> -5, 70% -> -8, 90% -> -10)."""
+        base_profile = {
+            "platform": "test_mono",
+            "collateral_and_workout": {"security_type": "Buyback-Garantie"},
+            "malus_triggers": {"monoculture_pct": 29.9},
+        }
+        # 29.9% -> kein Malus
+        res = self.scorer.score_platform(base_profile)
+        mono_mali = [m for m in res["malus_deductions"] if m.type == "monoculture"]
+        self.assertEqual(len(mono_mali), 0)
+
+        # 30.0% -> -3
+        base_profile["malus_triggers"]["monoculture_pct"] = 30.0
+        res = self.scorer.score_platform(base_profile)
+        mono_mali = [m for m in res["malus_deductions"] if m.type == "monoculture"]
+        self.assertEqual(len(mono_mali), 1)
+        self.assertEqual(mono_mali[0].penalty, -3)
+
+        # 50.0% -> -5
+        base_profile["malus_triggers"]["monoculture_pct"] = 50.0
+        res = self.scorer.score_platform(base_profile)
+        mono_mali = [m for m in res["malus_deductions"] if m.type == "monoculture"]
+        self.assertEqual(len(mono_mali), 1)
+        self.assertEqual(mono_mali[0].penalty, -5)
+
+        # 70.0% -> -8
+        base_profile["malus_triggers"]["monoculture_pct"] = 70.0
+        res = self.scorer.score_platform(base_profile)
+        mono_mali = [m for m in res["malus_deductions"] if m.type == "monoculture"]
+        self.assertEqual(len(mono_mali), 1)
+        self.assertEqual(mono_mali[0].penalty, -8)
+
+        # 90.0% -> -10
+        base_profile["malus_triggers"]["monoculture_pct"] = 90.0
+        res = self.scorer.score_platform(base_profile)
+        mono_mali = [m for m in res["malus_deductions"] if m.type == "monoculture"]
+        self.assertEqual(len(mono_mali), 1)
+        self.assertEqual(mono_mali[0].penalty, -10)
+
+        # Direct Lender ohne Realsicherheit/Verlustpuffer wird als 100% (-10) gewertet
+        direct_profile = {
+            "platform": "test_direct",
+            "collateral_and_workout": {"security_type": "Unbesichert"},
+            "malus_triggers": {"is_direct_lender": True, "monoculture_pct": 0.0},
+        }
+        res = self.scorer.score_platform(direct_profile)
+        mono_mali = [m for m in res["malus_deductions"] if m.type == "monoculture"]
+        self.assertEqual(len(mono_mali), 1)
+        self.assertEqual(mono_mali[0].penalty, -10)
+
+    def test_npl_benchmark_discrepancy_sets_conflict_flag(self):
+        """Prüft, dass eine Diskrepanz > 5% zwischen Profil-NPL und Benchmark-Performance das Conflict-Flag setzt."""
+        profile = {
+            "platform": "test_discrepancy",
+            "collateral_and_workout": {
+                "security_type": "Buyback-Garantie",
+                "current_npl_pct": 2.0,
+            },
+            "benchmarks": {
+                "p2p_empire_portfolio_perf": 85.0,  # Impliziert 15% NPL -> Differenz 13% > 5%
+            },
+            "malus_triggers": {},
+        }
+        res = self.scorer.score_platform(profile)
+        self.assertTrue(res["flags"].has_conflict)
+        self.assertTrue(
+            any("NPL-Diskrepanz" in note for note in res["flags"].conflict_notes)
+        )
 
 
 if __name__ == "__main__":
