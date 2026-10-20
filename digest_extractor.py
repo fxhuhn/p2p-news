@@ -386,7 +386,7 @@ def run_stage1_pipeline(
         import os
 
         env_val = os.getenv("MAX_DIGEST_ITEMS")
-        max_items = int(env_val) if env_val and env_val.isdigit() else 50
+        max_items = int(env_val) if env_val and env_val.isdigit() else 75
 
     if max_items > 0 and len(selected_items) > max_items:
         logger.info(

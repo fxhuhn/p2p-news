@@ -92,6 +92,61 @@ PRIMARY_PLATFORM_DOMAINS: set[str] = {
 }
 
 
+EXCLUDED_URL_PATTERNS: tuple[str, ...] = (
+    "/privacy-policy",
+    "/cookie-policy",
+    "/terms-and-conditions",
+    "/terms-of-use",
+    "/legal/",
+    "/legal",
+    "/impressum",
+    "/kontakt",
+    "/contact",
+    "/about-us",
+    "/about",
+    "/haftungsausschluss",
+    "/interessenkonflikt",
+    "/available-languages",
+    "/translations",
+    "/careers",
+    "/jobs",
+    "/blog/category/",
+    "/category/",
+    "/blog/tag/",
+    "/tag/",
+)
+
+EXCLUDED_TITLE_PATTERNS: tuple[str, ...] = (
+    r"^(?:datenschutz|privacy policy|cookie policy|terms (?:and|of) (?:conditions|use)|legal)\b",
+    r"^(?:haftungsausschluss|interessenkonflikt|impressum|kontakt|contact us)\b",
+    r"^(?:available languages|help us improve the translations|how we prepared the translations)\b",
+    r"^(?:get estateguru app|download (?:the )?app)\b",
+)
+
+
+def is_boilerplate_item(title: str, url: str, content_plain: str) -> bool:
+    """Prüft, ob ein Item eine irrelevante Metaseite, Boilerplate oder ein Inhaltsfragment ist."""
+    # 1. Mindesttextlänge: Abschnitte unter 10 Zeichen (ohne echten Fließtext) ignorieren
+    if len(content_plain.strip()) < 10:
+        return True
+
+    # 2. URL-Pfad prüfen
+    if url:
+        parsed = urlparse(url)
+        path = parsed.path.lower().rstrip("/")
+        for pattern in EXCLUDED_URL_PATTERNS:
+            if pattern in path or path.endswith(pattern):
+                return True
+
+    # 3. Titel prüfen
+    title_lower = title.strip().lower()
+    for pattern in EXCLUDED_TITLE_PATTERNS:
+        if re.search(pattern, title_lower):
+            return True
+
+    return False
+
+
 def slugify(text: str) -> str:
     """Erzeugt einen sauberen URL-kompatiblen Slug aus einem String."""
     cleaned = re.sub(r"[^\w\s-]", "", text.lower()).strip()
@@ -226,18 +281,24 @@ class ItemExtractor:
                 return items
 
         # Fallback / Single Article: Die gesamte Seite ist ein eigenständiges Item
-        return [
-            self._create_single_article_item(
-                markdown_body=markdown_body,
-                frontmatter=fm,
-                provider=provider,
-                page_url=page_url,
-                page_first_seen=page_first_seen,
-                snapshot_hash=snapshot_hash,
-                source_tier=source_tier,
-                is_baseline=is_baseline,
+        article = self._create_single_article_item(
+            markdown_body=markdown_body,
+            frontmatter=fm,
+            provider=provider,
+            page_url=page_url,
+            page_first_seen=page_first_seen,
+            snapshot_hash=snapshot_hash,
+            source_tier=source_tier,
+            is_baseline=is_baseline,
+        )
+        if is_boilerplate_item(article.title, article.url, article.content_plain):
+            logger.info(
+                "Überspringe Boilerplate-/Systemseite: %s (%s)",
+                article.title,
+                article.url,
             )
-        ]
+            return []
+        return [article]
 
     def _is_overview_page(self, body: str, frontmatter: dict[str, Any]) -> bool:
         """Erkennt, ob eine Datei eine Übersichtsseite mit mehreren Meldungen ist."""
@@ -357,6 +418,12 @@ class ItemExtractor:
             if not content_plain:
                 continue
 
+            if is_boilerplate_item(title, item_url, content_plain):
+                logger.debug(
+                    "Überspringe Boilerplate-Abschnitt: %s (%s)", title, item_url
+                )
+                continue
+
             item_content_hash = hashlib.sha256(
                 content_plain.encode("utf-8")
             ).hexdigest()
@@ -438,6 +505,12 @@ class ItemExtractor:
             clean_raw = re.sub(r"\[.*?\]\(.*?\)", "", text_part).strip()
             content_plain = normalize_plain_text(clean_raw)
             if not content_plain:
+                continue
+
+            if is_boilerplate_item(title, item_url, content_plain):
+                logger.debug(
+                    "Überspringe P2P-Game Boilerplate: %s (%s)", title, item_url
+                )
                 continue
 
             item_content_hash = hashlib.sha256(

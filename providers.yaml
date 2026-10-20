@@ -248,12 +248,17 @@ classification:
   topics:
     zinsen_aktionen:
       - cashback
+      - cashback-aktion
+      - cash-back
+      - rückvergütung
       - bonus
+      - investoren-bonus
       - zinssatz
       - zinserhöhung
       - zinsanstieg
       - zinsensenkung
       - zinsaktion
+      - sonderzins
       - loyalty
       - treueprogramm
       - summer splash
@@ -262,6 +267,12 @@ classification:
       - promo
       - zinsen
       - rendite
+      - startguthaben
+      - empfehlungsbonus
+      - willkommensbonus
+      - refer a friend
+      - referral
+      - freundschaftswerbung
     risiko_ausfaelle:
       - ausfall
       - verzug

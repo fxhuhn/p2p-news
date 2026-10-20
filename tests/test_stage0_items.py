@@ -218,6 +218,59 @@ Letzte Woche hatte ich darüber berichtet, dass die lettische Zentralbank der SI
         self.assertEqual(len(items), 1)
         self.assertEqual(items[0].title, "Einzelner Artikel")
 
+    def test_boilerplate_and_system_pages_are_excluded(self) -> None:
+        """Prüft, dass rechtliche Metaseiten und Boilerplate-Abschnitte verworfen werden."""
+        # 1. Single article mit Boilerplate-URL
+        fm_privacy = {
+            "source": "estateguru",
+            "url": "https://estateguru.co/blog/privacy-policy/",
+            "title": "Privacy Policy",
+        }
+        items = self.extractor.extract_items(
+            "This is our full privacy policy text for all platform users.",
+            frontmatter=fm_privacy,
+        )
+        self.assertEqual(len(items), 0)
+
+        # 2. Single article mit Boilerplate-Titel
+        fm_disclaimer = {
+            "source": "p2p-game",
+            "url": "https://p2p-game.com/p2p-news/thema/ratgeber.html#haftungsausschluss",
+            "title": "Haftungsausschluss & Interessenkonflikt",
+        }
+        items = self.extractor.extract_items(
+            "Alle Angaben ohne Gewähr und stellen keine Anlageberatung dar.",
+            frontmatter=fm_disclaimer,
+        )
+        self.assertEqual(len(items), 0)
+
+        # 3. Category/Tag Overview URL
+        fm_category = {
+            "source": "estateguru",
+            "url": "https://estateguru.co/blog/category/portfolio/",
+            "title": "Portfolio Category",
+        }
+        items = self.extractor.extract_items(
+            "Listing of all portfolio overview blog articles.",
+            frontmatter=fm_category,
+        )
+        self.assertEqual(len(items), 0)
+
+        # 4. Legitimer Artikel bleibt erhalten
+        fm_legit = {
+            "source": "estateguru",
+            "url": "https://estateguru.co/blog/citadele-partnership/",
+            "title": "Estateguru schließt Partnerschaft mit Citadele Bank",
+        }
+        items = self.extractor.extract_items(
+            "Estateguru kooperiert künftig mit der Citadele Bank für institutionelle Kreditfinanzierungen.",
+            frontmatter=fm_legit,
+        )
+        self.assertEqual(len(items), 1)
+        self.assertEqual(
+            items[0].title, "Estateguru schließt Partnerschaft mit Citadele Bank"
+        )
+
 
 class TestItemStore(unittest.TestCase):
     def test_upsert_preserves_first_seen_at(self) -> None:

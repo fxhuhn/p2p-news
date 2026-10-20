@@ -247,6 +247,101 @@ class TestWatermarkManager(unittest.TestCase):
             # 4. KW 35 Uralt-Meldung darf KEINESFALLS enthalten sein
             self.assertNotIn("item-w35-old", selected_ids)
 
+    def test_cashback_boost_vs_referral_priority(self) -> None:
+        """
+        Prüft, dass Cashback-Aktionen einen Score-Boost (+2.0) erhalten und vor
+        regulären News stehen, während Referral-/Startguthaben-Boni keinen Boost erhalten.
+        """
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            base_dir = Path(tmp_dir)
+            wm_file = base_dir / "watermark.json"
+            wm_mgr = WatermarkManager(watermark_path=wm_file)
+            store = ItemStore(items_dir=base_dir / "items")
+
+            item_referral = NewsItem(
+                item_id="item-ref",
+                provider="nectaro",
+                source_tier="primary",
+                url="https://nectaro.eu/blog/referral",
+                title="Nectaro Startguthaben und Empfehlungsbonus für Neukunden",
+                published_date="2026-10-07",
+                first_seen_at="2026-10-07T10:00:00+00:00",
+                last_seen_at="2026-10-07T10:00:00+00:00",
+                item_content_hash="h-ref",
+                page_snapshot_hash="s-ref",
+                severity="low",
+                content_plain="Startguthaben und Empfehlungsbonus bei Registrierung.",
+            )
+            item_regular = NewsItem(
+                item_id="item-reg",
+                provider="nectaro",
+                source_tier="primary",
+                url="https://nectaro.eu/blog/report",
+                title="Nectaro Quartalsbericht und Zinsänderung",
+                published_date="2026-10-07",
+                first_seen_at="2026-10-07T10:00:00+00:00",
+                last_seen_at="2026-10-07T10:00:00+00:00",
+                item_content_hash="h-reg",
+                page_snapshot_hash="s-reg",
+                severity="medium",
+                content_plain="Plattformbericht für das dritte Quartal.",
+            )
+            item_cashback = NewsItem(
+                item_id="item-cash",
+                provider="nectaro",
+                source_tier="primary",
+                url="https://nectaro.eu/blog/cashback",
+                title="Nectaro startet 1% Cashback-Aktion Summer Splash",
+                published_date="2026-10-07",
+                first_seen_at="2026-10-07T10:00:00+00:00",
+                last_seen_at="2026-10-07T10:00:00+00:00",
+                item_content_hash="h-cash",
+                page_snapshot_hash="s-cash",
+                severity="low",
+                content_plain="Exklusive Cashback-Aktion mit 1% Rückvergütung auf neue Investments.",
+            )
+
+            store.upsert_item(item_referral)
+            store.upsert_item(item_regular)
+            store.upsert_item(item_cashback)
+
+            selected = wm_mgr.select_items_for_run(store=store, iso_week="2026-W41")
+            self.assertEqual(len(selected), 3)
+
+            # Cashback (low + 2.0 boost = 2.0) > Regular (medium = 1.0) > Referral (low = 0.0)
+            self.assertEqual(selected[0].item_id, "item-cash")
+            self.assertEqual(selected[1].item_id, "item-reg")
+            self.assertEqual(selected[2].item_id, "item-ref")
+
+    def test_old_year_fallback_exclusion(self) -> None:
+        """
+        Prüft, dass Archivseiten mit historischer Jahreszahl im Titel
+        nicht per first_seen_at-Fallback in die aktuelle Woche gezogen werden.
+        """
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            base_dir = Path(tmp_dir)
+            wm_file = base_dir / "watermark.json"
+            wm_mgr = WatermarkManager(watermark_path=wm_file)
+            store = ItemStore(items_dir=base_dir / "items")
+
+            item_ancient = NewsItem(
+                item_id="item-ancient",
+                provider="mintos",
+                source_tier="primary",
+                url="https://mintos.com/blog/notes-2022",
+                title="Mintos Notes available on launch day 2022",
+                published_date=None,  # Kein explizites Datum
+                first_seen_at="2026-10-07T10:00:00+00:00",  # Crawl in 2026-W41
+                last_seen_at="2026-10-07T10:00:00+00:00",
+                item_content_hash="h-anc",
+                page_snapshot_hash="s-anc",
+                content_plain="Historical notes list.",
+            )
+            store.upsert_item(item_ancient)
+
+            selected = wm_mgr.select_items_for_run(store=store, iso_week="2026-W41")
+            self.assertEqual(len(selected), 0)
+
 
 class TestStage1Verifier(unittest.TestCase):
     def setUp(self) -> None:

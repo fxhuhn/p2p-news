@@ -21,6 +21,27 @@ from item_store import ItemStore
 logger = logging.getLogger("watermark_manager")
 
 
+CASHBACK_KEYWORDS: frozenset[str] = frozenset(
+    {
+        "cashback",
+        "cashback-aktion",
+        "cash-back",
+        "rückvergütung",
+        "sonderzins",
+        "zinsaktion",
+        "summer splash",
+        "summer storm",
+        "investoren-bonus",
+    }
+)
+
+
+def has_cashback_boost(item: NewsItem) -> bool:
+    """Ermittelt, ob ein Item eine hochpriorisierte Cashback- oder Rendite-Aktion ist."""
+    text = f"{item.title} {item.content_plain}".lower()
+    return any(kw in text for kw in CASHBACK_KEYWORDS)
+
+
 def get_previous_iso_week(iso_week: str) -> str:
     """Berechnet die ISO-Kalenderwoche der direkten Vorwoche (W-1)."""
     match = re.match(r"^(\d{4})-W(\d{2})$", iso_week)
@@ -233,15 +254,19 @@ class WatermarkManager:
 
                 # 3. Fallback auf first_seen_at (NUR für die aktuelle Woche W zulässig!)
                 if not item_iso_week and item.first_seen_at:
-                    try:
-                        dt = datetime.fromisoformat(item.first_seen_at[:10])
-                        cand_week = (
-                            f"{dt.isocalendar().year}-W{dt.isocalendar().week:02d}"
-                        )
-                        if cand_week == iso_week:
-                            item_iso_week = cand_week
-                    except Exception:
-                        pass
+                    # Plausibilitätscheck: Wenn im Titel ein altes Jahr (<= 2025) steht,
+                    # nicht per Fallback in die Gegenwart ziehen!
+                    title_year_match = re.search(r"\b(201\d|202[0-5])\b", item.title)
+                    if not title_year_match:
+                        try:
+                            dt = datetime.fromisoformat(item.first_seen_at[:10])
+                            cand_week = (
+                                f"{dt.isocalendar().year}-W{dt.isocalendar().week:02d}"
+                            )
+                            if cand_week == iso_week:
+                                item_iso_week = cand_week
+                        except Exception:
+                            pass
 
                 if not item_iso_week:
                     continue
@@ -279,12 +304,13 @@ class WatermarkManager:
                     # W-2 oder älter: Strikt ausschließen!
                     continue
 
-            # Sortierung: Schweregrad (critical > high > medium > low), Tier (primary vor secondary), Neueste zuerst
+            # Sortierung: Schweregrad + Cashback-Boost, Tier (primary vor secondary), Neueste zuerst
             severity_weights = {"critical": 3, "high": 2, "medium": 1, "low": 0}
             tier_weights = {"primary": 1, "secondary": 0}
             selected.sort(
                 key=lambda x: (
-                    severity_weights.get(x.severity, 0),
+                    severity_weights.get(x.severity, 0)
+                    + (2.0 if has_cashback_boost(x) else 0.0),
                     tier_weights.get(x.source_tier, 0),
                     x.published_date or "",
                     x.first_seen_at,
