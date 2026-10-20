@@ -249,6 +249,15 @@ def run_pipeline(
             commit_message=f"chore(newsletter): publish newsletter {target_week}",
             data_dir=base,
         )
+
+        try:
+            from telegram_publisher import send_newsletter_notification
+
+            send_newsletter_notification(out_file)
+        except Exception as exc:
+            logger.warning(
+                "Telegram-Benachrichtigung für Newsletter fehlgeschlagen: %s", exc
+            )
     else:
         logger.info("ERFOLG: Entwurf (Draft) erstellt zur menschlichen Durchsicht!")
         logger.info("Pfad: %s", out_file)

@@ -186,6 +186,15 @@ def run_full_audit(
             data_dir=base,
         )
 
+        try:
+            from telegram_publisher import send_ranking_notification
+
+            send_ranking_notification(ranking_path)
+        except Exception as exc:
+            logger.warning(
+                "Telegram-Benachrichtigung für Ranking fehlgeschlagen: %s", exc
+            )
+
     return scored_count, ranking_path
 
 

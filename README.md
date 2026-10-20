@@ -293,6 +293,37 @@ python git_publisher.py --files data/rankings/audit-ranking-2026-10.md data/fact
 
 ---
 
+## Automatisierte Verteilung: Telegram-Benachrichtigungen (Phase 2)
+
+Sobald ein neues Audit-Ranking oder ein freigegebener wöchentlicher Newsletter auf GitHub veröffentlicht wird, sendet das Modul [`telegram_publisher.py`](telegram_publisher.py) automatisch optimierte Ticker-Nachrichten an Telegram:
+
+* **Monatliches Plattform-Ranking:** Sendet eine kompakte Übersicht mit den Top-5 Plattformen, den stärksten Veränderungen/Malus-Abzügen, akuten Neuanlage-Stopps und dem direkten Link zum Markdown-Report auf GitHub.
+* **Wöchentlicher Newsletter:** Sendet eine übersichtliche Serie von Einzelnachrichten je Kategorie (`Volumen & Statistiken`, `Regulierung & Führung`, `Kreditanbahner & Marktplätze`, `Risiken & Verzögerungen`, `Features & Gesamtreport`).
+* **Mobil-optimiert:** Verzicht auf Piktogramme und horizontale Trennlinien für maximale Lesbarkeit und Informationsdichte auf Smartphones.
+
+### Konfiguration via `.env`
+
+```bash
+TELEGRAM_NOTIFY_ENABLED=true
+TELEGRAM_TOKEN="8838083513:AAGw6VNSZGij-QWd82Zd-PvlSWHZM8ZCSkk"
+TELEGRAM_CHAT_ID="661420919"
+```
+
+### Manuelle Ausführung via CLI
+
+```bash
+# Verbindungstest
+python telegram_publisher.py --test
+
+# Ranking manuell senden
+python telegram_publisher.py --ranking data/rankings/audit-ranking-2026-10.md
+
+# Newsletter manuell senden
+python telegram_publisher.py --newsletter data/newsletters/newsletter-2026-W42.md
+```
+
+---
+
 ## Container (Docker & Docker Compose)
 
 ### Image aus GitHub Container Registry (GHCR) laden
