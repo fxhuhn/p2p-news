@@ -1,7 +1,7 @@
 ---
 platform: revest
 platform_name: Revest
-audit_date: '2026-10-19'
+audit_date: '2026-10-21'
 audit_version: '1.0'
 audit_score:
   net_score: 49
@@ -74,7 +74,7 @@ sources:
 
 # Platform Audit Factsheet: Revest
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
+**Audit-Datum:** 2026-10-21 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -110,4 +110,4 @@ sources:
 | **P2P Dash Community Score** | **N/A / 100** | Empirischer Community Trust Score (p2pdash.com) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-19.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*

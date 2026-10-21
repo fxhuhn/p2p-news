@@ -1,11 +1,11 @@
 ---
 title: 'P2P Platform Audit Ranking – 2026-10'
-audit_date: '2026-10-19'
+audit_date: '2026-10-21'
 year_month: '2026-10'
 platforms_count: 31
 model: 'Mathematisches Nettomodell (Max. 100 Pkt - Mali)'
 generator: 'P2P Audit Scoring System'
-generated_at: '2026-10-19T17:17:55.662064+00:00'
+generated_at: '2026-10-21T11:48:21.047412+00:00'
 ---
 
 # P2P Platform Audit Ranking – 2026-10
@@ -17,33 +17,33 @@ generated_at: '2026-10-19T17:17:55.662064+00:00'
 | **1** | [Inrento](../factsheets/inrento.md) | **90** | `±0` | `TOP TIER` | 8-15 % | 25 | 24 | 25 | 16 | 0 | ✅ Valide |
 | **2** | [Crowdpear](../factsheets/crowdpear.md) | **86** | `±0` | `TOP TIER` | 8-15 % | 25 | 22 | 23 | 16 | 0 | ⚠️ Konflikt |
 | **3** | [Indemo](../factsheets/indemo.md) | **83** | `±0` | `TOP TIER` | 8-15 % | 25 | 22 | 25 | 11 | 0 | ✅ Valide |
-| **4** | [Lande](../factsheets/lande.md) | **81** | `-6` | `TOP TIER` | 8-15 % | 23 | 21 | 25 | 18 | `-6 Pkt` | ✅ Valide |
+| **4** | [Lande](../factsheets/lande.md) | **81** | `±0` | `TOP TIER` | 8-15 % | 23 | 21 | 25 | 18 | `-6 Pkt` | ✅ Valide |
 | **5** | [Insoil](../factsheets/insoil.md) | **81** | `±0` | `TOP TIER` | 8-15 % | 25 | 22 | 25 | 9 | 0 | ✅ Valide |
 | **6** | [Capitalia](../factsheets/capitalia.md) | **77** | `±0` | `TOP TIER` | 8-15 % | 23 | 22 | 23 | 9 | 0 | ✅ Valide |
-| **7** | [Mintos](../factsheets/mintos.md) | **75** | `-3` | `TOP TIER` | 8-15 % | 25 | 22 | 11 | 20 | `-3 Pkt` | ✅ Valide |
-| **8** | [Nectaro](../factsheets/nectaro.md) | **69** | `-4` | `MID RISK` | 5-8 % | 25 | 22 | 14 | 16 | `-8 Pkt` | ✅ Valide |
-| **9** | [Afranga](../factsheets/afranga.md) | **68** | `-4` | `MID RISK` | 5-8 % | 23 | 21 | 14 | 20 | `-10 Pkt` | ✅ Valide |
-| **10** | [Fagura](../factsheets/fagura.md) | **68** | `-3` | `MID RISK` | 5-8 % | 25 | 17 | 11 | 18 | `-3 Pkt` | ⚠️ Konflikt |
-| **11** | [Income](../factsheets/income.md) | **64** | `-2` | `MID RISK` | 5-8 % | 13 | 21 | 14 | 16 | 0 | ✅ Valide |
-| **12** | [Twino](../factsheets/twino.md) | **63** | `-4` | `MID RISK` | 5-8 % | 25 | 19 | 11 | 16 | `-8 Pkt` | ✅ Valide |
-| **13** | [Peerberry](../factsheets/peerberry.md) | **61** | `-4` | `MID RISK` | 5-8 % | 8 | 22 | 15 | 24 | `-8 Pkt` | ✅ Valide |
+| **7** | [Mintos](../factsheets/mintos.md) | **75** | `±0` | `TOP TIER` | 8-15 % | 25 | 22 | 11 | 20 | `-3 Pkt` | ✅ Valide |
+| **8** | [Nectaro](../factsheets/nectaro.md) | **69** | `±0` | `MID RISK` | 5-8 % | 25 | 22 | 14 | 16 | `-8 Pkt` | ✅ Valide |
+| **9** | [Afranga](../factsheets/afranga.md) | **68** | `±0` | `MID RISK` | 5-8 % | 23 | 21 | 14 | 20 | `-10 Pkt` | ✅ Valide |
+| **10** | [Fagura](../factsheets/fagura.md) | **68** | `±0` | `MID RISK` | 5-8 % | 25 | 17 | 11 | 18 | `-3 Pkt` | ⚠️ Konflikt |
+| **11** | [Income](../factsheets/income.md) | **64** | `±0` | `MID RISK` | 5-8 % | 13 | 21 | 14 | 16 | 0 | ✅ Valide |
+| **12** | [Twino](../factsheets/twino.md) | **63** | `±0` | `MID RISK` | 5-8 % | 25 | 19 | 11 | 16 | `-8 Pkt` | ✅ Valide |
+| **13** | [Peerberry](../factsheets/peerberry.md) | **61** | `±0` | `MID RISK` | 5-8 % | 8 | 22 | 15 | 24 | `-8 Pkt` | ✅ Valide |
 | **14** | [Bondora](../factsheets/bondora.md) | **61** | `±0` | `MID RISK` | 5-8 % | 14 | 22 | 13 | 18 | `-6 Pkt` | ✅ Valide |
-| **15** | [Viainvest](../factsheets/viainvest.md) | **60** | `-4` | `MID RISK` | 5-8 % | 25 | 18 | 11 | 16 | `-10 Pkt` | ⚠️ Konflikt |
-| **16** | [Esketit](../factsheets/esketit.md) | **60** | `-4` | `MID RISK` | 5-8 % | 13 | 21 | 14 | 20 | `-8 Pkt` | ✅ Valide |
-| **17** | [Robocash](../factsheets/robocash.md) | **56** | `-4` | `WATCHLIST` | 0-3 % | 8 | 20 | 14 | 24 | `-10 Pkt` | ✅ Valide |
-| **18** | [Debitum](../factsheets/debitum.md) | **55** | `-6` | `WATCHLIST` | 0-3 % | 25 | 19 | 11 | 11 | `-11 Pkt` | ⚠️ Konflikt |
-| **19** | [Modena](../factsheets/modena.md) | **51** | `-2` | `WATCHLIST` | 0-3 % | 11 | 22 | 17 | 11 | `-10 Pkt` | ✅ Valide |
-| **20** | [Revest](../factsheets/revest.md) | **49** | `-2` | `SPECULATIVE` | 0 % | 8 | 17 | 23 | 9 | `-8 Pkt` | ✅ Valide |
-| **21** | [Stockestate](../factsheets/stockestate.md) | **48** | `-6` | `SPECULATIVE` | 0 % | 17 | 5 | 23 | 9 | `-6 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
+| **15** | [Viainvest](../factsheets/viainvest.md) | **60** | `±0` | `MID RISK` | 5-8 % | 25 | 18 | 11 | 16 | `-10 Pkt` | ⚠️ Konflikt |
+| **16** | [Esketit](../factsheets/esketit.md) | **60** | `±0` | `MID RISK` | 5-8 % | 13 | 21 | 14 | 20 | `-8 Pkt` | ✅ Valide |
+| **17** | [Robocash](../factsheets/robocash.md) | **56** | `±0` | `WATCHLIST` | 0-3 % | 8 | 20 | 14 | 24 | `-10 Pkt` | ✅ Valide |
+| **18** | [Debitum](../factsheets/debitum.md) | **55** | `±0` | `WATCHLIST` | 0-3 % | 25 | 19 | 11 | 11 | `-11 Pkt` | ⚠️ Konflikt |
+| **19** | [Modena](../factsheets/modena.md) | **51** | `±0` | `WATCHLIST` | 0-3 % | 11 | 22 | 17 | 11 | `-10 Pkt` | ✅ Valide |
+| **20** | [Revest](../factsheets/revest.md) | **49** | `±0` | `SPECULATIVE` | 0 % | 8 | 17 | 23 | 9 | `-8 Pkt` | ✅ Valide |
+| **21** | [Stockestate](../factsheets/stockestate.md) | **48** | `±0` | `SPECULATIVE` | 0 % | 17 | 5 | 23 | 9 | `-6 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
 | **22** | [Bondster](../factsheets/bondster.md) | **44** | `±0` | `SPECULATIVE` | 0 % | 8 | 17 | 11 | 18 | `-10 Pkt` | ⚠️ Konflikt |
-| **23** | [Loanch](../factsheets/loanch.md) | **44** | `-3` | `SPECULATIVE` | 0 % | 8 | 3 | 14 | 24 | `-5 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
-| **24** | [Hive5](../factsheets/hive5.md) | **39** | `-6` | `DISTRESSED` | 0 % | 10 | 5 | 14 | 20 | `-10 Pkt` | ⚠️ Lücke |
-| **25** | [Monefit](../factsheets/monefit.md) | **38** | `-16` | `DISTRESSED` | 0 % | 10 | 17 | 14 | 18 | `-21 Pkt` | ⚠️ Konflikt |
+| **23** | [Loanch](../factsheets/loanch.md) | **44** | `±0` | `SPECULATIVE` | 0 % | 8 | 3 | 14 | 24 | `-5 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
+| **24** | [Hive5](../factsheets/hive5.md) | **39** | `±0` | `DISTRESSED` | 0 % | 10 | 5 | 14 | 20 | `-10 Pkt` | ⚠️ Lücke |
+| **25** | [Monefit](../factsheets/monefit.md) | **38** | `±0` | `DISTRESSED` | 0 % | 10 | 17 | 14 | 18 | `-21 Pkt` | ⚠️ Konflikt |
 | **26** | [Estateguru](../factsheets/estateguru.md) | **27** | `±0` | `DISTRESSED` | 0 % | 25 | 17 | 3 | 2 | `-20 Pkt` | ✅ Valide |
-| **27** | [Fintown](../factsheets/fintown.md) | **27** | `-2` | `DISTRESSED` | 0 % | 8 | 17 | 3 | 16 | `-17 Pkt` | ✅ Valide |
-| **28** | [Swaper](../factsheets/swaper.md) | **23** | `-5` | `DISTRESSED` | 0 % | 8 | 3 | 11 | 24 | `-23 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
-| **29** | [Lendermarket](../factsheets/lendermarket.md) | **22** | `-2` | `DISTRESSED` | 0 % | 8 | 12 | 11 | 16 | `-25 Pkt` | ✅ Valide |
-| **30** | [Asterra](../factsheets/asterra.md) | **5** | `-8` | `DISTRESSED` | 0 % | 2 | 3 | 3 | 11 | `-14 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
+| **27** | [Fintown](../factsheets/fintown.md) | **27** | `±0` | `DISTRESSED` | 0 % | 8 | 17 | 3 | 16 | `-17 Pkt` | ✅ Valide |
+| **28** | [Swaper](../factsheets/swaper.md) | **23** | `±0` | `DISTRESSED` | 0 % | 8 | 3 | 11 | 24 | `-23 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
+| **29** | [Lendermarket](../factsheets/lendermarket.md) | **22** | `±0` | `DISTRESSED` | 0 % | 8 | 12 | 11 | 16 | `-25 Pkt` | ✅ Valide |
+| **30** | [Asterra](../factsheets/asterra.md) | **5** | `±0` | `DISTRESSED` | 0 % | 2 | 3 | 3 | 11 | `-14 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
 | **31** | [Ventus](../factsheets/ventus.md) | **0** | `±0` | `DISTRESSED` | 0 % | 8 | 3 | 3 | 2 | `-40 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
 
 ## 2. Akute Watchlist- & Risiko-Warnungen

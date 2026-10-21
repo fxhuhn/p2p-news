@@ -1,7 +1,7 @@
 ---
 platform: afranga
 platform_name: Afranga
-audit_date: '2026-10-19'
+audit_date: '2026-10-21'
 audit_version: '1.0'
 audit_score:
   net_score: 68
@@ -74,7 +74,7 @@ sources:
 
 # Platform Audit Factsheet: Afranga
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
+**Audit-Datum:** 2026-10-21 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -110,4 +110,4 @@ sources:
 | **P2P Dash Community Score** | **68 / 100** (14.8 % XIRR) | 493 Investoren (Empirischer Schwarm-Score) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-19.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*

@@ -1,7 +1,7 @@
 ---
 platform: lendermarket
 platform_name: Lendermarket
-audit_date: '2026-10-19'
+audit_date: '2026-10-21'
 audit_version: '1.0'
 audit_score:
   net_score: 22
@@ -86,7 +86,7 @@ sources:
 
 # Platform Audit Factsheet: Lendermarket
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
+**Audit-Datum:** 2026-10-21 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -124,4 +124,4 @@ sources:
 | **P2P Dash Community Score** | **57 / 100** (17.2 % XIRR) | 432 Investoren (Empirischer Schwarm-Score) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-19.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*

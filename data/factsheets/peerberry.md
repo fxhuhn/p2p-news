@@ -1,7 +1,7 @@
 ---
 platform: peerberry
 platform_name: PeerBerry
-audit_date: '2026-10-19'
+audit_date: '2026-10-21'
 audit_version: '1.0'
 audit_score:
   net_score: 61
@@ -82,7 +82,7 @@ sources:
 
 # Platform Audit Factsheet: PeerBerry
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
+**Audit-Datum:** 2026-10-21 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -118,4 +118,4 @@ sources:
 | **P2P Dash Community Score** | **63 / 100** (9.1 % XIRR) | 524 Investoren (Empirischer Schwarm-Score) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-19.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*

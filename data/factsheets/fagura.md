@@ -1,7 +1,7 @@
 ---
 platform: fagura
 platform_name: Fagura
-audit_date: '2026-10-19'
+audit_date: '2026-10-21'
 audit_version: '1.0'
 audit_score:
   net_score: 68
@@ -79,7 +79,7 @@ sources:
 
 # Platform Audit Factsheet: Fagura
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
+**Audit-Datum:** 2026-10-21 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -125,4 +125,4 @@ sources:
 - [https://p2pmarketdata.com/platforms/fagura](https://p2pmarketdata.com/platforms/fagura)
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-19.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*

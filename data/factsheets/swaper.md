@@ -1,7 +1,7 @@
 ---
 platform: swaper
 platform_name: Swaper
-audit_date: '2026-10-19'
+audit_date: '2026-10-21'
 audit_version: '1.0'
 audit_score:
   net_score: 23
@@ -88,7 +88,7 @@ sources:
 
 # Platform Audit Factsheet: Swaper
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
+**Audit-Datum:** 2026-10-21 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -134,4 +134,4 @@ sources:
 | **P2P Dash Community Score** | **52 / 100** (13.3 % XIRR) | 344 Investoren (Empirischer Schwarm-Score) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-19.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*

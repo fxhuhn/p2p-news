@@ -1,7 +1,7 @@
 ---
 platform: ventus
 platform_name: Ventus Energy
-audit_date: '2026-10-19'
+audit_date: '2026-10-21'
 audit_version: '1.0'
 audit_score:
   net_score: 0
@@ -88,7 +88,7 @@ sources:
 
 # Platform Audit Factsheet: Ventus Energy
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
+**Audit-Datum:** 2026-10-21 | **Klasse:** `DISTRESSED` | **Depot-Limit:** `0 % (Kapitalabzug & Recovery)`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -134,4 +134,4 @@ sources:
 | **P2P Dash Community Score** | **29 / 100** (27.1 % XIRR) | 700 Investoren (Empirischer Schwarm-Score) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-19.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*

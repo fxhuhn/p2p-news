@@ -1,7 +1,7 @@
 ---
 platform: inrento
 platform_name: InRento
-audit_date: '2026-10-19'
+audit_date: '2026-10-21'
 audit_version: '1.0'
 audit_score:
   net_score: 90
@@ -71,7 +71,7 @@ sources:
 
 # Platform Audit Factsheet: InRento
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `TOP TIER` | **Depot-Limit:** `8 - 15 %`
+**Audit-Datum:** 2026-10-21 | **Klasse:** `TOP TIER` | **Depot-Limit:** `8 - 15 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -105,4 +105,4 @@ Keine Malus-Abschläge wirksam. Das Portfolio weist weder unzulässige Monokultu
 | **P2P Dash Community Score** | **78 / 100** (8.9 % XIRR) | 150 Investoren (Empirischer Schwarm-Score) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-19.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*

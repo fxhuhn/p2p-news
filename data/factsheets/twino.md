@@ -1,7 +1,7 @@
 ---
 platform: twino
 platform_name: Twino
-audit_date: '2026-10-19'
+audit_date: '2026-10-21'
 audit_version: '1.0'
 audit_score:
   net_score: 63
@@ -76,7 +76,7 @@ sources:
 
 # Platform Audit Factsheet: Twino
 
-**Audit-Datum:** 2026-10-19 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
+**Audit-Datum:** 2026-10-21 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -112,4 +112,4 @@ sources:
 | **P2P Dash Community Score** | **62 / 100** (11.7 % XIRR) | 312 Investoren (Empirischer Schwarm-Score) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-19.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*
