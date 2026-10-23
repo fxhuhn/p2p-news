@@ -1,7 +1,7 @@
 ---
 platform: debitum
 platform_name: Debitum Investments
-audit_date: '2026-10-21'
+audit_date: '2026-10-23'
 audit_version: '1.0'
 audit_score:
   net_score: 55
@@ -89,7 +89,7 @@ sources:
 
 # Platform Audit Factsheet: Debitum Investments
 
-**Audit-Datum:** 2026-10-21 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
+**Audit-Datum:** 2026-10-23 | **Klasse:** `WATCHLIST` | **Depot-Limit:** `0 - 3 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -131,4 +131,4 @@ sources:
 | **P2P Dash Community Score** | **65 / 100** (15.3 % XIRR) | 928 Investoren (Empirischer Schwarm-Score) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-23.*

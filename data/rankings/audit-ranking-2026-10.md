@@ -1,11 +1,11 @@
 ---
 title: 'P2P Platform Audit Ranking – 2026-10'
-audit_date: '2026-10-21'
+audit_date: '2026-10-23'
 year_month: '2026-10'
 platforms_count: 31
 model: 'Mathematisches Nettomodell (Max. 100 Pkt - Mali)'
 generator: 'P2P Audit Scoring System'
-generated_at: '2026-10-21T11:48:21.047412+00:00'
+generated_at: '2026-10-23T13:39:22.920910+00:00'
 ---
 
 # P2P Platform Audit Ranking – 2026-10

@@ -1,7 +1,7 @@
 ---
 platform: stockestate
 platform_name: Stockestate
-audit_date: '2026-10-21'
+audit_date: '2026-10-23'
 audit_version: '1.0'
 audit_score:
   net_score: 48
@@ -87,7 +87,7 @@ sources:
 
 # Platform Audit Factsheet: Stockestate
 
-**Audit-Datum:** 2026-10-21 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
+**Audit-Datum:** 2026-10-23 | **Klasse:** `SPECULATIVE` | **Depot-Limit:** `0 % (Neuanlage-Stopp)`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -132,4 +132,4 @@ sources:
 | **P2P Dash Community Score** | **N/A / 100** | Empirischer Community Trust Score (p2pdash.com) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-23.*

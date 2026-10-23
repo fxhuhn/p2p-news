@@ -1,7 +1,7 @@
 ---
 platform: viainvest
 platform_name: Viainvest
-audit_date: '2026-10-21'
+audit_date: '2026-10-23'
 audit_version: '1.0'
 audit_score:
   net_score: 60
@@ -78,7 +78,7 @@ sources:
 
 # Platform Audit Factsheet: Viainvest
 
-**Audit-Datum:** 2026-10-21 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
+**Audit-Datum:** 2026-10-23 | **Klasse:** `MID RISK` | **Depot-Limit:** `5 - 8 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -118,4 +118,4 @@ sources:
 | **P2P Dash Community Score** | **60 / 100** (12.0 % XIRR) | 558 Investoren (Empirischer Schwarm-Score) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-23.*

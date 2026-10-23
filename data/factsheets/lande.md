@@ -1,7 +1,7 @@
 ---
 platform: lande
 platform_name: Lande
-audit_date: '2026-10-21'
+audit_date: '2026-10-23'
 audit_version: '1.0'
 audit_score:
   net_score: 81
@@ -76,7 +76,7 @@ sources:
 
 # Platform Audit Factsheet: Lande
 
-**Audit-Datum:** 2026-10-21 | **Klasse:** `TOP TIER` | **Depot-Limit:** `8 - 15 %`
+**Audit-Datum:** 2026-10-23 | **Klasse:** `TOP TIER` | **Depot-Limit:** `8 - 15 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -112,4 +112,4 @@ sources:
 | **P2P Dash Community Score** | **56 / 100** (9.4 % XIRR) | 434 Investoren (Empirischer Schwarm-Score) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-21.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-23.*
