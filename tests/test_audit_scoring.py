@@ -620,6 +620,29 @@ class TestAuditScoring(unittest.TestCase):
         self.assertIn("**78 / 100** (8.9 % XIRR)", content)
         self.assertIn("150 Investoren", content)
 
+    def test_digilo_audit_benchmark(self):
+        """Prüft das deterministische Audit-Scoring für Digilo (ECSP, 1st-Rank Hypotheken, Langläufer)."""
+        import yaml
+
+        profile_path = Path("seed_platforms/digilo/profile.yaml")
+        self.assertTrue(profile_path.exists())
+        profile = yaml.safe_load(profile_path.read_text(encoding="utf-8"))
+
+        res = self.scorer.score_platform(profile)
+        self.assertEqual(res["pillar_1"].final_score, 25)  # ECSP + Lemonway Segregation
+        self.assertEqual(res["pillar_2"].final_score, 17)  # Solide / Lokaler Abschluss
+        self.assertEqual(
+            res["pillar_3"].final_score, 25
+        )  # 1st-Rank Hypothek, LTV <= 60%
+        self.assertEqual(
+            res["pillar_4"].final_score, 9
+        )  # Kein Sekundärmarkt, Laufzeit >365 Tage
+        self.assertEqual(res["malus_total"], 0)
+        self.assertEqual(res["raw_score"], 76)
+        self.assertEqual(res["net_score"], 76)
+        self.assertEqual(res["risk_class"], "TOP TIER")
+        self.assertEqual(res["portfolio_limit"], "8 - 15 %")
+
 
 if __name__ == "__main__":
     unittest.main()

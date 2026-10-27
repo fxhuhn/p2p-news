@@ -6,7 +6,7 @@ Ein modulares, produktionsreifes Python 3.11+ Tool zum Scannen von P2P-Lending-N
 
 ---
 
-## Unterstützte Anbieter (36 Provider)
+## Unterstützte Anbieter (37 Provider)
 
 ### 1. News- und Erfahrungs-Aggregatoren (5 Blogs)
 | Provider-Key | Name / Blog | Start-URL |
@@ -17,7 +17,7 @@ Ein modulares, produktionsreifes Python 3.11+ Tool zum Scannen von P2P-Lending-N
 | `passives-einkommen` | Passives Einkommen mit P2P (Lars Wrobbel) | `https://passives-einkommen-mit-p2p.de/p2p-kredite-news/` |
 | `p2p-anlage` | P2P-Anlage.de | `https://p2p-anlage.de` |
 
-### 2. Offizielle P2P-Plattformen (31 Plattformen)
+### 2. Offizielle P2P-Plattformen (32 Plattformen)
 | Provider-Key | Plattform | Start-URL | Gescannte Bereiche |
 |---|---|---|---|
 | `nectaro` | Nectaro | `https://nectaro.eu` | Hauptseite, Statistik, Dokumente, Anbahner, Blog |
@@ -51,6 +51,7 @@ Ein modulares, produktionsreifes Python 3.11+ Tool zum Scannen von P2P-Lending-N
 | `twino` | Twino | `https://www.twino.eu` | Hauptseite, Kredite, Blog |
 | `modena` | Modena | `https://modena.ee` | Hauptseite, Blog |
 | `insoil` | Insoil | `https://finance.insoil.com` | Hauptseite, News |
+| `digilo` | Digilo | `https://digilo.co` | Hauptseite, Projekte, Blog |
 
 ---
 

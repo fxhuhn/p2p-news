@@ -188,6 +188,14 @@ platforms:
     blog_pattern: "^(?!how-it-works|about-us|faq|news|tag|lt)[a-z0-9-]+$"
     auto_discover: true
 
+  digilo:
+    base_url: "https://digilo.co"
+    subpages:
+      - "/projects"
+      - "/about-us"
+    blog_path: "/blog"
+    auto_discover: true
+
 # ------------------------------------------------------------------------------
 # 2. Aggregatoren & Blogs (News & Erfahrungsberichte)
 # ------------------------------------------------------------------------------
@@ -243,6 +251,7 @@ classification:
     - macclear
     - afranga
     - mypeak
+    - digilo
 
   # Themengruppen und Trigger-Keywords
   topics:

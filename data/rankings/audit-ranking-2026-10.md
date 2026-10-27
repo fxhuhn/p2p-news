@@ -1,11 +1,11 @@
 ---
 title: 'P2P Platform Audit Ranking – 2026-10'
-audit_date: '2026-10-23'
+audit_date: '2026-10-27'
 year_month: '2026-10'
-platforms_count: 31
+platforms_count: 32
 model: 'Mathematisches Nettomodell (Max. 100 Pkt - Mali)'
 generator: 'P2P Audit Scoring System'
-generated_at: '2026-10-23T13:39:22.920910+00:00'
+generated_at: '2026-10-27T10:12:54.191747+00:00'
 ---
 
 # P2P Platform Audit Ranking – 2026-10
@@ -20,31 +20,32 @@ generated_at: '2026-10-23T13:39:22.920910+00:00'
 | **4** | [Lande](../factsheets/lande.md) | **81** | `±0` | `TOP TIER` | 8-15 % | 23 | 21 | 25 | 18 | `-6 Pkt` | ✅ Valide |
 | **5** | [Insoil](../factsheets/insoil.md) | **81** | `±0` | `TOP TIER` | 8-15 % | 25 | 22 | 25 | 9 | 0 | ✅ Valide |
 | **6** | [Capitalia](../factsheets/capitalia.md) | **77** | `±0` | `TOP TIER` | 8-15 % | 23 | 22 | 23 | 9 | 0 | ✅ Valide |
-| **7** | [Mintos](../factsheets/mintos.md) | **75** | `±0` | `TOP TIER` | 8-15 % | 25 | 22 | 11 | 20 | `-3 Pkt` | ✅ Valide |
-| **8** | [Nectaro](../factsheets/nectaro.md) | **69** | `±0` | `MID RISK` | 5-8 % | 25 | 22 | 14 | 16 | `-8 Pkt` | ✅ Valide |
-| **9** | [Afranga](../factsheets/afranga.md) | **68** | `±0` | `MID RISK` | 5-8 % | 23 | 21 | 14 | 20 | `-10 Pkt` | ✅ Valide |
-| **10** | [Fagura](../factsheets/fagura.md) | **68** | `±0` | `MID RISK` | 5-8 % | 25 | 17 | 11 | 18 | `-3 Pkt` | ⚠️ Konflikt |
-| **11** | [Income](../factsheets/income.md) | **64** | `±0` | `MID RISK` | 5-8 % | 13 | 21 | 14 | 16 | 0 | ✅ Valide |
-| **12** | [Twino](../factsheets/twino.md) | **63** | `±0` | `MID RISK` | 5-8 % | 25 | 19 | 11 | 16 | `-8 Pkt` | ✅ Valide |
-| **13** | [Peerberry](../factsheets/peerberry.md) | **61** | `±0` | `MID RISK` | 5-8 % | 8 | 22 | 15 | 24 | `-8 Pkt` | ✅ Valide |
-| **14** | [Bondora](../factsheets/bondora.md) | **61** | `±0` | `MID RISK` | 5-8 % | 14 | 22 | 13 | 18 | `-6 Pkt` | ✅ Valide |
-| **15** | [Viainvest](../factsheets/viainvest.md) | **60** | `±0` | `MID RISK` | 5-8 % | 25 | 18 | 11 | 16 | `-10 Pkt` | ⚠️ Konflikt |
-| **16** | [Esketit](../factsheets/esketit.md) | **60** | `±0` | `MID RISK` | 5-8 % | 13 | 21 | 14 | 20 | `-8 Pkt` | ✅ Valide |
-| **17** | [Robocash](../factsheets/robocash.md) | **56** | `±0` | `WATCHLIST` | 0-3 % | 8 | 20 | 14 | 24 | `-10 Pkt` | ✅ Valide |
-| **18** | [Debitum](../factsheets/debitum.md) | **55** | `±0` | `WATCHLIST` | 0-3 % | 25 | 19 | 11 | 11 | `-11 Pkt` | ⚠️ Konflikt |
-| **19** | [Modena](../factsheets/modena.md) | **51** | `±0` | `WATCHLIST` | 0-3 % | 11 | 22 | 17 | 11 | `-10 Pkt` | ✅ Valide |
-| **20** | [Revest](../factsheets/revest.md) | **49** | `±0` | `SPECULATIVE` | 0 % | 8 | 17 | 23 | 9 | `-8 Pkt` | ✅ Valide |
-| **21** | [Stockestate](../factsheets/stockestate.md) | **48** | `±0` | `SPECULATIVE` | 0 % | 17 | 5 | 23 | 9 | `-6 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
-| **22** | [Bondster](../factsheets/bondster.md) | **44** | `±0` | `SPECULATIVE` | 0 % | 8 | 17 | 11 | 18 | `-10 Pkt` | ⚠️ Konflikt |
-| **23** | [Loanch](../factsheets/loanch.md) | **44** | `±0` | `SPECULATIVE` | 0 % | 8 | 3 | 14 | 24 | `-5 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
-| **24** | [Hive5](../factsheets/hive5.md) | **39** | `±0` | `DISTRESSED` | 0 % | 10 | 5 | 14 | 20 | `-10 Pkt` | ⚠️ Lücke |
-| **25** | [Monefit](../factsheets/monefit.md) | **38** | `±0` | `DISTRESSED` | 0 % | 10 | 17 | 14 | 18 | `-21 Pkt` | ⚠️ Konflikt |
-| **26** | [Estateguru](../factsheets/estateguru.md) | **27** | `±0` | `DISTRESSED` | 0 % | 25 | 17 | 3 | 2 | `-20 Pkt` | ✅ Valide |
-| **27** | [Fintown](../factsheets/fintown.md) | **27** | `±0` | `DISTRESSED` | 0 % | 8 | 17 | 3 | 16 | `-17 Pkt` | ✅ Valide |
-| **28** | [Swaper](../factsheets/swaper.md) | **23** | `±0` | `DISTRESSED` | 0 % | 8 | 3 | 11 | 24 | `-23 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
-| **29** | [Lendermarket](../factsheets/lendermarket.md) | **22** | `±0` | `DISTRESSED` | 0 % | 8 | 12 | 11 | 16 | `-25 Pkt` | ✅ Valide |
-| **30** | [Asterra](../factsheets/asterra.md) | **5** | `±0` | `DISTRESSED` | 0 % | 2 | 3 | 3 | 11 | `-14 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
-| **31** | [Ventus](../factsheets/ventus.md) | **0** | `±0` | `DISTRESSED` | 0 % | 8 | 3 | 3 | 2 | `-40 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
+| **7** | [Digilo](../factsheets/digilo.md) | **76** | `NEU` | `TOP TIER` | 8-15 % | 25 | 17 | 25 | 9 | 0 | ✅ Valide |
+| **8** | [Mintos](../factsheets/mintos.md) | **75** | `±0` | `TOP TIER` | 8-15 % | 25 | 22 | 11 | 20 | `-3 Pkt` | ✅ Valide |
+| **9** | [Nectaro](../factsheets/nectaro.md) | **69** | `±0` | `MID RISK` | 5-8 % | 25 | 22 | 14 | 16 | `-8 Pkt` | ✅ Valide |
+| **10** | [Afranga](../factsheets/afranga.md) | **68** | `±0` | `MID RISK` | 5-8 % | 23 | 21 | 14 | 20 | `-10 Pkt` | ✅ Valide |
+| **11** | [Fagura](../factsheets/fagura.md) | **68** | `±0` | `MID RISK` | 5-8 % | 25 | 17 | 11 | 18 | `-3 Pkt` | ⚠️ Konflikt |
+| **12** | [Income](../factsheets/income.md) | **64** | `±0` | `MID RISK` | 5-8 % | 13 | 21 | 14 | 16 | 0 | ✅ Valide |
+| **13** | [Twino](../factsheets/twino.md) | **63** | `±0` | `MID RISK` | 5-8 % | 25 | 19 | 11 | 16 | `-8 Pkt` | ✅ Valide |
+| **14** | [Peerberry](../factsheets/peerberry.md) | **61** | `±0` | `MID RISK` | 5-8 % | 8 | 22 | 15 | 24 | `-8 Pkt` | ✅ Valide |
+| **15** | [Bondora](../factsheets/bondora.md) | **61** | `±0` | `MID RISK` | 5-8 % | 14 | 22 | 13 | 18 | `-6 Pkt` | ✅ Valide |
+| **16** | [Viainvest](../factsheets/viainvest.md) | **60** | `±0` | `MID RISK` | 5-8 % | 25 | 18 | 11 | 16 | `-10 Pkt` | ⚠️ Konflikt |
+| **17** | [Esketit](../factsheets/esketit.md) | **60** | `±0` | `MID RISK` | 5-8 % | 13 | 21 | 14 | 20 | `-8 Pkt` | ✅ Valide |
+| **18** | [Robocash](../factsheets/robocash.md) | **56** | `±0` | `WATCHLIST` | 0-3 % | 8 | 20 | 14 | 24 | `-10 Pkt` | ✅ Valide |
+| **19** | [Debitum](../factsheets/debitum.md) | **55** | `±0` | `WATCHLIST` | 0-3 % | 25 | 19 | 11 | 11 | `-11 Pkt` | ⚠️ Konflikt |
+| **20** | [Modena](../factsheets/modena.md) | **51** | `±0` | `WATCHLIST` | 0-3 % | 11 | 22 | 17 | 11 | `-10 Pkt` | ✅ Valide |
+| **21** | [Revest](../factsheets/revest.md) | **49** | `±0` | `SPECULATIVE` | 0 % | 8 | 17 | 23 | 9 | `-8 Pkt` | ✅ Valide |
+| **22** | [Stockestate](../factsheets/stockestate.md) | **48** | `±0` | `SPECULATIVE` | 0 % | 17 | 5 | 23 | 9 | `-6 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
+| **23** | [Bondster](../factsheets/bondster.md) | **44** | `±0` | `SPECULATIVE` | 0 % | 8 | 17 | 11 | 18 | `-10 Pkt` | ⚠️ Konflikt |
+| **24** | [Loanch](../factsheets/loanch.md) | **44** | `±0` | `SPECULATIVE` | 0 % | 8 | 3 | 14 | 24 | `-5 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
+| **25** | [Hive5](../factsheets/hive5.md) | **39** | `±0` | `DISTRESSED` | 0 % | 10 | 5 | 14 | 20 | `-10 Pkt` | ⚠️ Lücke |
+| **26** | [Monefit](../factsheets/monefit.md) | **38** | `±0` | `DISTRESSED` | 0 % | 10 | 17 | 14 | 18 | `-21 Pkt` | ⚠️ Konflikt |
+| **27** | [Estateguru](../factsheets/estateguru.md) | **27** | `±0` | `DISTRESSED` | 0 % | 25 | 17 | 3 | 2 | `-20 Pkt` | ✅ Valide |
+| **28** | [Fintown](../factsheets/fintown.md) | **27** | `±0` | `DISTRESSED` | 0 % | 8 | 17 | 3 | 16 | `-17 Pkt` | ✅ Valide |
+| **29** | [Swaper](../factsheets/swaper.md) | **23** | `±0` | `DISTRESSED` | 0 % | 8 | 3 | 11 | 24 | `-23 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
+| **30** | [Lendermarket](../factsheets/lendermarket.md) | **22** | `±0` | `DISTRESSED` | 0 % | 8 | 12 | 11 | 16 | `-25 Pkt` | ✅ Valide |
+| **31** | [Asterra](../factsheets/asterra.md) | **5** | `±0` | `DISTRESSED` | 0 % | 2 | 3 | 3 | 11 | `-14 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
+| **32** | [Ventus](../factsheets/ventus.md) | **0** | `±0` | `DISTRESSED` | 0 % | 8 | 3 | 3 | 2 | `-40 Pkt` | ⚠️ Konflikt, ⚠️ Lücke |
 
 ## 2. Akute Watchlist- & Risiko-Warnungen
 
@@ -67,7 +68,7 @@ generated_at: '2026-10-23T13:39:22.920910+00:00'
 
 | Risikoklasse | Zulässiges Depot-Limit | Plattformen im Universum | Maximale Allokation |
 | :--- | :---: | :--- | :---: |
-| **TOP TIER (70 - 100)** | 8 – 15 % je Plattform | Inrento, Crowdpear, Indemo, Lande, Insoil, Capitalia, Mintos | **50 – 70 %** |
+| **TOP TIER (70 - 100)** | 8 – 15 % je Plattform | Inrento, Crowdpear, Indemo, Lande, Insoil, Capitalia, Digilo, Mintos | **50 – 70 %** |
 | **MID RISK (60 - 69)** | 5 – 8 % je Plattform | Nectaro, Afranga, Fagura, Income, Twino, Peerberry, Bondora, Viainvest, Esketit | **25 – 40 %** |
 | **WATCHLIST (51 - 59)** | 0 – 3 % je Plattform | Robocash, Debitum, Modena | **0 – 10 %** |
 | **SPECULATIVE / DISTRESSED (0 - 50)** | **0 %** (Neuanlage-Stopp) | Revest, Stockestate, Bondster, Loanch, Hive5, Monefit, Estateguru, Fintown, Swaper, Lendermarket, Asterra, Ventus | **0 %** |
@@ -89,6 +90,7 @@ Abgleich unseres mathematischen Netto-Scores mit den externen Experten-Rankings:
 | [Lande](../factsheets/lande.md) | **81** | `TOP TIER` | **7.7** (Platz 4) | **78** (Platz 5 von 40) | **8.1** | **33** | **56** | 9.4 % |
 | [Insoil](../factsheets/insoil.md) | **81** | `TOP TIER` | **5.7** (Platz 16) `RF: -7` | **58** (Platz 15 von 40) | **6.5** | **32** | - | - |
 | [Capitalia](../factsheets/capitalia.md) | **77** | `TOP TIER` | - | **78** (Platz 4 von 40) | **6.9** | **31** | - | - |
+| [Digilo](../factsheets/digilo.md) | **76** | `TOP TIER` | **8.2** (Top-Platziert) | **62** (Platz 14 von 40) | - | - | - | - |
 | [Mintos](../factsheets/mintos.md) | **75** | `TOP TIER` | **6.2** (Platz 11) | **75** (Platz 7 von 40) | **6.2** | **34** | **56** | 10.4 % |
 | [Nectaro](../factsheets/nectaro.md) | **69** | `MID RISK` | **8.0** (Platz 2) | **58** (Platz 16 von 40) | **8.5** | **22** | **71** | 16.3 % |
 | [Afranga](../factsheets/afranga.md) | **68** | `MID RISK` | **6.4** (Platz 8) | **60** (Platz 14 von 40) | **7.3** | **24** | **68** | 14.8 % |
