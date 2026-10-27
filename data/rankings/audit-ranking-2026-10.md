@@ -5,7 +5,7 @@ year_month: '2026-10'
 platforms_count: 32
 model: 'Mathematisches Nettomodell (Max. 100 Pkt - Mali)'
 generator: 'P2P Audit Scoring System'
-generated_at: '2026-10-27T10:12:54.191747+00:00'
+generated_at: '2026-10-27T13:29:53.375903+00:00'
 ---
 
 # P2P Platform Audit Ranking – 2026-10
