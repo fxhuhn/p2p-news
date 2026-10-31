@@ -118,7 +118,7 @@ def test_prepare_docs_full_pipeline(tmp_path: Path) -> None:
     assert (docs_dir / "rankings" / "index.md").read_text(
         encoding="utf-8"
     ) == "Oct Rank"
-    assert (docs_dir / "rankings" / "archiv" / "audit-ranking-2026-10.md").read_text(
+    assert (docs_dir / "rankings" / "audit-ranking-2026-10.md").read_text(
         encoding="utf-8"
     ) == "Oct Rank"
     assert (docs_dir / "factsheets" / "inrento.md").exists()

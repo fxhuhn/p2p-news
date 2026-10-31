@@ -3,7 +3,7 @@
 
 Scans:
 - data/newsletters/ -> mirrors latest edition to docs/index.md and archives to docs/archiv/
-- data/rankings/    -> mirrors latest ranking to docs/rankings/index.md and archives to docs/rankings/archiv/
+- data/rankings/    -> mirrors latest ranking to docs/rankings/index.md and archives to docs/rankings/
 - data/factsheets/  -> mirrors platform factsheets to docs/factsheets/
 """
 
@@ -142,13 +142,12 @@ def update_mkdocs_nav(
             }
         )
 
-    # 2. Ranking Section
+    # 2. Ranking Section (kept at docs/rankings/ level for relative factsheet links)
     if sorted_periods:
         newest_period = sorted_periods[0]
         newest_rank_label = f"Aktuelles Ranking ({newest_period})"
         rankings_archive: list[dict[str, str]] = [
-            {f"Ranking {p}": f"rankings/archiv/audit-ranking-{p}.md"}
-            for p in sorted_periods
+            {f"Ranking {p}": f"rankings/audit-ranking-{p}.md"} for p in sorted_periods
         ]
         nav.append(
             {
@@ -212,9 +211,7 @@ def prepare_docs(
     sorted_periods = sorted(grouped_rank.keys(), reverse=True)
     if sorted_periods:
         rankings_docs = docs_dir / "rankings"
-        rankings_archive = rankings_docs / "archiv"
         rankings_docs.mkdir(parents=True, exist_ok=True)
-        rankings_archive.mkdir(parents=True, exist_ok=True)
 
         newest_period = sorted_periods[0]
         _, newest_rank_path = grouped_rank[newest_period]
@@ -222,7 +219,7 @@ def prepare_docs(
 
         for period in sorted_periods:
             _, rank_src = grouped_rank[period]
-            shutil.copy2(rank_src, rankings_archive / f"audit-ranking-{period}.md")
+            shutil.copy2(rank_src, rankings_docs / f"audit-ranking-{period}.md")
 
     # 3. Process Factsheets
     factsheets = scan_factsheets(factsheets_dir)
