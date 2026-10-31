@@ -24,6 +24,7 @@ from unittest.mock import MagicMock, patch
 from telegram_publisher import (
     format_newsletter_messages,
     format_ranking_message,
+    get_pages_base_url,
     send_newsletter_notification,
     send_ranking_notification,
     send_telegram_message,
@@ -113,6 +114,22 @@ class TestTelegramPublisher(unittest.TestCase):
     def tearDown(self) -> None:
         self.temp_dir.cleanup()
 
+    def test_get_pages_base_url(self) -> None:
+        """Prüft Generierung der Pages-Basis-URL aus Repo und Umgebung."""
+        self.assertEqual(
+            get_pages_base_url("owner/repo"), "https://owner.github.io/repo/"
+        )
+        self.assertEqual(
+            get_pages_base_url("FxHuhn/P2P-News"),
+            "https://fxhuhn.github.io/P2P-News/",
+        )
+        with patch.dict(
+            "os.environ", {"GITHUB_PAGES_URL": "https://custom-pages.example.com/"}
+        ):
+            self.assertEqual(
+                get_pages_base_url("owner/repo"), "https://custom-pages.example.com/"
+            )
+
     def test_disabled_publisher(self) -> None:
         """Prüft, dass bei deaktivierter Notification keine HTTP-Anfrage erfolgt."""
         with patch.dict("os.environ", {"TELEGRAM_NOTIFY_ENABLED": "false"}):
@@ -194,11 +211,12 @@ class TestTelegramPublisher(unittest.TestCase):
         self.assertIn("Neuanlage-Stopp (0 % Depot-Limit):", msg)
         self.assertIn("Revest, Monefit", msg)
 
-        # GitHub-Link
+        # GitHub Pages Link
         self.assertIn(
-            "https://github.com/owner/repo/blob/main/data/rankings/audit-ranking-2026-10.md",
+            "https://owner.github.io/repo/rankings/",
             msg,
         )
+        self.assertIn("Ranking auf GitHub Pages öffnen", msg)
 
         # Keine Emojis oder Trennlinien
         for prohibited in ["📊", "🥇", "🥈", "🚜", "⚠️", "🛑", "━━━━", "───"]:
@@ -230,9 +248,10 @@ class TestTelegramPublisher(unittest.TestCase):
         self.assertIn("<b>Features &amp; Gesamtreport</b>", msgs[2])
         self.assertIn("<b>Debitum</b> hat das neue Produkt", msgs[2])
         self.assertIn(
-            "https://github.com/owner/repo/blob/main/data/newsletters/newsletter-2026-W42.md",
+            "https://owner.github.io/repo/archiv/newsletter-2026-W42/",
             msgs[2],
         )
+        self.assertIn("Newsletter auf GitHub Pages öffnen", msgs[2])
 
         # Keine Prüfzeile ("24 Fakten geprüft")
         for m in msgs:

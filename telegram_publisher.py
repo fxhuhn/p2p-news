@@ -63,6 +63,19 @@ def get_telegram_config() -> dict[str, str | bool]:
     }
 
 
+def get_pages_base_url(repo: str | None = None) -> str:
+    """Ermittelt die Basis-URL für GitHub Pages aus Umgebung oder Repository-Name."""
+    custom_url = os.getenv("GITHUB_PAGES_URL", "").strip()
+    if custom_url:
+        return custom_url.rstrip("/") + "/"
+
+    repository = (repo or os.getenv("GITHUB_REPOSITORY") or "fxhuhn/p2p-news").strip()
+    if "/" in repository:
+        owner, repo_name = repository.split("/", 1)
+        return f"https://{owner.lower()}.github.io/{repo_name}/"
+    return f"https://{repository.lower()}.github.io/"
+
+
 def send_telegram_message(
     text: str,
     token: str | None = None,
@@ -155,7 +168,6 @@ def format_ranking_message(
 
     config = get_telegram_config()
     repository = repo or str(config["repo"])
-    git_branch = branch or str(config["branch"])
 
     # Metadaten aus Frontmatter
     year_month = ""
@@ -221,14 +233,13 @@ def format_ranking_message(
             if plat_match:
                 stopp_platforms.append(plat_match.group(1).strip())
 
-    github_url = (
-        f"https://github.com/{repository}/blob/{git_branch}/data/rankings/{path.name}"
-    )
+    pages_base = get_pages_base_url(repository)
+    pages_url = f"{pages_base}rankings/"
 
     # Aufbau der mobilen Nachricht
     blocks = [
         f"<b>{html.escape(title)}</b>",
-        "Das neue Monats-Ranking für 31 Plattformen ist auf GitHub verfügbar.",
+        "Das neue Monats-Ranking für 31 Plattformen ist auf GitHub Pages verfügbar.",
     ]
 
     if top_platforms:
@@ -252,7 +263,7 @@ def format_ranking_message(
         blocks.append(stopp_str)
 
     blocks.append(
-        f'<b>Vollständiger Report:</b>\n<a href="{github_url}">Ranking auf GitHub öffnen</a>'
+        f'<b>Vollständiger Report:</b>\n<a href="{pages_url}">Ranking auf GitHub Pages öffnen</a>'
     )
 
     return "\n\n".join(blocks)
@@ -276,7 +287,6 @@ def format_newsletter_messages(
 
     config = get_telegram_config()
     repository = repo or str(config["repo"])
-    git_branch = branch or str(config["branch"])
 
     # 1. Metadaten / Titel & Briefing
     kw_title = "P2P Kredite Wochenrückblick"
@@ -359,7 +369,13 @@ def format_newsletter_messages(
         "Plattform-Features & Produktneuheiten": "Features & Gesamtreport",
     }
 
-    github_url = f"https://github.com/{repository}/blob/{git_branch}/data/newsletters/{path.name}"
+    pages_base = get_pages_base_url(repository)
+    week_match = re.search(r"newsletter-(\d{4}-W\d{2})", path.name)
+    pages_url = (
+        f"{pages_base}archiv/newsletter-{week_match.group(1)}/"
+        if week_match
+        else pages_base
+    )
 
     for idx, (headline, paragraphs) in enumerate(sections):
         clean_headline = headline_map.get(headline, headline)
@@ -377,7 +393,7 @@ def format_newsletter_messages(
 
         # Wenn es der letzte Abschnitt ist, Link anhängen
         if idx == len(sections) - 1:
-            msg_body += f'\n\n<b>Vollständiger Report & Quellen:</b>\n<a href="{github_url}">Newsletter auf GitHub öffnen</a>'
+            msg_body += f'\n\n<b>Vollständiger Report & Quellen:</b>\n<a href="{pages_url}">Newsletter auf GitHub Pages öffnen</a>'
 
         messages.append(msg_body)
 
