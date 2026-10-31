@@ -51,6 +51,8 @@ venv.bak/
 .ruff_cache/
 .coverage
 htmlcov/
+docs/
+site/
 
 # Local databases and caches
 *.db

@@ -1,0 +1,82 @@
+site_name: P2P Kredite Newsletter & Audit-Ranking
+site_description: Automatisierter P2P-Lending Wochenrückblick, Plattform-Audit-Rankings
+  und Factsheets
+site_author: P2P News Pipeline
+site_url: https://fxhuhn.github.io/p2p-news/
+repo_url: https://github.com/fxhuhn/p2p-news
+repo_name: fxhuhn/p2p-news
+theme:
+  name: material
+  language: de
+  features:
+  - navigation.top
+  - navigation.instant
+  - navigation.tabs
+  - navigation.sections
+  - search.suggest
+  - search.highlight
+  - content.code.copy
+  palette:
+  - scheme: default
+    primary: indigo
+    accent: indigo
+    toggle:
+      icon: material/brightness-7
+      name: Dunkelmodus aktivieren
+  - scheme: slate
+    primary: indigo
+    accent: indigo
+    toggle:
+      icon: material/brightness-4
+      name: Hellmodus aktivieren
+markdown_extensions:
+- admonition
+- pymdownx.details
+- pymdownx.superfences
+- tables
+- attr_list
+nav:
+- Newsletter:
+  - Aktuelle Ausgabe (KW 43/2026): index.md
+  - Archiv:
+    - KW 43/2026: archiv/newsletter-2026-W43.md
+    - KW 42/2026: archiv/newsletter-2026-W42.md
+    - KW 41/2026: archiv/newsletter-2026-W41.md
+    - KW 40/2026: archiv/newsletter-2026-W40.md
+- Audit-Ranking:
+  - Aktuelles Ranking (2026-10): rankings/index.md
+  - Archiv:
+    - Ranking 2026-10: rankings/archiv/audit-ranking-2026-10.md
+- Factsheets:
+  - Afranga: factsheets/afranga.md
+  - Asterra Estate: factsheets/asterra.md
+  - Bondora: factsheets/bondora.md
+  - Bondster: factsheets/bondster.md
+  - Capitalia: factsheets/capitalia.md
+  - Crowdpear: factsheets/crowdpear.md
+  - Debitum Investments: factsheets/debitum.md
+  - Digilo: factsheets/digilo.md
+  - Esketit: factsheets/esketit.md
+  - EstateGuru: factsheets/estateguru.md
+  - Fagura: factsheets/fagura.md
+  - Fintown: factsheets/fintown.md
+  - hive5: factsheets/hive5.md
+  - Income Marketplace: factsheets/income.md
+  - Indemo: factsheets/indemo.md
+  - InRento: factsheets/inrento.md
+  - InSoil Finance: factsheets/insoil.md
+  - Lande: factsheets/lande.md
+  - Lendermarket: factsheets/lendermarket.md
+  - Loanch: factsheets/loanch.md
+  - Mintos: factsheets/mintos.md
+  - Modena: factsheets/modena.md
+  - Monefit SmartSaver: factsheets/monefit.md
+  - Nectaro: factsheets/nectaro.md
+  - PeerBerry: factsheets/peerberry.md
+  - Revest: factsheets/revest.md
+  - Robocash: factsheets/robocash.md
+  - Stockestate: factsheets/stockestate.md
+  - Swaper: factsheets/swaper.md
+  - Twino: factsheets/twino.md
+  - Ventus Energy: factsheets/ventus.md
+  - Viainvest: factsheets/viainvest.md
