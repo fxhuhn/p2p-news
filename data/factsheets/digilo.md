@@ -1,7 +1,7 @@
 ---
 platform: digilo
 platform_name: Digilo
-audit_date: '2026-10-27'
+audit_date: '2026-11-01'
 audit_version: '1.0'
 audit_score:
   net_score: 76
@@ -73,7 +73,7 @@ sources:
 
 # Platform Audit Factsheet: Digilo
 
-**Audit-Datum:** 2026-10-27 | **Klasse:** `TOP TIER` | **Depot-Limit:** `8 - 15 %`
+**Audit-Datum:** 2026-11-01 | **Klasse:** `TOP TIER` | **Depot-Limit:** `8 - 15 %`
 
 ## 1. Executive Summary & Audit-Verdict
 
@@ -107,4 +107,4 @@ Keine Malus-Abschläge wirksam. Das Portfolio weist weder unzulässige Monokultu
 | **P2P Dash Community Score** | **N/A / 100** | Empirischer Community Trust Score (p2pdash.com) |
 
 ---
-*Automatisch generiert durch das P2P Audit Scoring System am 2026-10-27.*
+*Automatisch generiert durch das P2P Audit Scoring System am 2026-11-01.*
